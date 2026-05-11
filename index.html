@@ -38,7 +38,6 @@
                 radial-gradient(circle at 80% 80%, rgba(0, 245, 255, 0.05) 0%, transparent 50%);
         }
 
-        /* Neon Glow Effect */
         .neon-glow {
             text-shadow: 0 0 10px var(--primary-neon), 0 0 20px var(--primary-neon), 0 0 30px var(--primary-neon);
             color: var(--primary-neon);
@@ -59,42 +58,12 @@
             box-shadow: 0 0 20px rgba(0, 245, 255, 0.5), inset 0 0 20px rgba(0, 245, 255, 0.1);
         }
 
-        /* Corner Brackets */
-        .corner-bracket {
-            position: relative;
-        }
-
-        .corner-bracket::before,
-        .corner-bracket::after {
-            content: '';
-            position: absolute;
-            width: 20px;
-            height: 20px;
-            border: 2px solid var(--secondary-neon);
-        }
-
-        .corner-bracket::before {
-            top: -10px;
-            left: -10px;
-            border-right: none;
-            border-bottom: none;
-        }
-
-        .corner-bracket::after {
-            bottom: -10px;
-            right: -10px;
-            border-left: none;
-            border-top: none;
-        }
-
-        /* Main Container */
         .container {
             display: flex;
             height: 100vh;
             width: 100%;
         }
 
-        /* Auth Screen */
         .auth-screen {
             display: none;
             position: fixed;
@@ -120,7 +89,6 @@
             border-radius: 10px;
             width: 90%;
             max-width: 400px;
-            neon-border-cyan;
             border: 2px solid var(--secondary-neon);
             box-shadow: 0 0 30px rgba(0, 245, 255, 0.3), inset 0 0 20px rgba(0, 245, 255, 0.1);
         }
@@ -214,6 +182,7 @@
             text-align: center;
             color: var(--text-light);
             font-size: 12px;
+            margin-top: 15px;
         }
 
         .toggle-form a {
@@ -222,7 +191,6 @@
             text-decoration: underline;
         }
 
-        /* Sidebar */
         .sidebar {
             width: 300px;
             background: var(--card-bg);
@@ -376,7 +344,6 @@
             box-shadow: 0 0 15px rgba(0, 245, 255, 0.5);
         }
 
-        /* Main Chat Area */
         .chat-container {
             flex: 1;
             display: flex;
@@ -450,7 +417,6 @@
             box-shadow: 0 0 15px rgba(0, 245, 255, 0.5);
         }
 
-        /* Messages */
         .messages-container {
             flex: 1;
             overflow-y: auto;
@@ -606,7 +572,6 @@
             }
         }
 
-        /* Input Area */
         .input-area {
             padding: 20px;
             border-top: 2px solid var(--primary-neon);
@@ -706,7 +671,6 @@
             box-shadow: 0 0 25px rgba(255, 0, 110, 0.8);
         }
 
-        /* Emoji Picker */
         .emoji-picker-container {
             position: absolute;
             bottom: 80px;
@@ -744,7 +708,6 @@
             transform: scale(1.2);
         }
 
-        /* Modal */
         .modal {
             display: none;
             position: fixed;
@@ -772,6 +735,7 @@
             width: 90%;
             max-height: 80vh;
             overflow-y: auto;
+            position: relative;
         }
 
         .modal-header {
@@ -800,7 +764,6 @@
             text-shadow: 0 0 10px var(--primary-neon);
         }
 
-        /* User List */
         .user-item {
             padding: 12px;
             margin-bottom: 8px;
@@ -875,7 +838,6 @@
             box-shadow: 0 0 10px rgba(255, 0, 85, 0.5);
         }
 
-        /* Notification */
         .notification {
             position: fixed;
             bottom: 20px;
@@ -912,7 +874,6 @@
             box-shadow: 0 0 20px rgba(0, 255, 136, 0.5);
         }
 
-        /* Empty State */
         .empty-state {
             display: flex;
             flex-direction: column;
@@ -933,7 +894,28 @@
             font-size: 14px;
         }
 
-        /* Scrollbar */
+        .loading-spinner {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100%;
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid var(--primary-neon);
+            border-top-color: transparent;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
         ::-webkit-scrollbar {
             width: 8px;
         }
@@ -953,7 +935,6 @@
             box-shadow: 0 0 15px rgba(0, 245, 255, 0.5);
         }
 
-        /* Responsive */
         @media (max-width: 768px) {
             .sidebar {
                 width: 250px;
@@ -1015,9 +996,9 @@
                         <label>Password</label>
                         <input type="password" id="signInPassword" placeholder="••••••••">
                     </div>
-                    <button class="btn" onclick="handleSignIn()">Sign In</button>
+                    <button class="btn" id="signInBtn">Sign In</button>
                     <div class="toggle-form">
-                        Don't have an account? <a onclick="toggleAuthForm()">Sign Up</a>
+                        Don't have an account? <a id="showSignUp">Sign Up</a>
                     </div>
                 </div>
 
@@ -1039,9 +1020,9 @@
                         <label>Bio (Optional)</label>
                         <textarea id="signUpBio" placeholder="Tell us about yourself..."></textarea>
                     </div>
-                    <button class="btn" onclick="handleSignUp()">Create Account</button>
+                    <button class="btn" id="signUpBtn">Create Account</button>
                     <div class="toggle-form">
-                        Already have an account? <a onclick="toggleAuthForm()">Sign In</a>
+                        Already have an account? <a id="showSignIn">Sign In</a>
                     </div>
                 </div>
             </div>
@@ -1054,17 +1035,17 @@
         <div class="sidebar">
             <div class="sidebar-header">
                 <div class="sidebar-title">⚡ NEXUS</div>
-                <button class="icon-btn" onclick="openUserProfile()" title="Profile">👤</button>
+                <button class="icon-btn" id="profileBtn" title="Profile">👤</button>
             </div>
 
             <div class="sidebar-tabs">
-                <button class="tab-btn active" onclick="switchTab('chats')">Chats</button>
-                <button class="tab-btn" onclick="switchTab('friends')">Friends</button>
-                <button class="tab-btn" onclick="switchTab('requests')">Requests</button>
+                <button class="tab-btn active" data-tab="chats">Chats</button>
+                <button class="tab-btn" data-tab="friends">Friends</button>
+                <button class="tab-btn" data-tab="requests">Requests</button>
             </div>
 
             <div class="search-box">
-                <input type="text" id="searchInput" placeholder="Search..." onkeyup="handleSearch()">
+                <input type="text" id="searchInput" placeholder="Search...">
             </div>
 
             <div class="sidebar-content" id="sidebarContent">
@@ -1072,7 +1053,7 @@
             </div>
 
             <div style="padding: 10px; border-top: 1px solid var(--primary-neon);">
-                <button class="btn btn-secondary" onclick="handleLogout()" style="width: 100%;">Logout</button>
+                <button class="btn btn-secondary" id="logoutBtn" style="width: 100%;">Logout</button>
             </div>
         </div>
 
@@ -1090,8 +1071,8 @@
                     </div>
                 </div>
                 <div class="chat-header-actions">
-                    <button class="icon-btn" onclick="toggleGroupInfo()" title="Info">ℹ️</button>
-                    <button class="icon-btn" onclick="toggleMediaGallery()" title="Media">🖼️</button>
+                    <button class="icon-btn" id="groupInfoBtn" title="Info">ℹ️</button>
+                    <button class="icon-btn" id="mediaGalleryBtn" title="Media">🖼️</button>
                 </div>
             </div>
 
@@ -1105,13 +1086,13 @@
             <div class="input-area" id="inputArea" style="display: none;">
                 <div class="input-wrapper">
                     <div class="input-controls">
-                        <button class="control-btn" onclick="toggleEmojiPicker()" title="Emoji">😊</button>
-                        <button class="control-btn" onclick="triggerFileUpload()" title="Upload">📎</button>
-                        <button class="control-btn" id="voiceBtn" onclick="toggleVoiceRecording()" title="Voice">🎤</button>
+                        <button class="control-btn" id="emojiBtn" title="Emoji">😊</button>
+                        <button class="control-btn" id="uploadBtn" title="Upload">📎</button>
+                        <button class="control-btn" id="voiceBtn" title="Voice">🎤</button>
                     </div>
-                    <textarea class="message-input" id="messageInput" placeholder="Type a message..." onkeypress="handleMessageKeypress(event)"></textarea>
+                    <textarea class="message-input" id="messageInput" placeholder="Type a message..."></textarea>
                 </div>
-                <button class="send-btn" onclick="sendMessage()" title="Send">➤</button>
+                <button class="send-btn" id="sendBtn" title="Send">➤</button>
             </div>
 
             <div class="emoji-picker-container" id="emojiPicker">
@@ -1121,12 +1102,12 @@
     </div>
 
     <!-- Hidden file input -->
-    <input type="file" id="fileInput" style="display: none;" onchange="handleFileUpload(event)">
+    <input type="file" id="fileInput" style="display: none;">
 
     <!-- Modals -->
     <div class="modal" id="userProfileModal">
-        <div class="modal-content" style="position: relative;">
-            <button class="modal-close" onclick="closeModal('userProfileModal')">✕</button>
+        <div class="modal-content">
+            <button class="modal-close" id="closeProfileModal">✕</button>
             <div class="modal-header">My Profile</div>
             <div id="userProfileContent">
                 <!-- Profile content will be populated -->
@@ -1135,8 +1116,8 @@
     </div>
 
     <div class="modal" id="groupInfoModal">
-        <div class="modal-content" style="position: relative;">
-            <button class="modal-close" onclick="closeModal('groupInfoModal')">✕</button>
+        <div class="modal-content">
+            <button class="modal-close" id="closeGroupInfoModal">✕</button>
             <div class="modal-header">Group Info</div>
             <div id="groupInfoContent">
                 <!-- Group info will be populated -->
@@ -1144,30 +1125,11 @@
         </div>
     </div>
 
-    <div class="modal" id="createGroupModal">
-        <div class="modal-content" style="position: relative;">
-            <button class="modal-close" onclick="closeModal('createGroupModal')">✕</button>
-            <div class="modal-header">Create Group Chat</div>
-            <div class="form-group">
-                <label>Group Name</label>
-                <input type="text" id="groupNameInput" placeholder="Enter group name">
-            </div>
-            <div class="form-group">
-                <label>Select Members</label>
-                <div id="membersList" style="max-height: 300px; overflow-y: auto;">
-                    <!-- Members will be populated -->
-                </div>
-            </div>
-            <button class="btn" onclick="createGroup()">Create Group</button>
-        </div>
-    </div>
-
-    <!-- Firebase Scripts -->
-    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-storage.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-messaging.js"></script>
+    <!-- Firebase Compat SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-storage-compat.js"></script>
 
     <script>
         // ============================================
@@ -1185,10 +1147,11 @@
 
         // Initialize Firebase
         firebase.initializeApp(firebaseConfig);
+        
+        // Get Firebase services
         const auth = firebase.auth();
         const db = firebase.firestore();
         const storage = firebase.storage();
-        const messaging = firebase.messaging();
 
         // ============================================
         // GLOBAL STATE
@@ -1205,6 +1168,57 @@
         const emojis = ['😀', '😂', '😍', '🥰', '😎', '🤔', '😢', '😡', '🎉', '🎊', '🔥', '💯', '👍', '👎', '❤️', '💔', '💪', '🙌', '🤝', '✨', '🌟', '⭐', '🎯', '🚀', '💎', '🏆', '🎁', '🎈', '🎭', '🎪'];
 
         // ============================================
+        // DOM ELEMENTS
+        // ============================================
+        document.addEventListener('DOMContentLoaded', function() {
+            // Auth elements
+            document.getElementById('signInBtn').addEventListener('click', handleSignIn);
+            document.getElementById('signUpBtn').addEventListener('click', handleSignUp);
+            document.getElementById('showSignUp').addEventListener('click', toggleAuthForm);
+            document.getElementById('showSignIn').addEventListener('click', toggleAuthForm);
+            
+            // Sidebar elements
+            document.getElementById('profileBtn').addEventListener('click', openUserProfile);
+            document.getElementById('logoutBtn').addEventListener('click', handleLogout);
+            document.getElementById('searchInput').addEventListener('keyup', handleSearch);
+            
+            // Tab buttons
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    currentTab = this.dataset.tab;
+                    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    loadSidebarContent();
+                });
+            });
+            
+            // Chat elements
+            document.getElementById('groupInfoBtn').addEventListener('click', toggleGroupInfo);
+            document.getElementById('mediaGalleryBtn').addEventListener('click', function() {
+                showNotification('Media gallery coming soon!', 'success');
+            });
+            
+            // Input elements
+            document.getElementById('emojiBtn').addEventListener('click', toggleEmojiPicker);
+            document.getElementById('uploadBtn').addEventListener('click', triggerFileUpload);
+            document.getElementById('voiceBtn').addEventListener('click', toggleVoiceRecording);
+            document.getElementById('sendBtn').addEventListener('click', sendMessage);
+            document.getElementById('messageInput').addEventListener('keypress', handleMessageKeypress);
+            document.getElementById('fileInput').addEventListener('change', handleFileUpload);
+            
+            // Modal elements
+            document.getElementById('closeProfileModal').addEventListener('click', function() {
+                closeModal('userProfileModal');
+            });
+            document.getElementById('closeGroupInfoModal').addEventListener('click', function() {
+                closeModal('groupInfoModal');
+            });
+            
+            // Setup emoji picker
+            setupEmojiPicker();
+        });
+
+        // ============================================
         // AUTHENTICATION
         // ============================================
         auth.onAuthStateChanged(async (user) => {
@@ -1218,9 +1232,9 @@
                         email: user.email,
                         name: user.displayName || 'User',
                         bio: '',
-                        avatar: user.photoURL || getAvatarInitial(user.displayName || user.email),
-                        createdAt: new Date(),
-                        lastSeen: new Date(),
+                        avatar: getAvatarInitial(user.displayName || user.email),
+                        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                        lastSeen: firebase.firestore.FieldValue.serverTimestamp(),
                         isOnline: true
                     });
                 }
@@ -1229,6 +1243,7 @@
                 updateUserStatus(true);
             } else {
                 currentUser = null;
+                currentConversation = null;
                 showAuthScreen();
             }
         });
@@ -1273,10 +1288,10 @@
                         uid: user.uid,
                         email: email,
                         name: name,
-                        bio: bio,
+                        bio: bio || '',
                         avatar: getAvatarInitial(name),
-                        createdAt: new Date(),
-                        lastSeen: new Date(),
+                        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                        lastSeen: firebase.firestore.FieldValue.serverTimestamp(),
                         isOnline: true
                     });
 
@@ -1318,13 +1333,6 @@
             document.getElementById('mainContainer').style.display = 'flex';
         }
 
-        function switchTab(tab) {
-            currentTab = tab;
-            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-            event.target.classList.add('active');
-            loadSidebarContent();
-        }
-
         function openModal(modalId) {
             document.getElementById(modalId).classList.add('active');
         }
@@ -1337,33 +1345,47 @@
         // INITIALIZATION
         // ============================================
         async function initializeApp() {
-            await loadConversations();
-            await loadFriends();
-            await loadFriendRequests();
-            loadSidebarContent();
-            setupEmojiPicker();
-            setupNotifications();
+            try {
+                await loadConversations();
+                await loadFriends();
+                await loadFriendRequests();
+                loadSidebarContent();
+            } catch (error) {
+                console.error('Initialization error:', error);
+                showNotification('Failed to initialize app', 'error');
+            }
         }
 
         // ============================================
         // CONVERSATIONS
         // ============================================
         async function loadConversations() {
-            const query = db.collection('conversations')
-                .where('participants', 'array-contains', currentUser.uid)
-                .orderBy('lastMessageTime', 'desc');
+            try {
+                const query = db.collection('conversations')
+                    .where('participants', 'array-contains', currentUser.uid)
+                    .orderBy('lastMessageTime', 'desc');
 
-            query.onSnapshot(snapshot => {
-                conversations = snapshot.docs.map(doc => ({
-                    id: doc.id,
-                    ...doc.data()
-                }));
-                loadSidebarContent();
-            });
+                query.onSnapshot(snapshot => {
+                    conversations = snapshot.docs.map(doc => ({
+                        id: doc.id,
+                        ...doc.data()
+                    }));
+                    loadSidebarContent();
+                });
+            } catch (error) {
+                console.error('Error loading conversations:', error);
+                // Show user-friendly message about Firestore index
+                showNotification('Note: If this is your first time, you may need to create a Firestore composite index. Check the console for details.', 'error');
+                console.log('If you see an error about a composite index, please create one in Firebase Console with:');
+                console.log('- Collection: conversations');
+                console.log('- Fields: participants (array-contains), lastMessageTime (descending)');
+            }
         }
 
         async function openConversation(conversationId) {
             currentConversation = conversations.find(c => c.id === conversationId);
+            if (!currentConversation) return;
+
             document.getElementById('chatHeader').style.display = 'flex';
             document.getElementById('inputArea').style.display = 'flex';
 
@@ -1375,9 +1397,13 @@
             loadMessages();
 
             // Mark as read
-            await db.collection('conversations').doc(conversationId).update({
-                [`unreadCount.${currentUser.uid}`]: 0
-            });
+            try {
+                await db.collection('conversations').doc(conversationId).update({
+                    [`unreadCount.${currentUser.uid}`]: 0
+                });
+            } catch (error) {
+                console.error('Error marking as read:', error);
+            }
 
             // Update sidebar
             document.querySelectorAll('.conversation-item').forEach(item => {
@@ -1387,6 +1413,8 @@
         }
 
         async function loadMessages() {
+            if (!currentConversation) return;
+
             const messagesRef = db.collection('conversations')
                 .doc(currentConversation.id)
                 .collection('messages')
@@ -1418,11 +1446,11 @@
 
             // Media
             if (message.mediaUrl) {
-                if (message.mediaType.startsWith('image/')) {
+                if (message.mediaType && message.mediaType.startsWith('image/')) {
                     content += `<div class="media-preview"><img src="${message.mediaUrl}" alt="Image"></div>`;
-                } else if (message.mediaType.startsWith('video/')) {
+                } else if (message.mediaType && message.mediaType.startsWith('video/')) {
                     content += `<div class="media-preview"><video controls><source src="${message.mediaUrl}"></video></div>`;
-                } else if (message.mediaType.startsWith('audio/')) {
+                } else if (message.mediaType && message.mediaType.startsWith('audio/')) {
                     content += `<div class="media-preview"><audio controls><source src="${message.mediaUrl}"></audio></div>`;
                 }
             }
@@ -1432,9 +1460,19 @@
                 content += `<div style="margin-top: 8px; padding: 8px; background: rgba(0,0,0,0.3); border-radius: 3px; font-size: 12px; color: var(--text-secondary);">📝 ${escapeHtml(message.transcription)}</div>`;
             }
 
+            // Timestamp
+            let timeStr = 'Just now';
+            if (message.timestamp) {
+                try {
+                    timeStr = new Date(message.timestamp.toDate()).toLocaleTimeString();
+                } catch (e) {
+                    timeStr = new Date(message.timestamp).toLocaleTimeString();
+                }
+            }
+
             content += `
                         <div class="message-meta">
-                            <span>${new Date(message.timestamp.toDate()).toLocaleTimeString()}</span>
+                            <span>${timeStr}</span>
                             ${message.isRead ? '<span class="read-receipt">✓✓</span>' : '<span>✓</span>'}
                         </div>
                     </div>
@@ -1452,7 +1490,7 @@
             content += '</div>';
 
             if (message.senderId !== currentUser.uid) {
-                messageEl.innerHTML = `<div class="message-avatar">${getAvatarInitial(message.senderName)}</div>${content}`;
+                messageEl.innerHTML = `<div class="message-avatar">${getAvatarInitial(message.senderName || 'U')}</div>${content}`;
             } else {
                 messageEl.innerHTML = content;
             }
@@ -1462,7 +1500,7 @@
 
         async function sendMessage() {
             const text = document.getElementById('messageInput').value.trim();
-            if (!text && !currentConversation) return;
+            if (!text || !currentConversation) return;
 
             const message = {
                 senderId: currentUser.uid,
@@ -1485,11 +1523,8 @@
                 });
 
                 document.getElementById('messageInput').value = '';
-
-                // Send notification
-                await sendNotificationToRecipients(currentConversation.id, `${currentUser.displayName}: ${text}`);
             } catch (error) {
-                showNotification('Failed to send message', 'error');
+                showNotification('Failed to send message: ' + error.message, 'error');
             }
         }
 
@@ -1529,14 +1564,14 @@
             try {
                 await db.collection('users').doc(userId).collection('friendRequests').add({
                     fromId: currentUser.uid,
-                    fromName: currentUser.displayName,
+                    fromName: currentUser.displayName || 'User',
                     fromEmail: currentUser.email,
                     timestamp: firebase.firestore.FieldValue.serverTimestamp()
                 });
 
                 showNotification('Friend request sent!', 'success');
             } catch (error) {
-                showNotification('Failed to send friend request', 'error');
+                showNotification('Failed to send friend request: ' + error.message, 'error');
             }
         }
 
@@ -1558,7 +1593,7 @@
 
                 showNotification('Friend request accepted!', 'success');
             } catch (error) {
-                showNotification('Failed to accept friend request', 'error');
+                showNotification('Failed to accept friend request: ' + error.message, 'error');
             }
         }
 
@@ -1567,7 +1602,7 @@
                 await db.collection('users').doc(currentUser.uid).collection('friendRequests').doc(requestId).delete();
                 showNotification('Friend request declined', 'success');
             } catch (error) {
-                showNotification('Failed to decline friend request', 'error');
+                showNotification('Failed to decline friend request: ' + error.message, 'error');
             }
         }
 
@@ -1575,6 +1610,8 @@
         // SIDEBAR CONTENT
         // ============================================
         async function loadSidebarContent() {
+            if (!currentUser) return;
+
             const container = document.getElementById('sidebarContent');
             container.innerHTML = '';
 
@@ -1593,7 +1630,7 @@
                         <div class="conversation-preview">${conv.lastMessage || 'No messages yet'}</div>
                         ${unreadCount > 0 ? `<div class="unread-badge">${unreadCount}</div>` : ''}
                     `;
-                    el.onclick = () => openConversation(conv.id);
+                    el.onclick = function() { openConversation(conv.id); };
                     container.appendChild(el);
                 });
             } else if (currentTab === 'friends') {
@@ -1605,18 +1642,37 @@
                 friends.forEach(friend => {
                     const el = document.createElement('div');
                     el.className = 'user-item';
+                    
+                    let statusText = 'Offline';
+                    let statusClass = 'offline-indicator';
+                    if (friend.isOnline) {
+                        statusText = 'Online';
+                        statusClass = 'online-indicator';
+                    } else if (friend.lastSeen) {
+                        try {
+                            statusText = `Last seen: ${new Date(friend.lastSeen.toDate()).toLocaleString()}`;
+                        } catch (e) {
+                            statusText = 'Offline';
+                        }
+                    }
+
                     el.innerHTML = `
                         <div class="user-info">
                             <div class="user-name">${friend.name || 'User'}</div>
                             <div class="user-status">
-                                <span class="${friend.isOnline ? 'online-indicator' : 'offline-indicator'}"></span>
-                                ${friend.isOnline ? 'Online' : `Last seen: ${new Date(friend.lastSeen.toDate()).toLocaleString()}`}
+                                <span class="${statusClass}"></span>
+                                ${statusText}
                             </div>
                         </div>
                         <div class="user-actions">
-                            <button class="user-action-btn" onclick="startDirectMessage('${friend.uid}', '${friend.name}')">Message</button>
+                            <button class="user-action-btn" data-friend-id="${friend.uid}" data-friend-name="${friend.name || 'User'}">Message</button>
                         </div>
                     `;
+                    
+                    el.querySelector('.user-action-btn').addEventListener('click', function() {
+                        startDirectMessage(this.dataset.friendId, this.dataset.friendName);
+                    });
+                    
                     container.appendChild(el);
                 });
             } else if (currentTab === 'requests') {
@@ -1634,10 +1690,19 @@
                             <div class="user-status">${request.fromEmail}</div>
                         </div>
                         <div class="user-actions">
-                            <button class="user-action-btn accept" onclick="acceptFriendRequest('${request.id}', '${request.fromId}')">Accept</button>
-                            <button class="user-action-btn reject" onclick="declineFriendRequest('${request.id}')">Decline</button>
+                            <button class="user-action-btn accept" data-request-id="${request.id}" data-from-id="${request.fromId}">Accept</button>
+                            <button class="user-action-btn reject" data-request-id="${request.id}">Decline</button>
                         </div>
                     `;
+                    
+                    el.querySelector('.accept').addEventListener('click', function() {
+                        acceptFriendRequest(this.dataset.requestId, this.dataset.fromId);
+                    });
+                    
+                    el.querySelector('.reject').addEventListener('click', function() {
+                        declineFriendRequest(this.dataset.requestId);
+                    });
+                    
                     container.appendChild(el);
                 });
             }
@@ -1648,6 +1713,7 @@
                 // Check if conversation exists
                 const existing = conversations.find(c => 
                     c.isGroup === false && 
+                    c.participants && 
                     c.participants.includes(userId) && 
                     c.participants.includes(currentUser.uid)
                 );
@@ -1679,10 +1745,11 @@
                 document.getElementById('chatHeader').style.display = 'flex';
                 document.getElementById('inputArea').style.display = 'flex';
                 document.getElementById('chatName').textContent = userName;
+                document.getElementById('chatAvatar').textContent = getAvatarInitial(userName);
                 document.getElementById('messagesContainer').innerHTML = '';
                 loadMessages();
             } catch (error) {
-                showNotification('Failed to start conversation', 'error');
+                showNotification('Failed to start conversation: ' + error.message, 'error');
             }
         }
 
@@ -1708,6 +1775,8 @@
         }
 
         async function addReaction(messageId, emoji) {
+            if (!currentConversation) return;
+
             try {
                 const messageRef = db.collection('conversations')
                     .doc(currentConversation.id)
@@ -1715,6 +1784,8 @@
                     .doc(messageId);
 
                 const messageDoc = await messageRef.get();
+                if (!messageDoc.exists) return;
+
                 const reactions = messageDoc.data().reactions || {};
 
                 if (!reactions[emoji]) {
@@ -1740,17 +1811,12 @@
 
         async function handleFileUpload(event) {
             const file = event.target.files[0];
-            if (!file) return;
+            if (!file || !currentConversation) return;
 
             try {
                 showNotification('Uploading file...', 'success');
                 const storageRef = storage.ref(`messages/${currentUser.uid}/${Date.now()}_${file.name}`);
                 const uploadTask = storageRef.put(file);
-
-                uploadTask.on('state_changed', (snapshot) => {
-                    const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-                    console.log('Upload progress:', progress);
-                });
 
                 await uploadTask;
                 const mediaUrl = await storageRef.getDownloadURL();
@@ -1773,7 +1839,7 @@
 
                 showNotification('File uploaded successfully!', 'success');
             } catch (error) {
-                showNotification('Failed to upload file', 'error');
+                showNotification('Failed to upload file: ' + error.message, 'error');
             }
 
             event.target.value = '';
@@ -1803,6 +1869,8 @@
                 mediaRecorder.onstop = async () => {
                     const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
                     await uploadVoiceMessage(audioBlob);
+                    // Stop all tracks to release microphone
+                    stream.getTracks().forEach(track => track.stop());
                 };
 
                 mediaRecorder.start();
@@ -1810,12 +1878,12 @@
                 document.getElementById('voiceBtn').classList.add('recording');
                 showNotification('Recording...', 'success');
             } catch (error) {
-                showNotification('Failed to access microphone', 'error');
+                showNotification('Failed to access microphone: ' + error.message, 'error');
             }
         }
 
         function stopVoiceRecording() {
-            if (mediaRecorder) {
+            if (mediaRecorder && isRecording) {
                 mediaRecorder.stop();
                 isRecording = false;
                 document.getElementById('voiceBtn').classList.remove('recording');
@@ -1823,14 +1891,13 @@
         }
 
         async function uploadVoiceMessage(audioBlob) {
+            if (!currentConversation) return;
+
             try {
                 showNotification('Processing voice message...', 'success');
                 const storageRef = storage.ref(`voice/${currentUser.uid}/${Date.now()}.webm`);
                 await storageRef.put(audioBlob);
                 const mediaUrl = await storageRef.getDownloadURL();
-
-                // Transcribe audio (simulated - in production, use Web Speech API or server-side service)
-                const transcription = await transcribeAudio(mediaUrl);
 
                 const message = {
                     senderId: currentUser.uid,
@@ -1838,7 +1905,7 @@
                     text: '🎤 Voice Message',
                     mediaUrl: mediaUrl,
                     mediaType: 'audio/webm',
-                    transcription: transcription,
+                    transcription: '[Voice message]',
                     timestamp: firebase.firestore.FieldValue.serverTimestamp(),
                     isRead: false,
                     reactions: {}
@@ -1851,78 +1918,39 @@
 
                 showNotification('Voice message sent!', 'success');
             } catch (error) {
-                showNotification('Failed to send voice message', 'error');
+                showNotification('Failed to send voice message: ' + error.message, 'error');
             }
-        }
-
-        async function transcribeAudio(audioUrl) {
-            // Simulated transcription - in production, use Web Speech API or server service
-            return '[Transcription: Voice message received]';
-        }
-
-        // ============================================
-        // NOTIFICATIONS
-        // ============================================
-        function setupNotifications() {
-            if ('serviceWorker' in navigator) {
-                navigator.serviceWorker.register('/sw.js').catch(() => {
-                    console.log('Service Worker registration failed');
-                });
-            }
-
-            // Listen for new messages
-            db.collection('conversations')
-                .where('participants', 'array-contains', currentUser.uid)
-                .onSnapshot(snapshot => {
-                    snapshot.docChanges().forEach(change => {
-                        if (change.type === 'modified') {
-                            const conv = change.doc.data();
-                            if (conv.lastMessage && !conv.lastMessage.includes(currentUser.displayName)) {
-                                playNotificationSound();
-                            }
-                        }
-                    });
-                });
-        }
-
-        async function sendNotificationToRecipients(conversationId, message) {
-            const conv = conversations.find(c => c.id === conversationId);
-            if (!conv) return;
-
-            const recipients = conv.participants.filter(p => p !== currentUser.uid);
-            recipients.forEach(recipientId => {
-                // In production, send via Firebase Cloud Messaging
-                console.log(`Notification sent to ${recipientId}: ${message}`);
-            });
-        }
-
-        function playNotificationSound() {
-            const audio = new Audio('data:audio/wav;base64,UklGRiYAAABXQVZFZm10IBAAAAABAAEAQB8AAAB9AAACABAAZGF0YQIAAAAAAA==');
-            audio.play().catch(() => {});
         }
 
         // ============================================
         // USER PROFILE
         // ============================================
         async function openUserProfile() {
-            const userDoc = await db.collection('users').doc(currentUser.uid).get();
-            const userData = userDoc.data();
+            if (!currentUser) return;
 
-            const modal = document.getElementById('userProfileModal');
-            const content = document.getElementById('userProfileContent');
-            content.innerHTML = `
-                <div style="text-align: center; margin-bottom: 20px;">
-                    <div class="chat-header-avatar" style="width: 80px; height: 80px; font-size: 36px; margin: 0 auto 15px;">${userData.avatar}</div>
-                    <h3 style="color: var(--text-light); margin-bottom: 5px;">${userData.name}</h3>
-                    <p style="color: var(--text-secondary); font-size: 12px;">${userData.email}</p>
-                </div>
-                <div class="form-group">
-                    <label>Bio</label>
-                    <textarea id="bioInput" style="resize: none;">${userData.bio || ''}</textarea>
-                </div>
-                <button class="btn" onclick="updateUserProfile()">Save Changes</button>
-            `;
-            openModal('userProfileModal');
+            try {
+                const userDoc = await db.collection('users').doc(currentUser.uid).get();
+                const userData = userDoc.data();
+
+                const content = document.getElementById('userProfileContent');
+                content.innerHTML = `
+                    <div style="text-align: center; margin-bottom: 20px;">
+                        <div class="chat-header-avatar" style="width: 80px; height: 80px; font-size: 36px; margin: 0 auto 15px;">${userData.avatar || '?'}</div>
+                        <h3 style="color: var(--text-light); margin-bottom: 5px;">${userData.name}</h3>
+                        <p style="color: var(--text-secondary); font-size: 12px;">${userData.email}</p>
+                    </div>
+                    <div class="form-group">
+                        <label>Bio</label>
+                        <textarea id="bioInput" style="resize: none;">${userData.bio || ''}</textarea>
+                    </div>
+                    <button class="btn" id="saveProfileBtn">Save Changes</button>
+                `;
+                
+                document.getElementById('saveProfileBtn').addEventListener('click', updateUserProfile);
+                openModal('userProfileModal');
+            } catch (error) {
+                showNotification('Failed to load profile: ' + error.message, 'error');
+            }
         }
 
         async function updateUserProfile() {
@@ -1934,45 +1962,19 @@
                 showNotification('Profile updated!', 'success');
                 closeModal('userProfileModal');
             } catch (error) {
-                showNotification('Failed to update profile', 'error');
+                showNotification('Failed to update profile: ' + error.message, 'error');
             }
         }
 
         // ============================================
         // GROUP CHATS
         // ============================================
-        async function createGroup() {
-            const groupName = document.getElementById('groupNameInput').value;
-            const memberCheckboxes = document.querySelectorAll('#membersList input:checked');
-            const selectedMembers = Array.from(memberCheckboxes).map(cb => cb.value);
-
-            if (!groupName || selectedMembers.length === 0) {
-                showNotification('Please enter group name and select members', 'error');
+        function toggleGroupInfo() {
+            if (!currentConversation || !currentConversation.isGroup) {
+                showNotification('This is not a group chat', 'error');
                 return;
             }
-
-            try {
-                const convRef = await db.collection('conversations').add({
-                    name: groupName,
-                    isGroup: true,
-                    participants: [currentUser.uid, ...selectedMembers],
-                    createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-                    lastMessageTime: firebase.firestore.FieldValue.serverTimestamp(),
-                    lastMessage: '',
-                    unreadCount: {}
-                });
-
-                showNotification('Group created successfully!', 'success');
-                closeModal('createGroupModal');
-                document.getElementById('groupNameInput').value = '';
-            } catch (error) {
-                showNotification('Failed to create group', 'error');
-            }
-        }
-
-        function toggleGroupInfo() {
-            if (!currentConversation || !currentConversation.isGroup) return;
-            const modal = document.getElementById('groupInfoModal');
+            
             const content = document.getElementById('groupInfoContent');
             content.innerHTML = `
                 <div class="form-group">
@@ -1982,15 +1984,11 @@
                 <div class="form-group">
                     <label>Members</label>
                     <div style="max-height: 200px; overflow-y: auto;">
-                        ${currentConversation.participants.map(p => `<div style="padding: 8px; color: var(--text-light);">👤 ${p}</div>`).join('')}
+                        ${currentConversation.participants ? currentConversation.participants.map(p => `<div style="padding: 8px; color: var(--text-light);">👤 ${p}</div>`).join('') : 'No members'}
                     </div>
                 </div>
             `;
             openModal('groupInfoModal');
-        }
-
-        function toggleMediaGallery() {
-            showNotification('Media gallery coming soon!', 'success');
         }
 
         // ============================================
@@ -2014,6 +2012,7 @@
         }
 
         function escapeHtml(text) {
+            if (!text) return '';
             const div = document.createElement('div');
             div.textContent = text;
             return div.innerHTML;
@@ -2045,7 +2044,9 @@
 
         // Update status when page closes
         window.addEventListener('beforeunload', () => {
-            updateUserStatus(false);
+            if (currentUser) {
+                updateUserStatus(false);
+            }
         });
 
         // Update status periodically
