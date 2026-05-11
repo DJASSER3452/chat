@@ -2,1584 +2,383 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>DZ CLOSE - دردشة الجزائر</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@200;300;400;500;700;800;900&family=Cairo:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DZ CLOSE - by Jasser Achalaf</title>
     
     <!-- Firebase SDKs -->
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-storage-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.8.4/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.8.4/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.8.4/firebase-database-compat.js"></script>
+    
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
+        /* =========================================
+           CSS Variables & Themes (DZ CLOSE Style)
+           ========================================= */
         :root {
-            --bg-primary: #0a0a0f;
-            --bg-secondary: #12121a;
-            --bg-card: #1a1a25;
-            --bg-hover: #252535;
-            --accent: #00d4aa;
-            --accent-glow: rgba(0, 212, 170, 0.3);
-            --accent-secondary: #ff6b35;
-            --text-primary: #ffffff;
-            --text-secondary: #a0a0b0;
-            --text-muted: #606070;
-            --border: #2a2a3a;
-            --success: #00c853;
-            --warning: #ffc107;
-            --danger: #ff3d57;
-            --online: #00e676;
+            --primary: #0088cc; /* WhatsApp/Twitter like blue */
+            --bg-main: #0b141a;
+            --bg-secondary: #111b21;
+            --bg-chat: #0b141a;
+            --text-main: #e9edef;
+            --text-secondary: #8696a0;
+            --border-color: #222d34;
+            --msg-sent: #005c4b;
+            --msg-received: #202c33;
+            --hover-bg: #202c33;
         }
-        
-        .theme-sunset {
-            --bg-primary: #1a0a0f;
-            --bg-secondary: #2a1015;
-            --accent: #ff6b35;
-            --accent-glow: rgba(255, 107, 53, 0.3);
+
+        [data-theme="light"] {
+            --bg-main: #f0f2f5;
+            --bg-secondary: #ffffff;
+            --bg-chat: #efeae2;
+            --text-main: #111b21;
+            --text-secondary: #667781;
+            --border-color: #e9edef;
+            --msg-sent: #d9fdd3;
+            --msg-received: #ffffff;
+            --hover-bg: #f5f6f6;
         }
-        
-        .theme-ocean {
-            --bg-primary: #0a0f1a;
-            --bg-secondary: #101825;
-            --accent: #00b4d8;
-            --accent-glow: rgba(0, 180, 216, 0.3);
+
+        [data-theme="red"] {
+            --primary: #e91e63;
+            --msg-sent: #880e4f;
         }
-        
-        .theme-forest {
-            --bg-primary: #0a1a0f;
-            --bg-secondary: #102515;
-            --accent: #4caf50;
-            --accent-glow: rgba(76, 175, 80, 0.3);
-        }
-        
-        .theme-purple {
-            --bg-primary: #0f0a1a;
-            --bg-secondary: #151025;
-            --accent: #9c27b0;
-            --accent-glow: rgba(156, 39, 176, 0.3);
-        }
-        
+
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            transition: background-color 0.3s, color 0.3s;
         }
-        
+
         body {
-            font-family: 'Tajawal', sans-serif;
-            background: var(--bg-primary);
-            color: var(--text-primary);
-            min-height: 100vh;
-            overflow-x: hidden;
-        }
-        
-        .font-cairo {
-            font-family: 'Cairo', sans-serif;
-        }
-        
-        /* Custom Scrollbar */
-        ::-webkit-scrollbar {
-            width: 6px;
-            height: 6px;
-        }
-        
-        ::-webkit-scrollbar-track {
-            background: var(--bg-secondary);
-        }
-        
-        ::-webkit-scrollbar-thumb {
-            background: var(--accent);
-            border-radius: 3px;
-        }
-        
-        /* Animated Background */
-        .animated-bg {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -1;
+            background-color: var(--bg-main);
+            color: var(--text-main);
+            height: 100vh;
             overflow: hidden;
         }
-        
-        .bg-orb {
-            position: absolute;
-            border-radius: 50%;
-            filter: blur(80px);
-            opacity: 0.4;
-            animation: float 20s infinite ease-in-out;
+
+        /* =========================================
+           Auth Screens
+           ========================================= */
+        .auth-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background: linear-gradient(135deg, var(--primary), #0b141a);
         }
-        
-        .bg-orb:nth-child(1) {
+        .auth-box {
+            background: var(--bg-secondary);
+            padding: 40px;
+            border-radius: 15px;
             width: 400px;
-            height: 400px;
-            background: var(--accent);
-            top: -100px;
-            right: -100px;
-            animation-delay: 0s;
+            max-width: 90%;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            text-align: center;
         }
-        
-        .bg-orb:nth-child(2) {
-            width: 300px;
-            height: 300px;
-            background: var(--accent-secondary);
-            bottom: -50px;
-            left: -50px;
-            animation-delay: -5s;
+        .auth-box h1 { color: var(--primary); margin-bottom: 10px; font-size: 2.5em; }
+        .auth-box p { color: var(--text-secondary); margin-bottom: 20px; }
+        .auth-box input {
+            width: 100%; padding: 12px; margin: 10px 0;
+            background: var(--bg-main); border: none; border-radius: 8px;
+            color: var(--text-main); font-size: 16px; outline: none;
         }
-        
-        .bg-orb:nth-child(3) {
-            width: 200px;
-            height: 200px;
-            background: var(--accent);
-            top: 50%;
-            left: 50%;
-            animation-delay: -10s;
+        .btn {
+            width: 100%; padding: 12px; margin: 10px 0;
+            background: var(--primary); border: none; border-radius: 8px;
+            color: white; font-size: 16px; cursor: pointer; font-weight: bold;
         }
-        
-        @keyframes float {
-            0%, 100% { transform: translate(0, 0) scale(1); }
-            25% { transform: translate(30px, -30px) scale(1.1); }
-            50% { transform: translate(-20px, 20px) scale(0.9); }
-            75% { transform: translate(20px, 30px) scale(1.05); }
-        }
-        
-        /* Glass Effect */
-        .glass {
-            background: rgba(26, 26, 37, 0.8);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border: 1px solid var(--border);
-        }
-        
-        .glass-light {
-            background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-        }
-        
-        /* Buttons */
-        .btn-primary {
-            background: linear-gradient(135deg, var(--accent), color-mix(in srgb, var(--accent) 80%, black));
-            color: var(--bg-primary);
-            font-weight: 700;
-            padding: 12px 24px;
-            border-radius: 12px;
-            border: none;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .btn-primary::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
-            transition: left 0.5s ease;
-        }
-        
-        .btn-primary:hover::before {
-            left: 100%;
-        }
-        
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 30px var(--accent-glow);
-        }
-        
-        .btn-secondary {
-            background: var(--bg-hover);
-            color: var(--text-primary);
-            font-weight: 600;
-            padding: 12px 24px;
-            border-radius: 12px;
-            border: 1px solid var(--border);
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-        
-        .btn-secondary:hover {
-            background: var(--bg-card);
-            border-color: var(--accent);
-        }
-        
-        /* Input Fields */
-        .input-field {
-            width: 100%;
-            padding: 14px 18px;
-            background: var(--bg-secondary);
-            border: 2px solid var(--border);
-            border-radius: 12px;
-            color: var(--text-primary);
-            font-size: 15px;
-            font-family: 'Tajawal', sans-serif;
-            transition: all 0.3s ease;
-            outline: none;
-        }
-        
-        .input-field:focus {
-            border-color: var(--accent);
-            box-shadow: 0 0 20px var(--accent-glow);
-        }
-        
-        .input-field::placeholder {
-            color: var(--text-muted);
-        }
-        
-        /* Chat Bubble */
-        .chat-bubble {
-            max-width: 75%;
-            padding: 12px 16px;
-            border-radius: 18px;
-            position: relative;
-            animation: bubbleIn 0.3s ease;
-        }
-        
-        .chat-bubble.sent {
-            background: linear-gradient(135deg, var(--accent), color-mix(in srgb, var(--accent) 70%, black));
-            color: var(--bg-primary);
-            margin-left: auto;
-            border-bottom-left-radius: 4px;
-        }
-        
-        .chat-bubble.received {
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-bottom-right-radius: 4px;
-        }
-        
-        @keyframes bubbleIn {
-            from {
-                opacity: 0;
-                transform: translateY(10px) scale(0.95);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0) scale(1);
-            }
-        }
-        
-        /* Story Ring */
-        .story-ring {
-            background: linear-gradient(45deg, var(--accent), var(--accent-secondary), var(--accent));
-            padding: 3px;
-            border-radius: 50%;
-            cursor: pointer;
-            transition: transform 0.3s ease;
-        }
-        
-        .story-ring:hover {
-            transform: scale(1.05);
-        }
-        
-        .story-ring.viewed {
-            background: var(--text-muted);
-        }
-        
-        .story-ring img {
-            border-radius: 50%;
-            border: 3px solid var(--bg-primary);
-        }
+        .btn:hover { opacity: 0.8; }
+        .link-btn { background: none; border: none; color: var(--primary); cursor: pointer; margin-top: 10px; }
+
+        /* =========================================
+           Main App Layout (Responsive)
+           ========================================= */
+        #app-container { display: none; height: 100vh; }
+        .app-layout { display: flex; height: 100vh; }
         
         /* Sidebar */
         .sidebar {
-            width: 320px;
-            height: 100vh;
-            position: fixed;
-            top: 0;
-            right: 0;
-            background: var(--bg-secondary);
-            border-left: 1px solid var(--border);
-            transition: transform 0.3s ease;
-            z-index: 100;
+            width: 400px; background: var(--bg-secondary);
+            border-left: 1px solid var(--border-color);
+            display: flex; flex-direction: column; position: relative;
+        }
+        .sidebar-header {
+            padding: 15px; display: flex; justify-content: space-between;
+            align-items: center; background: var(--bg-secondary);
+            border-bottom: 1px solid var(--border-color);
+        }
+        .sidebar-header .user-avatar { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; }
+        .sidebar-nav { display: flex; justify-content: space-around; padding: 10px 0; border-bottom: 1px solid var(--border-color); }
+        .nav-item { color: var(--text-secondary); font-size: 20px; cursor: pointer; padding: 10px 20px; border-radius: 8px; }
+        .nav-item.active { color: var(--primary); background: var(--hover-bg); }
+        
+        .search-bar { padding: 10px; }
+        .search-bar input {
+            width: 100%; padding: 10px 15px; background: var(--bg-main);
+            border: none; border-radius: 20px; color: var(--text-main); outline: none;
         }
         
-        @media (max-width: 768px) {
-            .sidebar {
-                transform: translateX(100%);
-            }
-            .sidebar.open {
-                transform: translateX(0);
-            }
+        .chat-list { flex: 1; overflow-y: auto; }
+        .chat-item {
+            display: flex; padding: 15px; cursor: pointer; border-bottom: 1px solid var(--border-color);
         }
-        
-        /* Modal */
-        .modal-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.8);
-            backdrop-filter: blur(5px);
-            z-index: 1000;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            opacity: 0;
-            visibility: hidden;
-            transition: all 0.3s ease;
+        .chat-item:hover { background: var(--hover-bg); }
+        .chat-item img { width: 50px; height: 50px; border-radius: 50%; margin-left: 15px; }
+        .chat-info { flex: 1; }
+        .chat-name { font-weight: bold; display: flex; justify-content: space-between; }
+        .chat-last-msg { color: var(--text-secondary); font-size: 14px; margin-top: 5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 200px;}
+        .online-dot { width: 10px; height: 10px; background: #4caf50; border-radius: 50%; display: inline-block; margin-right: 5px; }
+
+        /* Stories Bar */
+        .stories-bar { display: flex; padding: 15px; overflow-x: auto; border-bottom: 1px solid var(--border-color); }
+        .story-item { margin-left: 15px; text-align: center; cursor: pointer; }
+        .story-item img { width: 60px; height: 60px; border-radius: 50%; border: 2px solid var(--primary); padding: 2px; }
+        .story-item span { font-size: 12px; display: block; margin-top: 5px; }
+
+        /* Main Chat Area */
+        .main-chat {
+            flex: 1; display: flex; flex-direction: column;
+            background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+            background-color: var(--bg-chat);
         }
-        
-        .modal-overlay.active {
-            opacity: 1;
-            visibility: visible;
+        .chat-header {
+            padding: 15px; background: var(--bg-secondary);
+            border-bottom: 1px solid var(--border-color);
+            display: flex; align-items: center; justify-content: space-between;
         }
-        
-        .modal-content {
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: 20px;
-            padding: 30px;
-            max-width: 500px;
-            width: 90%;
-            max-height: 90vh;
-            overflow-y: auto;
-            transform: scale(0.9);
-            transition: transform 0.3s ease;
+        .chat-header-info { display: flex; align-items: center; }
+        .chat-header-info img { width: 40px; height: 40px; border-radius: 50%; margin-left: 15px; }
+        .chat-header-icons i { margin: 0 10px; font-size: 20px; color: var(--text-secondary); cursor: pointer; }
+
+        .messages-area { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; }
+        .message {
+            max-width: 65%; padding: 10px 15px; border-radius: 10px;
+            margin-bottom: 10px; position: relative; font-size: 15px;
         }
-        
-        .modal-overlay.active .modal-content {
-            transform: scale(1);
+        .message.sent { background: var(--msg-sent); align-self: flex-end; border-bottom-right-radius: 0; }
+        .message.received { background: var(--msg-received); align-self: flex-start; border-bottom-left-radius: 0; }
+        .message .time { font-size: 11px; color: var(--text-secondary); text-align: left; margin-top: 5px; display: block;}
+        .voice-msg { display: flex; align-items: center; }
+        .voice-msg i { margin-left: 10px; cursor: pointer; }
+        .voice-wave { flex: 1; height: 20px; background: var(--primary); opacity: 0.5; border-radius: 10px; position: relative; overflow: hidden; }
+        .voice-wave::after { content: ''; position: absolute; top:0; left:0; width: 40%; height: 100%; background: var(--primary); }
+
+        .chat-input-area {
+            padding: 15px; background: var(--bg-secondary);
+            display: flex; align-items: center; border-top: 1px solid var(--border-color);
         }
-        
-        /* Notification Badge */
-        .badge {
-            background: var(--danger);
-            color: white;
-            font-size: 11px;
-            font-weight: 700;
-            padding: 2px 6px;
-            border-radius: 10px;
-            position: absolute;
-            top: -5px;
-            left: -5px;
-            min-width: 18px;
-            text-align: center;
+        .chat-input-area input { flex: 1; padding: 12px 15px; background: var(--bg-main); border: none; border-radius: 20px; color: var(--text-main); outline: none; }
+        .chat-input-area .input-actions i { margin: 0 10px; font-size: 24px; color: var(--text-secondary); cursor: pointer; }
+        .recording-btn { color: #f44336 !important; animation: pulse 1s infinite; }
+        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
+
+        /* Call UI */
+        .call-overlay {
+            display: none; position: fixed; top:0; left:0; width:100%; height:100%;
+            background: rgba(0,0,0,0.9); z-index: 100; flex-direction: column;
+            justify-content: center; align-items: center; color: white;
         }
-        
-        /* Online Indicator */
-        .online-indicator {
-            width: 12px;
-            height: 12px;
-            background: var(--online);
-            border-radius: 50%;
-            border: 2px solid var(--bg-primary);
-            position: absolute;
-            bottom: 2px;
-            right: 2px;
-        }
-        
-        /* Tabs */
-        .tab-btn {
-            padding: 12px 20px;
-            background: transparent;
-            border: none;
-            color: var(--text-secondary);
-            font-weight: 600;
-            cursor: pointer;
-            position: relative;
-            transition: all 0.3s ease;
-        }
-        
-        .tab-btn.active {
-            color: var(--accent);
-        }
-        
-        .tab-btn::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 0;
-            height: 3px;
-            background: var(--accent);
-            border-radius: 3px;
-            transition: width 0.3s ease;
-        }
-        
-        .tab-btn.active::after {
-            width: 70%;
-        }
-        
-        /* Typing Indicator */
-        .typing-indicator {
-            display: flex;
-            gap: 4px;
-            padding: 12px 16px;
-        }
-        
-        .typing-indicator span {
-            width: 8px;
-            height: 8px;
-            background: var(--text-muted);
-            border-radius: 50%;
-            animation: typing 1.4s infinite ease-in-out;
-        }
-        
-        .typing-indicator span:nth-child(2) { animation-delay: 0.2s; }
-        .typing-indicator span:nth-child(3) { animation-delay: 0.4s; }
-        
-        @keyframes typing {
-            0%, 60%, 100% { transform: translateY(0); }
-            30% { transform: translateY(-8px); }
-        }
-        
-        /* AI Assistant */
-        .ai-assistant {
-            position: fixed;
-            bottom: 90px;
-            left: 20px;
-            z-index: 500;
-        }
-        
-        .ai-btn {
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, #6366f1, #8b5cf6);
-            border: none;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 5px 30px rgba(99, 102, 241, 0.4);
-            transition: all 0.3s ease;
-        }
-        
-        .ai-btn:hover {
-            transform: scale(1.1);
-        }
-        
-        /* Voice Message */
-        .voice-message {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            padding: 10px 15px;
-            background: var(--bg-hover);
-            border-radius: 20px;
-        }
-        
-        .voice-wave {
-            display: flex;
-            align-items: center;
-            gap: 2px;
-            height: 30px;
-        }
-        
-        .voice-wave span {
-            width: 3px;
-            background: var(--accent);
-            border-radius: 2px;
-            animation: wave 1s infinite ease-in-out;
-        }
-        
-        @keyframes wave {
-            0%, 100% { height: 5px; }
-            50% { height: 25px; }
-        }
-        
-        /* Reaction */
-        .reaction-picker {
-            display: flex;
-            gap: 5px;
-            background: var(--bg-card);
-            padding: 8px 12px;
-            border-radius: 30px;
-            border: 1px solid var(--border);
-        }
-        
-        .reaction-btn {
-            font-size: 20px;
-            background: none;
-            border: none;
-            cursor: pointer;
-            transition: transform 0.2s ease;
-        }
-        
-        .reaction-btn:hover {
-            transform: scale(1.3);
-        }
-        
-        /* Theme Selector */
-        .theme-option {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            cursor: pointer;
-            border: 3px solid transparent;
-            transition: all 0.3s ease;
-        }
-        
-        .theme-option.active {
-            border-color: var(--text-primary);
-            transform: scale(1.1);
-        }
-        
-        /* Loading Skeleton */
-        .skeleton {
-            background: linear-gradient(90deg, var(--bg-hover) 25%, var(--bg-card) 50%, var(--bg-hover) 75%);
-            background-size: 200% 100%;
-            animation: shimmer 1.5s infinite;
-            border-radius: 8px;
-        }
-        
-        @keyframes shimmer {
-            0% { background-position: -200% 0; }
-            100% { background-position: 200% 0; }
-        }
-        
-        /* Page Transitions */
-        .page {
-            display: none;
-            animation: pageIn 0.5s ease;
-        }
-        
-        .page.active {
-            display: block;
-        }
-        
-        @keyframes pageIn {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-        
-        /* Responsive Grid */
-        .responsive-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 20px;
-        }
-        
-        /* Status Bar */
-        .status-bar {
-            height: 4px;
-            background: var(--bg-hover);
-            border-radius: 2px;
-            overflow: hidden;
-        }
-        
-        .status-bar-fill {
-            height: 100%;
-            background: linear-gradient(90deg, var(--accent), var(--accent-secondary));
-            transition: width 0.5s ease;
-        }
-        
-        /* Checkbox Custom */
-        .custom-checkbox {
-            appearance: none;
-            width: 22px;
-            height: 22px;
-            background: var(--bg-secondary);
-            border: 2px solid var(--border);
-            border-radius: 6px;
-            cursor: pointer;
-            position: relative;
-            transition: all 0.3s ease;
-        }
-        
-        .custom-checkbox:checked {
-            background: var(--accent);
-            border-color: var(--accent);
-        }
-        
-        .custom-checkbox:checked::after {
-            content: '✓';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            color: var(--bg-primary);
-            font-weight: bold;
-            font-size: 14px;
-        }
-        
-        /* Toggle Switch */
-        .toggle-switch {
-            width: 50px;
-            height: 26px;
-            background: var(--bg-hover);
-            border-radius: 13px;
-            cursor: pointer;
-            position: relative;
-            transition: background 0.3s ease;
-        }
-        
-        .toggle-switch.active {
-            background: var(--accent);
-        }
-        
-        .toggle-switch::after {
-            content: '';
-            position: absolute;
-            top: 3px;
-            left: 3px;
-            width: 20px;
-            height: 20px;
-            background: white;
-            border-radius: 50%;
-            transition: left 0.3s ease;
-        }
-        
-        .toggle-switch.active::after {
-            left: 27px;
-        }
-        
+        .call-overlay img { width: 100px; height: 100px; border-radius: 50%; margin-bottom: 20px; }
+        .call-overlay h2 { margin-bottom: 10px; }
+        .call-overlay p { color: #4caf50; margin-bottom: 40px; }
+        .call-actions i { font-size: 30px; margin: 0 20px; padding: 15px; border-radius: 50%; cursor: pointer; }
+        .call-end { background: #f44336; color: white; }
+
         /* Story Viewer */
         .story-viewer {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: black;
-            z-index: 2000;
-            display: none;
+            display: none; position: fixed; top:0; left:0; width:100%; height:100%;
+            background: black; z-index: 200; justify-content: center; align-items: center;
+            flex-direction: column; color: white;
         }
-        
-        .story-viewer.active {
-            display: flex;
-            flex-direction: column;
+        .story-viewer video, .story-viewer img { max-width: 100%; max-height: 80vh; }
+        .story-progress { position: absolute; top: 20px; width: 90%; display: flex; }
+        .progress-bar { flex: 1; height: 3px; background: rgba(255,255,255,0.3); margin: 0 2px; }
+        .progress-bar.active { background: white; }
+        .story-header { position: absolute; top: 40px; width: 90%; display: flex; align-items: center; }
+        .story-header img { width: 40px; height: 40px; border-radius: 50%; margin-left: 10px; }
+        .story-close { position: absolute; top: 40px; left: 40px; font-size: 30px; cursor: pointer; }
+
+        /* AI Assistant */
+        .ai-window {
+            display: none; position: fixed; bottom: 20px; left: 20px; width: 350px; height: 500px;
+            background: var(--bg-secondary); border-radius: 15px; box-shadow: 0 5px 25px rgba(0,0,0,0.5);
+            flex-direction: column; z-index: 50; overflow: hidden;
         }
-        
-        .story-progress-bar {
-            height: 3px;
-            background: rgba(255,255,255,0.3);
-            flex: 1;
-            margin: 0 3px;
-            border-radius: 2px;
-            overflow: hidden;
+        .ai-header { padding: 15px; background: var(--primary); color: white; display: flex; justify-content: space-between; }
+        .ai-messages { flex: 1; padding: 15px; overflow-y: auto; }
+        .ai-msg { margin-bottom: 10px; padding: 10px; border-radius: 10px; max-width: 80%; }
+        .ai-bot { background: var(--hover-bg); }
+        .ai-user { background: var(--primary); color: white; margin-right: auto; margin-left: 0; text-align: left;}
+        .ai-input { padding: 10px; border-top: 1px solid var(--border-color); display: flex; }
+        .ai-input input { flex: 1; padding: 8px; background: var(--bg-main); border: none; color: var(--text-main); outline: none; border-radius: 15px;}
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .sidebar { width: 100%; position: absolute; z-index: 10; }
+            .main-chat { display: none; }
+            .app-layout.chat-open .sidebar { display: none; }
+            .app-layout.chat-open .main-chat { display: flex; }
+            .ai-window { width: 90%; left: 5%; bottom: 10px; height: 60vh; }
         }
-        
-        .story-progress-fill {
-            height: 100%;
-            background: white;
-            width: 0;
-            transition: width 0.1s linear;
-        }
-        
-        /* Emoji Picker */
-        .emoji-picker {
-            display: grid;
-            grid-template-columns: repeat(8, 1fr);
-            gap: 5px;
-            max-height: 200px;
-            overflow-y: auto;
-            padding: 10px;
-            background: var(--bg-card);
-            border-radius: 12px;
-            border: 1px solid var(--border);
-        }
-        
-        .emoji-btn {
-            font-size: 24px;
-            background: none;
-            border: none;
-            cursor: pointer;
-            padding: 5px;
-            border-radius: 8px;
-            transition: background 0.2s ease;
-        }
-        
-        .emoji-btn:hover {
-            background: var(--bg-hover);
-        }
-        
-        /* Group Avatar */
-        .group-avatar {
-            display: flex;
-            width: 50px;
-            height: 50px;
-            border-radius: 12px;
-            overflow: hidden;
-        }
-        
-        .group-avatar img {
-            width: 50%;
-            height: 100%;
-            object-fit: cover;
-        }
-        
-        /* Notification Toast */
-        .toast {
-            position: fixed;
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%) translateY(100px);
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            padding: 15px 25px;
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            z-index: 3000;
-            opacity: 0;
-            transition: all 0.3s ease;
-        }
-        
-        .toast.show {
-            transform: translateX(-50%) translateY(0);
-            opacity: 1;
-        }
-        
-        /* Reduced Motion */
-        @media (prefers-reduced-motion: reduce) {
-            *, *::before, *::after {
-                animation-duration: 0.01ms !important;
-                animation-iteration-count: 1 !important;
-                transition-duration: 0.01ms !important;
-            }
-        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: var(--bg-main); }
+        ::-webkit-scrollbar-thumb { background: var(--text-secondary); border-radius: 3px; }
     </style>
 </head>
 <body>
-    <!-- Animated Background -->
-    <div class="animated-bg">
-        <div class="bg-orb"></div>
-        <div class="bg-orb"></div>
-        <div class="bg-orb"></div>
-    </div>
 
-    <!-- Auth Pages -->
-    <div id="authPages" class="min-h-screen flex items-center justify-center p-4">
-        <!-- Welcome Page -->
-        <div id="welcomePage" class="page active w-full max-w-md">
-            <div class="text-center mb-10">
-                <div class="w-28 h-28 mx-auto mb-6 rounded-3xl bg-gradient-to-br from-[var(--accent)] to-[var(--accent-secondary)] flex items-center justify-center shadow-lg shadow-[var(--accent-glow)]">
-                    <svg width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-[var(--bg-primary)]">
-                        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
-                    </svg>
-                </div>
-                <h1 class="font-cairo text-5xl font-black mb-3 bg-gradient-to-r from-[var(--accent)] to-[var(--accent-secondary)] bg-clip-text text-transparent">DZ CLOSE</h1>
-                <p class="text-[var(--text-secondary)] text-lg">منصة التواصل الاجتماعي الجزائرية</p>
-            </div>
+    <!-- ================= AUTH SCREENS ================= -->
+    <div id="auth-container" class="auth-container">
+        <div class="auth-box">
+            <h1>DZ CLOSE</h1>
+            <p>بواسطة المبرمج جاسر اشلاف</p>
             
-            <div class="glass rounded-3xl p-8">
-                <button onclick="showPage('loginPage')" class="btn-primary w-full mb-4 text-lg">تسجيل الدخول</button>
-                <button onclick="showPage('registerPage')" class="btn-secondary w-full text-lg">إنشاء حساب جديد</button>
-                
-                <div class="mt-6 pt-6 border-t border-[var(--border)]">
-                    <button onclick="showPage('forgotPage')" class="text-[var(--accent)] hover:underline text-sm">نسيت كلمة المرور؟</button>
-                </div>
+            <div id="login-form">
+                <input type="email" id="login-email" placeholder="البريد الإلكتروني">
+                <input type="password" id="login-password" placeholder="كلمة السر">
+                <button class="btn" onclick="login()">تسجيل الدخول</button>
+                <button class="link-btn" onclick="showRegister()">إنشاء حساب جديد</button>
+                <button class="link-btn" onclick="showResetPassword()">نسيت كلمة السر؟</button>
             </div>
-            
-            <p class="text-center text-[var(--text-muted)] text-sm mt-8">
-                صنع بكل حب بواسطة <span class="text-[var(--accent)] font-bold">المبرمج جاسر اشلاف</span>
-            </p>
-        </div>
 
-        <!-- Login Page -->
-        <div id="loginPage" class="page w-full max-w-md">
-            <button onclick="showPage('welcomePage')" class="mb-6 text-[var(--text-secondary)] hover:text-[var(--text-primary)] flex items-center gap-2">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M19 12H5M12 19l-7-7 7-7"/>
-                </svg>
-                رجوع
-            </button>
-            
-            <div class="text-center mb-8">
-                <h2 class="font-cairo text-3xl font-bold mb-2">تسجيل الدخول</h2>
-                <p class="text-[var(--text-secondary)]">مرحباً بعودتك إلى DZ CLOSE</p>
+            <div id="register-form" style="display:none;">
+                <input type="text" id="reg-username" placeholder="اسم المستخدم">
+                <input type="email" id="reg-email" placeholder="البريد الإلكتروني">
+                <input type="password" id="reg-password" placeholder="كلمة السر">
+                <button class="btn" onclick="register()">تسجيل</button>
+                <button class="link-btn" onclick="showLogin()">لدي حساب بالفعل</button>
             </div>
-            
-            <div class="glass rounded-3xl p-8">
-                <form id="loginForm" onsubmit="handleLogin(event)">
-                    <div class="mb-5">
-                        <label class="block text-sm font-medium mb-2 text-[var(--text-secondary)]">البريد الإلكتروني</label>
-                        <input type="email" id="loginEmail" class="input-field" placeholder="example@email.com" required>
-                    </div>
-                    
-                    <div class="mb-5 relative">
-                        <label class="block text-sm font-medium mb-2 text-[var(--text-secondary)]">كلمة المرور</label>
-                        <input type="password" id="loginPassword" class="input-field" placeholder="••••••••" required>
-                        <button type="button" onclick="togglePassword('loginPassword')" class="absolute left-4 top-10 text-[var(--text-muted)] hover:text-[var(--text-primary)]">
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
-                                <circle cx="12" cy="12" r="3"/>
-                            </svg>
-                        </button>
-                    </div>
-                    
-                    <div class="flex items-center justify-between mb-6">
-                        <label class="flex items-center gap-2 cursor-pointer">
-                            <input type="checkbox" class="custom-checkbox">
-                            <span class="text-sm text-[var(--text-secondary)]">تذكرني</span>
-                        </label>
-                        <button type="button" onclick="showPage('forgotPage')" class="text-sm text-[var(--accent)] hover:underline">نسيت كلمة المرور؟</button>
-                    </div>
-                    
-                    <button type="submit" class="btn-primary w-full text-lg">دخول</button>
-                </form>
-                
-                <div class="mt-6 text-center">
-                    <p class="text-[var(--text-secondary)] text-sm">
-                        ليس لديك حساب؟ 
-                        <button onclick="showPage('registerPage')" class="text-[var(--accent)] hover:underline font-medium">سجل الآن</button>
-                    </p>
-                </div>
-            </div>
-        </div>
 
-        <!-- Register Page -->
-        <div id="registerPage" class="page w-full max-w-md">
-            <button onclick="showPage('welcomePage')" class="mb-6 text-[var(--text-secondary)] hover:text-[var(--text-primary)] flex items-center gap-2">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M19 12H5M12 19l-7-7 7-7"/>
-                </svg>
-                رجوع
-            </button>
-            
-            <div class="text-center mb-8">
-                <h2 class="font-cairo text-3xl font-bold mb-2">إنشاء حساب جديد</h2>
-                <p class="text-[var(--text-secondary)]">انضم إلى مجتمع DZ CLOSE</p>
-            </div>
-            
-            <div class="glass rounded-3xl p-8">
-                <form id="registerForm" onsubmit="handleRegister(event)">
-                    <div class="mb-5">
-                        <label class="block text-sm font-medium mb-2 text-[var(--text-secondary)]">الاسم الكامل</label>
-                        <input type="text" id="registerName" class="input-field" placeholder="اسمك الكامل" required>
-                    </div>
-                    
-                    <div class="mb-5">
-                        <label class="block text-sm font-medium mb-2 text-[var(--text-secondary)]">اسم المستخدم</label>
-                        <input type="text" id="registerUsername" class="input-field" placeholder="@username" required>
-                    </div>
-                    
-                    <div class="mb-5">
-                        <label class="block text-sm font-medium mb-2 text-[var(--text-secondary)]">البريد الإلكتروني</label>
-                        <input type="email" id="registerEmail" class="input-field" placeholder="example@email.com" required>
-                    </div>
-                    
-                    <div class="mb-5">
-                        <label class="block text-sm font-medium mb-2 text-[var(--text-secondary)]">رقم الهاتف</label>
-                        <input type="tel" id="registerPhone" class="input-field" placeholder="+213 xxx xxx xxx">
-                    </div>
-                    
-                    <div class="mb-5 relative">
-                        <label class="block text-sm font-medium mb-2 text-[var(--text-secondary)]">كلمة المرور</label>
-                        <input type="password" id="registerPassword" class="input-field" placeholder="••••••••" required minlength="6">
-                        <button type="button" onclick="togglePassword('registerPassword')" class="absolute left-4 top-10 text-[var(--text-muted)] hover:text-[var(--text-primary)]">
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
-                                <circle cx="12" cy="12" r="3"/>
-                            </svg>
-                        </button>
-                    </div>
-                    
-                    <div class="mb-5 relative">
-                        <label class="block text-sm font-medium mb-2 text-[var(--text-secondary)]">تأكيد كلمة المرور</label>
-                        <input type="password" id="registerConfirmPassword" class="input-field" placeholder="••••••••" required>
-                    </div>
-                    
-                    <div class="mb-6">
-                        <label class="flex items-center gap-2 cursor-pointer">
-                            <input type="checkbox" class="custom-checkbox" required>
-                            <span class="text-sm text-[var(--text-secondary)]">أوافق على الشروط والأحكام وسياسة الخصوصية</span>
-                        </label>
-                    </div>
-                    
-                    <button type="submit" class="btn-primary w-full text-lg">إنشاء الحساب</button>
-                </form>
-                
-                <div class="mt-6 text-center">
-                    <p class="text-[var(--text-secondary)] text-sm">
-                        لديك حساب بالفعل؟ 
-                        <button onclick="showPage('loginPage')" class="text-[var(--accent)] hover:underline font-medium">سجل دخول</button>
-                    </p>
-                </div>
-            </div>
-        </div>
-
-        <!-- Forgot Password Page -->
-        <div id="forgotPage" class="page w-full max-w-md">
-            <button onclick="showPage('welcomePage')" class="mb-6 text-[var(--text-secondary)] hover:text-[var(--text-primary)] flex items-center gap-2">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M19 12H5M12 19l-7-7 7-7"/>
-                </svg>
-                رجوع
-            </button>
-            
-            <div class="text-center mb-8">
-                <div class="w-16 h-16 mx-auto mb-4 rounded-full bg-[var(--accent)] bg-opacity-20 flex items-center justify-center">
-                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2">
-                        <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
-                        <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
-                    </svg>
-                </div>
-                <h2 class="font-cairo text-3xl font-bold mb-2">استعادة كلمة المرور</h2>
-                <p class="text-[var(--text-secondary)]">أدخل بريدك الإلكتروني لاستعادة كلمة المرور</p>
-            </div>
-            
-            <div class="glass rounded-3xl p-8">
-                <form id="forgotForm" onsubmit="handleForgotPassword(event)">
-                    <div class="mb-6">
-                        <label class="block text-sm font-medium mb-2 text-[var(--text-secondary)]">البريد الإلكتروني</label>
-                        <input type="email" id="forgotEmail" class="input-field" placeholder="example@email.com" required>
-                    </div>
-                    
-                    <button type="submit" class="btn-primary w-full text-lg">إرسال رابط الاستعادة</button>
-                </form>
-                
-                <div class="mt-6 text-center">
-                    <button onclick="showPage('loginPage')" class="text-[var(--accent)] hover:underline text-sm">العودة لتسجيل الدخول</button>
-                </div>
+            <div id="reset-form" style="display:none;">
+                <input type="email" id="reset-email" placeholder="أدخل بريدك الإلكتروني لاستعادة كلمة السر">
+                <button class="btn" onclick="resetPassword()">إرسال رابط الاستعادة</button>
+                <button class="link-btn" onclick="showLogin()">العودة لتسجيل الدخول</button>
             </div>
         </div>
     </div>
 
-    <!-- Main App -->
-    <div id="mainApp" class="hidden">
-        <!-- Sidebar -->
-        <aside id="sidebar" class="sidebar flex flex-col">
-            <!-- Sidebar Header -->
-            <div class="p-4 border-b border-[var(--border)] flex items-center justify-between">
-                <div class="flex items-center gap-3">
-                    <div id="currentUserAvatar" class="w-10 h-10 rounded-full bg-gradient-to-br from-[var(--accent)] to-[var(--accent-secondary)] flex items-center justify-center font-bold text-[var(--bg-primary)]">
-                        D
-                    </div>
+    <!-- ================= MAIN APP ================= -->
+    <div id="app-container">
+        <div class="app-layout" id="app-layout">
+            
+            <!-- Sidebar -->
+            <div class="sidebar">
+                <div class="sidebar-header">
+                    <img src="https://via.placeholder.com/40" class="user-avatar" id="my-avatar">
                     <div>
-                        <h3 id="currentUserName" class="font-bold">المستخدم</h3>
-                        <span class="text-xs text-[var(--online)]">متصل الآن</span>
-                    </div>
-                </div>
-                <div class="flex gap-2">
-                    <button onclick="openModal('settingsModal')" class="w-10 h-10 rounded-full bg-[var(--bg-hover)] flex items-center justify-center hover:bg-[var(--bg-card)] transition-colors">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <circle cx="12" cy="12" r="3"/>
-                            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
-                        </svg>
-                    </button>
-                    <button onclick="handleLogout()" class="w-10 h-10 rounded-full bg-[var(--bg-hover)] flex items-center justify-center hover:bg-[var(--danger)] hover:bg-opacity-20 transition-colors text-[var(--danger)]">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
-                            <polyline points="16 17 21 12 16 7"/>
-                            <line x1="21" y1="12" x2="9" y2="12"/>
-                        </svg>
-                    </button>
-                </div>
-            </div>
-            
-            <!-- Search -->
-            <div class="p-4">
-                <div class="relative">
-                    <input type="text" id="searchInput" class="input-field pr-10" placeholder="بحث..." oninput="handleSearch(this.value)">
-                    <svg class="absolute right-3 top-1/2 transform -translate-y-1/2 text-[var(--text-muted)]" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <circle cx="11" cy="11" r="8"/>
-                        <path d="M21 21l-4.35-4.35"/>
-                    </svg>
-                </div>
-            </div>
-            
-            <!-- Tabs -->
-            <div class="flex border-b border-[var(--border)]">
-                <button class="tab-btn active flex-1" onclick="switchTab('chats')">المحادثات</button>
-                <button class="tab-btn flex-1" onclick="switchTab('groups')">المجموعات</button>
-                <button class="tab-btn flex-1" onclick="switchTab('friends')">الأصدقاء</button>
-            </div>
-            
-            <!-- Content -->
-            <div class="flex-1 overflow-y-auto">
-                <!-- Chats Tab -->
-                <div id="chatsTab" class="tab-content">
-                    <div id="chatsList" class="divide-y divide-[var(--border)]">
-                        <!-- Chats will be loaded here -->
+                        <i class="fas fa-robot" onclick="toggleAI()" style="margin-left: 15px; cursor:pointer;" title="المساعد الذكي"></i>
+                        <i class="fas fa-palette" onclick="changeTheme()" style="margin-left: 15px; cursor:pointer;" title="تغيير الثيم"></i>
+                        <i class="fas fa-sign-out-alt" onclick="logout()" style="cursor:pointer;" title="تسجيل الخروج"></i>
                     </div>
                 </div>
                 
-                <!-- Groups Tab -->
-                <div id="groupsTab" class="tab-content hidden">
-                    <div class="p-4">
-                        <button onclick="openModal('createGroupModal')" class="btn-primary w-full flex items-center justify-center gap-2">
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
-                                <circle cx="9" cy="7" r="4"/>
-                                <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
-                                <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
-                            </svg>
-                            إنشاء مجموعة جديدة
-                        </button>
+                <div class="sidebar-nav">
+                    <div class="nav-item active" onclick="switchTab('chats')"><i class="fas fa-comment-dots"></i></div>
+                    <div class="nav-item" onclick="switchTab('stories')"><i class="fas fa-circle-notch"></i></div>
+                    <div class="nav-item" onclick="switchTab('friends')"><i class="fas fa-user-friends"></i></div>
+                    <div class="nav-item" onclick="switchTab('groups')"><i class="fas fa-users"></i></div>
+                </div>
+
+                <div class="search-bar">
+                    <input type="text" placeholder="بحث في DZ CLOSE..." id="search-input">
+                </div>
+
+                <div class="chat-list" id="chat-list">
+                    <!-- Dynamic List -->
+                </div>
+            </div>
+
+            <!-- Main Chat Section -->
+            <div class="main-chat" id="main-chat">
+                <div class="chat-header" id="chat-header" style="display:none;">
+                    <div class="chat-header-info">
+                        <i class="fas fa-arrow-right" onclick="closeChatMobile()" style="margin-left: 15px; display:none;" id="back-btn"></i>
+                        <img src="https://via.placeholder.com/40" id="chat-avatar">
+                        <div>
+                            <h4 id="chat-name">المستخدم</h4>
+                            <small id="chat-status">متصل</small>
+                        </div>
                     </div>
-                    <div id="groupsList" class="divide-y divide-[var(--border)]">
-                        <!-- Groups will be loaded here -->
+                    <div class="chat-header-icons">
+                        <i class="fas fa-video" onclick="startCall()"></i>
+                        <i class="fas fa-phone" onclick="startCall()"></i>
                     </div>
                 </div>
                 
-                <!-- Friends Tab -->
-                <div id="friendsTab" class="tab-content hidden">
-                    <div class="p-4">
-                        <button onclick="openModal('addFriendModal')" class="btn-primary w-full flex items-center justify-center gap-2">
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
-                                <circle cx="8.5" cy="7" r="4"/>
-                                <line x1="20" y1="8" x2="20" y2="14"/>
-                                <line x1="23" y1="11" x2="17" y2="11"/>
-                            </svg>
-                            إضافة صديق
-                        </button>
+                <div class="messages-area" id="messages-area">
+                    <div style="text-align:center; color:var(--text-secondary); margin-top:20vh;">
+                        <h2>DZ CLOSE</h2>
+                        <p>اختر دردشة للبدء أو استخدم المساعد الذكي</p>
                     </div>
-                    <div class="px-4 py-2">
-                        <h4 class="text-sm font-bold text-[var(--text-muted)] mb-3">طلبات الصداقة</h4>
-                        <div id="friendRequests" class="space-y-3">
-                            <!-- Friend requests will be loaded here -->
-                        </div>
+                </div>
+
+                <div class="chat-input-area" id="chat-input-area" style="display:none;">
+                    <div class="input-actions">
+                        <i class="fas fa-smile"></i>
+                        <i class="fas fa-paperclip"></i>
                     </div>
-                    <div class="px-4 py-2">
-                        <h4 class="text-sm font-bold text-[var(--text-muted)] mb-3">أصدقاؤك</h4>
-                        <div id="friendsList" class="space-y-2">
-                            <!-- Friends will be loaded here -->
-                        </div>
+                    <input type="text" placeholder="اكتب رسالة..." id="msg-input" onkeypress="handleEnter(event)">
+                    <div class="input-actions">
+                        <i class="fas fa-microphone" id="mic-btn" onmousedown="startRecording()" onmouseup="stopRecording()"></i>
+                        <i class="fas fa-paper-plane" onclick="sendMessage()"></i>
                     </div>
                 </div>
             </div>
-        </aside>
-        
-        <!-- Main Content -->
-        <main class="md:mr-80 h-screen flex flex-col">
-            <!-- Stories Section -->
-            <div class="p-4 border-b border-[var(--border)] glass">
-                <div class="flex gap-4 overflow-x-auto pb-2 scrollbar-hide">
-                    <!-- Add Story -->
-                    <div class="flex-shrink-0 text-center cursor-pointer" onclick="openModal('addStoryModal')">
-                        <div class="w-16 h-16 rounded-full bg-[var(--bg-card)] border-2 border-dashed border-[var(--border)] flex items-center justify-center mb-1 hover:border-[var(--accent)] transition-colors">
-                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2">
-                                <line x1="12" y1="5" x2="12" y2="19"/>
-                                <line x1="5" y1="12" x2="19" y2="12"/>
-                            </svg>
-                        </div>
-                        <span class="text-xs text-[var(--text-secondary)]">إضافة قصة</span>
-                    </div>
-                    <!-- Stories will be loaded here -->
-                    <div id="storiesContainer">
-                        <!-- Stories -->
-                    </div>
-                </div>
+        </div>
+
+        <!-- Call UI -->
+        <div class="call-overlay" id="call-overlay">
+            <img src="https://via.placeholder.com/100" id="call-avatar">
+            <h2 id="call-name">المستخدم</h2>
+            <p id="call-status">جاري الاتصال...</p>
+            <div class="call-actions">
+                <i class="fas fa-microphone-slash"></i>
+                <i class="fas fa-volume-up"></i>
+                <i class="fas fa-video"></i>
+                <i class="fas fa-phone-slash call-end" onclick="endCall()"></i>
             </div>
-            
-            <!-- Chat Area -->
-            <div id="chatArea" class="flex-1 flex flex-col">
-                <!-- No Chat Selected -->
-                <div id="noChatSelected" class="flex-1 flex items-center justify-center">
-                    <div class="text-center">
-                        <div class="w-24 h-24 mx-auto mb-6 rounded-full bg-[var(--bg-card)] flex items-center justify-center">
-                            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" stroke-width="1.5">
-                                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
-                            </svg>
-                        </div>
-                        <h3 class="text-xl font-bold mb-2">مرحباً بك في DZ CLOSE</h3>
-                        <p class="text-[var(--text-muted)]">اختر محادثة للبدء</p>
-                    </div>
-                </div>
-                
-                <!-- Active Chat -->
-                <div id="activeChat" class="hidden flex-1 flex flex-col">
-                    <!-- Chat Header -->
-                    <div id="chatHeader" class="p-4 border-b border-[var(--border)] glass flex items-center gap-3">
-                        <button onclick="closeChat()" class="md:hidden w-10 h-10 rounded-full bg-[var(--bg-hover)] flex items-center justify-center">
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M19 12H5M12 19l-7-7 7-7"/>
-                            </svg>
-                        </button>
-                        <div class="relative">
-                            <div id="chatAvatar" class="w-12 h-12 rounded-full bg-gradient-to-br from-[var(--accent)] to-[var(--accent-secondary)] flex items-center justify-center font-bold text-[var(--bg-primary)]">
-                                U
-                            </div>
-                            <div id="chatOnlineStatus" class="online-indicator hidden"></div>
-                        </div>
-                        <div class="flex-1">
-                            <h3 id="chatName" class="font-bold">اسم المستخدم</h3>
-                            <p id="chatStatus" class="text-sm text-[var(--text-muted)]">غير متصل</p>
-                        </div>
-                        <div class="flex gap-2">
-                            <button onclick="startCall('voice')" class="w-10 h-10 rounded-full bg-[var(--bg-hover)] flex items-center justify-center hover:bg-[var(--accent)] hover:text-[var(--bg-primary)] transition-colors">
-                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
-                                </svg>
-                            </button>
-                            <button onclick="startCall('video')" class="w-10 h-10 rounded-full bg-[var(--bg-hover)] flex items-center justify-center hover:bg-[var(--accent)] hover:text-[var(--bg-primary)] transition-colors">
-                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <polygon points="23 7 16 12 23 17 23 7"/>
-                                    <rect x="1" y="5" width="15" height="14" rx="2" ry="2"/>
-                                </svg>
-                            </button>
-                            <button onclick="openModal('chatInfoModal')" class="w-10 h-10 rounded-full bg-[var(--bg-hover)] flex items-center justify-center hover:bg-[var(--bg-card)] transition-colors">
-                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <circle cx="12" cy="12" r="1"/>
-                                    <circle cx="19" cy="12" r="1"/>
-                                    <circle cx="5" cy="12" r="1"/>
-                                </svg>
-                            </button>
-                        </div>
-                    </div>
-                    
-                    <!-- Messages -->
-                    <div id="messagesContainer" class="flex-1 overflow-y-auto p-4 space-y-4">
-                        <!-- Messages will be loaded here -->
-                    </div>
-                    
-                    <!-- Typing Indicator -->
-                    <div id="typingIndicator" class="hidden px-4">
-                        <div class="chat-bubble received">
-                            <div class="typing-indicator">
-                                <span></span>
-                                <span></span>
-                                <span></span>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Input Area -->
-                    <div class="p-4 border-t border-[var(--border)] glass">
-                        <div class="flex items-end gap-3">
-                            <button onclick="openEmojiPicker()" class="w-10 h-10 rounded-full bg-[var(--bg-hover)] flex items-center justify-center hover:bg-[var(--bg-card)] transition-colors flex-shrink-0">
-                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <circle cx="12" cy="12" r="10"/>
-                                    <path d="M8 14s1.5 2 4 2 4-2 4-2"/>
-                                    <line x1="9" y1="9" x2="9.01" y2="9"/>
-                                    <line x1="15" y1="9" x2="15.01" y2="9"/>
-                                </svg>
-                            </button>
-                            <button onclick="document.getElementById('fileInput').click()" class="w-10 h-10 rounded-full bg-[var(--bg-hover)] flex items-center justify-center hover:bg-[var(--bg-card)] transition-colors flex-shrink-0">
-                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/>
-                                </svg>
-                            </button>
-                            <input type="file" id="fileInput" class="hidden" onchange="handleFileSelect(event)">
-                            <div class="flex-1 relative">
-                                <textarea id="messageInput" class="input-field resize-none" placeholder="اكتب رسالتك..." rows="1" onkeydown="handleMessageKeydown(event)" oninput="autoResize(this)"></textarea>
-                            </div>
-                            <button id="voiceRecordBtn" onmousedown="startVoiceRecording()" onmouseup="stopVoiceRecording()" ontouchstart="startVoiceRecording()" ontouchend="stopVoiceRecording()" class="w-10 h-10 rounded-full bg-[var(--bg-hover)] flex items-center justify-center hover:bg-[var(--bg-card)] transition-colors flex-shrink-0">
-                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/>
-                                    <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
-                                    <line x1="12" y1="19" x2="12" y2="23"/>
-                                    <line x1="8" y1="23" x2="16" y2="23"/>
-                                </svg>
-                            </button>
-                            <button onclick="sendMessage()" class="w-10 h-10 rounded-full bg-[var(--accent)] flex items-center justify-center hover:opacity-90 transition-opacity flex-shrink-0">
-                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--bg-primary)" stroke-width="2">
-                                    <line x1="22" y1="2" x2="11" y2="13"/>
-                                    <polygon points="22 2 15 22 11 13 2 9 22 2"/>
-                                </svg>
-                            </button>
-                        </div>
-                    </div>
-                </div>
+        </div>
+
+        <!-- Story Viewer -->
+        <div class="story-viewer" id="story-viewer">
+            <div class="story-progress" id="story-progress"></div>
+            <div class="story-header">
+                <img src="https://via.placeholder.com/40" id="story-user-avatar">
+                <span id="story-user-name" style="margin-right:10px;">جاسر</span>
             </div>
-        </main>
-        
-        <!-- Mobile Menu Button -->
-        <button onclick="toggleSidebar()" class="md:hidden fixed bottom-24 right-4 w-14 h-14 rounded-full bg-[var(--accent)] flex items-center justify-center shadow-lg z-50">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--bg-primary)" stroke-width="2">
-                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
-            </svg>
-        </button>
-        
+            <i class="fas fa-times story-close" onclick="closeStory()"></i>
+            <div id="story-content" onmousedown="pauseStory()" onmouseup="resumeStory()" ontouchstart="pauseStory()" ontouchend="resumeStory()">
+                <!-- Image or Video -->
+            </div>
+        </div>
+
         <!-- AI Assistant -->
-        <div class="ai-assistant">
-            <button onclick="openModal('aiModal')" class="ai-btn">
-                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
-                    <path d="M12 2a2 2 0 0 1 2 2c0 .74-.4 1.39-1 1.73V7h1a7 7 0 0 1 7 7h1a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1h-1v1a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-1H2a1 1 0 0 1-1-1v-3a1 1 0 0 1 1-1h1a7 7 0 0 1 7-7h1V5.73c-.6-.34-1-.99-1-1.73a2 2 0 0 1 2-2M7.5 13a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3m9 0a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3M12 17a1 1 0 0 0-1 1 1 1 0 0 0 1 1 1 1 0 0 0 1-1 1 1 0 0 0-1-1"/>
-                </svg>
-            </button>
-        </div>
-        
-        <!-- Navigation Bar (Mobile) -->
-        <nav class="md:hidden fixed bottom-0 left-0 right-0 glass border-t border-[var(--border)] z-40">
-            <div class="flex justify-around py-3">
-                <button onclick="switchNav('home')" class="nav-btn flex flex-col items-center gap-1 text-[var(--accent)]">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
-                    </svg>
-                    <span class="text-xs">المحادثات</span>
-                </button>
-                <button onclick="switchNav('groups')" class="nav-btn flex flex-col items-center gap-1 text-[var(--text-muted)]">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
-                        <circle cx="9" cy="7" r="4"/>
-                        <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
-                        <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
-                    </svg>
-                    <span class="text-xs">المجموعات</span>
-                </button>
-                <button onclick="openModal('addStoryModal')" class="nav-btn flex flex-col items-center gap-1 text-[var(--text-muted)]">
-                    <div class="w-12 h-12 -mt-6 rounded-full bg-[var(--accent)] flex items-center justify-center shadow-lg">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--bg-primary)" stroke-width="2">
-                            <line x1="12" y1="5" x2="12" y2="19"/>
-                            <line x1="5" y1="12" x2="19" y2="12"/>
-                        </svg>
-                    </div>
-                    <span class="text-xs">قصة</span>
-                </button>
-                <button onclick="switchNav('notifications')" class="nav-btn flex flex-col items-center gap-1 text-[var(--text-muted)] relative">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
-                        <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
-                    </svg>
-                    <span class="text-xs">الإشعارات</span>
-                    <span id="notifBadge" class="hidden badge">0</span>
-                </button>
-                <button onclick="switchNav('profile')" class="nav-btn flex flex-col items-center gap-1 text-[var(--text-muted)]">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
-                        <circle cx="12" cy="7" r="4"/>
-                    </svg>
-                    <span class="text-xs">الملف الشخصي</span>
-                </button>
+        <div class="ai-window" id="ai-window">
+            <div class="ai-header">
+                <h3><i class="fas fa-robot"></i> مساعد DZ CLOSE</h3>
+                <i class="fas fa-times" onclick="toggleAI()" style="cursor:pointer;"></i>
             </div>
-        </nav>
-    </div>
-
-    <!-- Modals -->
-    <!-- Settings Modal -->
-    <div id="settingsModal" class="modal-overlay">
-        <div class="modal-content max-w-lg">
-            <div class="flex items-center justify-between mb-6">
-                <h2 class="font-cairo text-2xl font-bold">الإعدادات</h2>
-                <button onclick="closeModal('settingsModal')" class="w-10 h-10 rounded-full bg-[var(--bg-hover)] flex items-center justify-center hover:bg-[var(--bg-card)]">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <line x1="18" y1="6" x2="6" y2="18"/>
-                        <line x1="6" y1="6" x2="18" y2="18"/>
-                    </svg>
-                </button>
+            <div class="ai-messages" id="ai-messages">
+                <div class="ai-msg ai-bot">مرحباً! أنا مساعدك الذكي. كيف أستطيع مساعدتك؟ يمكنك سؤالي عن كيفية استخدام الستوريز، المكالمات، أو أي ميزة أخرى!</div>
             </div>
-            
-            <!-- Profile Section -->
-            <div class="mb-6 p-4 bg-[var(--bg-secondary)] rounded-xl">
-                <h3 class="font-bold mb-4">الملف الشخصي</h3>
-                <div class="flex items-center gap-4 mb-4">
-                    <div class="relative">
-                        <div id="settingsAvatar" class="w-16 h-16 rounded-full bg-gradient-to-br from-[var(--accent)] to-[var(--accent-secondary)] flex items-center justify-center font-bold text-2xl text-[var(--bg-primary)]">
-                            D
-                        </div>
-                        <button onclick="document.getElementById('avatarInput').click()" class="absolute -bottom-1 -right-1 w-8 h-8 rounded-full bg-[var(--accent)] flex items-center justify-center">
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--bg-primary)" stroke-width="2">
-                                <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
-                                <circle cx="12" cy="13" r="4"/>
-                            </svg>
-                        </button>
-                        <input type="file" id="avatarInput" class="hidden" accept="image/*" onchange="handleAvatarChange(event)">
-                    </div>
-                    <div class="flex-1">
-                        <input type="text" id="settingsName" class="input-field mb-2" placeholder="الاسم">
-                        <textarea id="settingsBio" class="input-field text-sm" placeholder="نبذة عنك" rows="2"></textarea>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Theme Section -->
-            <div class="mb-6 p-4 bg-[var(--bg-secondary)] rounded-xl">
-                <h3 class="font-bold mb-4">المظهر</h3>
-                <div class="flex gap-3 flex-wrap">
-                    <button onclick="setTheme('default')" class="theme-option active" style="background: linear-gradient(135deg, #00d4aa, #ff6b35);" data-theme="default"></button>
-                    <button onclick="setTheme('sunset')" class="theme-option" style="background: linear-gradient(135deg, #ff6b35, #ff3d57);" data-theme="sunset"></button>
-                    <button onclick="setTheme('ocean')" class="theme-option" style="background: linear-gradient(135deg, #00b4d8, #0077b6);" data-theme="ocean"></button>
-                    <button onclick="setTheme('forest')" class="theme-option" style="background: linear-gradient(135deg, #4caf50, #2e7d32);" data-theme="forest"></button>
-                    <button onclick="setTheme('purple')" class="theme-option" style="background: linear-gradient(135deg, #9c27b0, #6a1b9a);" data-theme="purple"></button>
-                </div>
-            </div>
-            
-            <!-- Notifications -->
-            <div class="mb-6 p-4 bg-[var(--bg-secondary)] rounded-xl">
-                <h3 class="font-bold mb-4">الإشعارات</h3>
-                <div class="space-y-4">
-                    <div class="flex items-center justify-between">
-                        <span>إشعارات الرسائل</span>
-                        <div class="toggle-switch active" onclick="this.classList.toggle('active')"></div>
-                    </div>
-                    <div class="flex items-center justify-between">
-                        <span>إشعارات المكالمات</span>
-                        <div class="toggle-switch active" onclick="this.classList.toggle('active')"></div>
-                    </div>
-                    <div class="flex items-center justify-between">
-                        <span>إشعارات المجموعات</span>
-                        <div class="toggle-switch" onclick="this.classList.toggle('active')"></div>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Sounds -->
-            <div class="mb-6 p-4 bg-[var(--bg-secondary)] rounded-xl">
-                <h3 class="font-bold mb-4">الأصوات</h3>
-                <div class="space-y-4">
-                    <div>
-                        <label class="block text-sm text-[var(--text-secondary)] mb-2">نغمة الرسائل</label>
-                        <select id="messageTone" class="input-field" onchange="playMessageTone()">
-                            <option value="default">الافتراضية</option>
-                            <option value="tone1">نغمة 1</option>
-                            <option value="tone2">نغمة 2</option>
-                            <option value="tone3">نغمة 3</option>
-                            <option value="none">بدون صوت</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block text-sm text-[var(--text-secondary)] mb-2">نغمة المكالمات</label>
-                        <select id="callTone" class="input-field">
-                            <option value="default">الافتراضية</option>
-                            <option value="ring1">رنة 1</option>
-                            <option value="ring2">رنة 2</option>
-                        </select>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Privacy -->
-            <div class="mb-6 p-4 bg-[var(--bg-secondary)] rounded-xl">
-                <h3 class="font-bold mb-4">الخصوصية</h3>
-                <div class="space-y-4">
-                    <div class="flex items-center justify-between">
-                        <span>إظهار حالة الاتصال</span>
-                        <div class="toggle-switch active" onclick="this.classList.toggle('active')"></div>
-                    </div>
-                    <div class="flex items-center justify-between">
-                        <span>إظهار "يكتب الآن"</span>
-                        <div class="toggle-switch active" onclick="this.classList.toggle('active')"></div>
-                    </div>
-                    <div class="flex items-center justify-between">
-                        <span>قراءة الرسائل (العلامات الزرقاء)</span>
-                        <div class="toggle-switch active" onclick="this.classList.toggle('active')"></div>
-                    </div>
-                </div>
-            </div>
-            
-            <button onclick="saveSettings()" class="btn-primary w-full">حفظ الإعدادات</button>
-        </div>
-    </div>
-
-    <!-- Add Friend Modal -->
-    <div id="addFriendModal" class="modal-overlay">
-        <div class="modal-content">
-            <div class="flex items-center justify-between mb-6">
-                <h2 class="font-cairo text-2xl font-bold">إضافة صديق</h2>
-                <button onclick="closeModal('addFriendModal')" class="w-10 h-10 rounded-full bg-[var(--bg-hover)] flex items-center justify-center hover:bg-[var(--bg-card)]">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <line x1="18" y1="6" x2="6" y2="18"/>
-                        <line x1="6" y1="6" x2="18" y2="18"/>
-                    </svg>
-                </button>
-            </div>
-            
-            <div class="mb-4">
-                <input type="text" id="friendSearchInput" class="input-field" placeholder="ابحث بالاسم أو البريد الإلكتروني..." oninput="searchUsers(this.value)">
-            </div>
-            
-            <div id="searchResults" class="space-y-3 max-h-80 overflow-y-auto">
-                <!-- Search results will appear here -->
+            <div class="ai-input">
+                <input type="text" placeholder="اسألني..." id="ai-input" onkeypress="if(event.key==='Enter')sendAiMsg()">
             </div>
         </div>
-    </div>
-
-    <!-- Create Group Modal -->
-    <div id="createGroupModal" class="modal-overlay">
-        <div class="modal-content">
-            <div class="flex items-center justify-between mb-6">
-                <h2 class="font-cairo text-2xl font-bold">إنشاء مجموعة جديدة</h2>
-                <button onclick="closeModal('createGroupModal')" class="w-10 h-10 rounded-full bg-[var(--bg-hover)] flex items-center justify-center hover:bg-[var(--bg-card)]">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <line x1="18" y1="6" x2="6" y2="18"/>
-                        <line x1="6" y1="6" x2="18" y2="18"/>
-                    </svg>
-                </button>
-            </div>
-            
-            <form onsubmit="createGroup(event)">
-                <div class="mb-4">
-                    <label class="block text-sm text-[var(--text-secondary)] mb-2">اسم المجموعة</label>
-                    <input type="text" id="groupName" class="input-field" placeholder="اسم المجموعة" required>
-                </div>
-                
-                <div class="mb-4">
-                    <label class="block text-sm text-[var(--text-secondary)] mb-2">وصف المجموعة (اختياري)</label>
-                    <textarea id="groupDesc" class="input-field" placeholder="وصف المجموعة" rows="2"></textarea>
-                </div>
-                
-                <div class="mb-4">
-                    <label class="block text-sm text-[var(--text-secondary)] mb-2">اختر الأعضاء</label>
-                    <div id="friendsSelectList" class="space-y-2 max-h-48 overflow-y-auto">
-                        <!-- Friends list for selection -->
-                    </div>
-                </div>
-                
-                <button type="submit" class="btn-primary w-full">إنشاء المجموعة</button>
-            </form>
-        </div>
-    </div>
-
-    <!-- Add Story Modal -->
-    <div id="addStoryModal" class="modal-overlay">
-        <div class="modal-content">
-            <div class="flex items-center justify-between mb-6">
-                <h2 class="font-cairo text-2xl font-bold">إضافة قصة</h2>
-                <button onclick="closeModal('addStoryModal')" class="w-10 h-10 rounded-full bg-[var(--bg-hover)] flex items-center justify-center hover:bg-[var(--bg-card)]">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <line x1="18" y1="6" x2="6" y2="18"/>
-                        <line x1="6" y1="6" x2="18" y2="18"/>
-                    </svg>
-                </button>
-            </div>
-            
-            <div class="border-2 border-dashed border-[var(--border)] rounded-xl p-8 text-center mb-4 cursor-pointer hover:border-[var(--accent)] transition-colors" onclick="document.getElementById('storyInput').click()">
-                <svg class="mx-auto mb-4 text-[var(--text-muted)]" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                    <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
-                    <circle cx="8.5" cy="8.5" r="1.5"/>
-                    <polyline points="21 15 16 10 5 21"/>
-                </svg>
-                <p class="text-[var(--text-secondary)]">اضغط لاختيار صورة أو فيديو</p>
-                <input type="file" id="storyInput" class="hidden" accept="image/*,video/*" onchange="handleStorySelect(event)">
-            </div>
-            
-            <div id="storyPreview" class="hidden mb-4">
-                <img id="storyPreviewImg" class="w-full rounded-xl max-h-64 object-cover">
-            </div>
-            
-            <div class="mb-4">
-                <textarea id="storyCaption" class="input-field" placeholder="أضف وصفاً لقصتك..." rows="2"></textarea>
-            </div>
-            
-            <button onclick="postStory()" class="btn-primary w-full">نشر القصة</button>
-        </div>
-    </div>
-
-    <!-- AI Assistant Modal -->
-    <div id="aiModal" class="modal-overlay">
-        <div class="modal-content max-w-lg">
-            <div class="flex items-center justify-between mb-6">
-                <div class="flex items-center gap-3">
-                    <div class="w-12 h-12 rounded-full bg-gradient-to-br from-indigo-500 to-purple-500 flex items-center justify-center">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
-                            <path d="M12 2a2 2 0 0 1 2 2c0 .74-.4 1.39-1 1.73V7h1a7 7 0 0 1 7 7h1a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1h-1v1a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-1H2a1 1 0 0 1-1-1v-3a1 1 0 0 1 1-1h1a7 7 0 0 1 7-7h1V5.73c-.6-.34-1-.99-1-1.73a2 2 0 0 1 2-2"/>
-                        </svg>
-                    </div>
-                    <div>
-                        <h2 class="font-cairo text-xl font-bold">مساعد DZ CLOSE</h2>
-                        <span class="text-sm text-[var(--online)]">متصل</span>
-                    </div>
-                </div>
-                <button onclick="closeModal('aiModal')" class="w-10 h-10 rounded-full bg-[var(--bg-hover)] flex items-center justify-center hover:bg-[var(--bg-card)]">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <line x1="18" y1="6" x2="6" y2="18"/>
-                        <line x1="6" y1="6" x2="18" y2="18"/>
-                    </svg>
-                </button>
-            </div>
-            
-            <div id="aiChatContainer" class="h-80 overflow-y-auto mb-4 p-4 bg-[var(--bg-secondary)] rounded-xl space-y-4">
-                <div class="chat-bubble received">
-                    <p>مرحباً! أنا مساعد DZ CLOSE الذكي. كيف يمكنني مساعدتك اليوم؟</p>
-                </div>
-            </div>
-            
-            <div class="flex gap-2">
-                <input type="text" id="aiInput" class="input-field flex-1" placeholder="اسألني أي شيء..." onkeydown="if(event.key==='Enter')sendAiMessage()">
-                <button onclick="sendAiMessage()" class="btn-primary px-6">إرسال</button>
-            </div>
-            
-            <div class="mt-4 grid grid-cols-2 gap-2">
-                <button onclick="askAi('كيف أقوم بإنشاء مجموعة؟')" class="btn-secondary text-sm">إنشاء مجموعة</button>
-                <button onclick="askAi('كيف أضيف أصدقاء؟')" class="btn-secondary text-sm">إضافة أصدقاء</button>
-                <button onclick="askAi('كيف أغير المظهر؟')" class="btn-secondary text-sm">تغيير المظهر</button>
-                <button onclick="askAi('كيف أنشر قصة؟')" class="btn-secondary text-sm">نشر قصة</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Story Viewer -->
-    <div id="storyViewer" class="story-viewer">
-        <div class="absolute top-0 left-0 right-0 p-4 z-10">
-            <div class="flex gap-1 mb-4" id="storyProgressBars">
-                <!-- Progress bars -->
-            </div>
-            <div class="flex items-center justify-between">
-                <div class="flex items-center gap-3">
-                    <div id="storyUserAvatar" class="w-10 h-10 rounded-full bg-[var(--accent)]"></div>
-                    <div>
-                        <h4 id="storyUserName" class="font-bold text-white">اسم المستخدم</h4>
-                        <span id="storyTime" class="text-sm text-gray-300">منذ ساعة</span>
-                    </div>
-                </div>
-                <button onclick="closeStoryViewer()" class="w-10 h-10 rounded-full bg-black/50 flex items-center justify-center">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
-                        <line x1="18" y1="6" x2="6" y2="18"/>
-                        <line x1="6" y1="6" x2="18" y2="18"/>
-                    </svg>
-                </button>
-            </div>
-        </div>
-        
-        <div class="flex-1 flex items-center justify-center">
-            <img id="storyImage" class="max-w-full max-h-full object-contain" src="" alt="">
-        </div>
-        
-        <div class="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/80 to-transparent">
-            <p id="storyCaption" class="text-white text-center mb-4">وصف القصة</p>
-            <div class="flex gap-3">
-                <input type="text" class="flex-1 bg-white/20 border border-white/30 rounded-full px-4 py-3 text-white placeholder-gray-300" placeholder="أرسل رسالة...">
-                <button class="w-12 h-12 rounded-full bg-white flex items-center justify-center">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="2">
-                        <line x1="22" y1="2" x2="11" y2="13"/>
-                        <polygon points="22 2 15 22 11 13 2 9 22 2"/>
-                    </svg>
-                </button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Call Modal -->
-    <div id="callModal" class="modal-overlay">
-        <div class="modal-content text-center">
-            <div class="w-24 h-24 mx-auto mb-6 rounded-full bg-gradient-to-br from-[var(--accent)] to-[var(--accent-secondary)] flex items-center justify-center">
-                <span id="callAvatar" class="text-3xl font-bold text-[var(--bg-primary)]">U</span>
-            </div>
-            <h2 id="callUserName" class="font-cairo text-2xl font-bold mb-2">اسم المستخدم</h2>
-            <p id="callStatus" class="text-[var(--text-muted)] mb-8">جاري الاتصال...</p>
-            
-            <div class="flex justify-center gap-6">
-                <button onclick="endCall()" class="w-16 h-16 rounded-full bg-[var(--danger)] flex items-center justify-center hover:opacity-80 transition-opacity">
-                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
-                        <path d="M23 17.18V19a2 2 0 0 1-2.11 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6A19.79 19.79 0 0 1 3.21 4.11 2 2 0 0 1 5.18 2h1.86a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 17.18z"/>
-                    </svg>
-                </button>
-                <button id="acceptCallBtn" class="hidden w-16 h-16 rounded-full bg-[var(--success)] flex items-center justify-center hover:opacity-80 transition-opacity">
-                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
-                        <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
-                    </svg>
-                </button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Emoji Picker -->
-    <div id="emojiPicker" class="hidden fixed bottom-28 left-4 z-50 emoji-picker shadow-xl">
-        <!-- Emojis will be loaded here -->
-    </div>
-
-    <!-- Toast Notification -->
-    <div id="toast" class="toast">
-        <svg id="toastIcon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--success)" stroke-width="2">
-            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
-            <polyline points="22 4 12 14.01 9 11.01"/>
-        </svg>
-        <span id="toastMessage">تمت العملية بنجاح</span>
     </div>
 
     <script>
-        // ==================== Firebase Configuration ====================
+        // =========================================
+        // Firebase Configuration & Init
+        // =========================================
         const firebaseConfig = {
             apiKey: "AIzaSyDQmWof8RhM8yef5MQDQ2Cc3KtMr7RQVHA",
             authDomain: "djasser-137e1.firebaseapp.com",
@@ -1590,1233 +389,397 @@
             appId: "1:204637393208:web:236fea510daa1d0f66f1cd",
             measurementId: "G-HCDEQ72HYD"
         };
-
-        // Initialize Firebase
+        
         firebase.initializeApp(firebaseConfig);
         const auth = firebase.auth();
-        const database = firebase.database();
-        const storage = firebase.storage();
-
-        // ==================== Global State ====================
+        const db = firebase.database();
+        
         let currentUser = null;
-        let currentChat = null;
-        let currentChatType = 'private';
-        let selectedFriends = [];
+        let currentChatId = null;
         let mediaRecorder = null;
         let audioChunks = [];
-        let storyTimeout = null;
+        let storyTimer = null;
+        let isStoryPaused = false;
 
-        // ==================== Emojis Data ====================
-        const emojis = ['😀', '😃', '😄', '😁', '😅', '😂', '🤣', '😊', '😇', '🙂', '😉', '😌', '😍', '🥰', '😘', '😗', '😙', '😚', '😋', '😛', '😜', '🤪', '😝', '🤑', '🤗', '🤭', '🤫', '🤔', '🤐', '🤨', '😐', '😑', '😶', '😏', '😒', '🙄', '😬', '🤥', '😌', '😔', '😪', '🤤', '😴', '😷', '🤒', '🤕', '🤢', '🤮', '🤧', '🥵', '🥶', '🥴', '😵', '🤯', '🤠', '🥳', '😎', '🤓', '🧐', '😕', '😟', '🙁', '😮', '😯', '😲', '😳', '🥺', '😦', '😧', '😨', '😰', '😥', '😢', '😭', '😱', '😖', '😣', '😞', '😓', '😩', '😫', '🥱', '😤', '😡', '😠', '🤬', '👍', '👎', '👏', '🙌', '🤝', '❤️', '💔', '💯', '🔥', '✨', '🎉', '🎊', ' Rahman'];
+        // =========================================
+        // Authentication System
+        // =========================================
+        function showRegister() { document.getElementById('login-form').style.display='none'; document.getElementById('register-form').style.display='block'; document.getElementById('reset-form').style.display='none'; }
+        function showLogin() { document.getElementById('login-form').style.display='block'; document.getElementById('register-form').style.display='none'; document.getElementById('reset-form').style.display='none'; }
+        function showResetPassword() { document.getElementById('login-form').style.display='none'; document.getElementById('register-form').style.display='none'; document.getElementById('reset-form').style.display='block'; }
 
-        // ==================== AI Responses ====================
-        const aiResponses = {
-            'إنشاء مجموعة': 'لإنشاء مجموعة جديدة:\n1. اذهب إلى تبويب "المجموعات"\n2. اضغط على "إنشاء مجموعة جديدة"\n3. أدخل اسم المجموعة ووصفها\n4. اختر الأصدقاء الذين تريد إضافتهم\n5. اضغط "إنشاء المجموعة"',
-            'إضافة أصدقاء': 'لإضافة صديق:\n1. اذهب إلى تبويب "الأصدقاء"\n2. اضغط على "إضافة صديق"\n3. ابحث بالاسم أو البريد الإلكتروني\n4. اضغط "إضافة" بجانب المستخدم المطلوب',
-            'تغيير المظهر': 'لتغيير مظهر التطبيق:\n1. اضغط على أيقونة الإعدادات\n2. اختر اللون المفضل من قسم "المظهر"\n3. سيتم تطبيق الثيم فوراً',
-            'نشر قصة': 'لنشر قصة جديدة:\n1. اضغط على "+" في قسم القصص\n2. اختر صورة أو فيديو من جهازك\n3. أضف وصفاً اختيارياً\n4. اضغط "نشر القصة"\nملاحظة: القصص تختفي بعد 24 ساعة'
-        };
-
-        // ==================== Initialization ====================
-        document.addEventListener('DOMContentLoaded', function() {
-            initApp();
-            loadEmojiPicker();
-            loadTheme();
-        });
-
-        function initApp() {
-            auth.onAuthStateChanged((user) => {
-                if (user) {
-                    currentUser = user;
-                    loadUserData();
-                    showMainApp();
-                    loadChats();
-                    loadGroups();
-                    loadFriends();
-                    loadFriendRequests();
-                    loadStories();
-                    setupMessageListener();
-                } else {
-                    showAuthPages();
-                }
-            });
-        }
-
-        // ==================== Page Navigation ====================
-        function showPage(pageId) {
-            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-            document.getElementById(pageId).classList.add('active');
-        }
-
-        function showAuthPages() {
-            document.getElementById('authPages').classList.remove('hidden');
-            document.getElementById('mainApp').classList.add('hidden');
-        }
-
-        function showMainApp() {
-            document.getElementById('authPages').classList.add('hidden');
-            document.getElementById('mainApp').classList.remove('hidden');
-        }
-
-        // ==================== Authentication ====================
-        function handleLogin(e) {
-            e.preventDefault();
-            const email = document.getElementById('loginEmail').value;
-            const password = document.getElementById('loginPassword').value;
-            
-            auth.signInWithEmailAndPassword(email, password)
-                .then(() => {
-                    showToast('تم تسجيل الدخول بنجاح', 'success');
-                })
-                .catch((error) => {
-                    showToast('خطأ: ' + getArabicError(error.code), 'error');
-                });
-        }
-
-        function handleRegister(e) {
-            e.preventDefault();
-            const name = document.getElementById('registerName').value;
-            const username = document.getElementById('registerUsername').value;
-            const email = document.getElementById('registerEmail').value;
-            const phone = document.getElementById('registerPhone').value;
-            const password = document.getElementById('registerPassword').value;
-            const confirmPassword = document.getElementById('registerConfirmPassword').value;
-            
-            if (password !== confirmPassword) {
-                showToast('كلمات المرور غير متطابقة', 'error');
-                return;
-            }
-            
-            auth.createUserWithEmailAndPassword(email, password)
-                .then((userCredential) => {
-                    const user = userCredential.user;
-                    return database.ref('users/' + user.uid).set({
-                        name: name,
-                        username: username,
-                        email: email,
-                        phone: phone,
-                        avatar: '',
-                        bio: '',
-                        online: true,
-                        createdAt: firebase.database.ServerValue.TIMESTAMP
-                    });
-                })
-                .then(() => {
-                    showToast('تم إنشاء الحساب بنجاح', 'success');
-                })
-                .catch((error) => {
-                    showToast('خطأ: ' + getArabicError(error.code), 'error');
-                });
-        }
-
-        function handleForgotPassword(e) {
-            e.preventDefault();
-            const email = document.getElementById('forgotEmail').value;
-            
-            auth.sendPasswordResetEmail(email)
-                .then(() => {
-                    showToast('تم إرسال رابط استعادة كلمة المرور إلى بريدك', 'success');
-                    showPage('loginPage');
-                })
-                .catch((error) => {
-                    showToast('خطأ: ' + getArabicError(error.code), 'error');
-                });
-        }
-
-        function handleLogout() {
-            if (currentUser) {
-                database.ref('users/' + currentUser.uid).update({
-                    online: false,
+        function register() {
+            const email = document.getElementById('reg-email').value;
+            const pass = document.getElementById('reg-password').value;
+            const username = document.getElementById('reg-username').value;
+            if(!email || !pass || !username) return alert('كل الحقول مطلوبة');
+            auth.createUserWithEmailAndPassword(email, pass).then(cred => {
+                return db.ref('users/' + cred.user.uid).set({
+                    username: username,
+                    email: email,
+                    profilePictureUrl: 'https://via.placeholder.com/100',
+                    bio: 'مستخدم جديد على DZ CLOSE',
+                    createdAt: firebase.database.ServerValue.TIMESTAMP,
+                    status: 'online',
                     lastSeen: firebase.database.ServerValue.TIMESTAMP
                 });
-            }
-            auth.signOut();
-            showToast('تم تسجيل الخروج', 'success');
+            }).catch(e => alert(e.message));
         }
 
-        // ==================== User Data ====================
-        function loadUserData() {
-            database.ref('users/' + currentUser.uid).on('value', (snapshot) => {
-                const userData = snapshot.val();
-                if (userData) {
-                    document.getElementById('currentUserName').textContent = userData.name || 'المستخدم';
-                    document.getElementById('currentUserAvatar').textContent = (userData.name || 'م').charAt(0);
-                    document.getElementById('settingsName').value = userData.name || '';
-                    document.getElementById('settingsBio').value = userData.bio || '';
-                    
-                    if (userData.avatar) {
-                        document.getElementById('currentUserAvatar').innerHTML = `<img src="${userData.avatar}" class="w-full h-full rounded-full object-cover">`;
-                        document.getElementById('settingsAvatar').innerHTML = `<img src="${userData.avatar}" class="w-full h-full rounded-full object-cover">`;
-                    }
-                }
-            });
+        function login() {
+            const email = document.getElementById('login-email').value;
+            const pass = document.getElementById('login-password').value;
+            auth.signInWithEmailAndPassword(email, pass).catch(e => alert(e.message));
         }
 
-        // ==================== Chats ====================
-        function loadChats() {
-            database.ref('userChats/' + currentUser.uid).on('value', (snapshot) => {
-                const chatsData = snapshot.val();
-                const chatsList = document.getElementById('chatsList');
-                chatsList.innerHTML = '';
-                
-                if (!chatsData) {
-                    chatsList.innerHTML = '<p class="p-4 text-center text-[var(--text-muted)]">لا توجد محادثات بعد</p>';
-                    return;
-                }
-                
-                const chatPromises = Object.keys(chatsData).map(chatId => {
-                    return database.ref('chats/' + chatId).once('value').then(chatSnapshot => {
-                        const chat = chatSnapshot.val();
-                        if (chat && chat.participants) {
-                            const otherUserId = chat.participants.find(p => p !== currentUser.uid);
-                            return database.ref('users/' + otherUserId).once('value').then(userSnapshot => {
-                                const user = userSnapshot.val();
-                                return {
-                                    chatId: chatId,
-                                    user: user,
-                                    userId: otherUserId,
-                                    lastMessage: chat.lastMessage,
-                                    timestamp: chat.timestamp
-                                };
-                            });
-                        }
-                        return null;
-                    });
-                });
-                
-                Promise.all(chatPromises).then(chats => {
-                    chats.filter(c => c !== null).sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0)).forEach(chat => {
-                        const chatEl = createChatElement(chat);
-                        chatsList.appendChild(chatEl);
-                    });
-                });
-            });
+        function resetPassword() {
+            const email = document.getElementById('reset-email').value;
+            auth.sendPasswordResetEmail(email).then(() => { alert('تم إرسال رابط استعادة كلمة السر'); showLogin(); }).catch(e => alert(e.message));
         }
 
-        function createChatElement(chat) {
-            const div = document.createElement('div');
-            div.className = 'flex items-center gap-3 p-4 hover:bg-[var(--bg-hover)] cursor-pointer transition-colors';
-            div.onclick = () => openChat(chat.chatId, chat.userId, chat.user);
-            
-            const isOnline = chat.user && chat.user.online;
-            const lastMessageText = chat.lastMessage ? (chat.lastMessage.text || 'صورة/ملف') : 'لا توجد رسائل';
-            const time = chat.timestamp ? formatTime(chat.timestamp) : '';
-            
-            div.innerHTML = `
-                <div class="relative">
-                    <div class="w-12 h-12 rounded-full bg-gradient-to-br from-[var(--accent)] to-[var(--accent-secondary)] flex items-center justify-center font-bold text-[var(--bg-primary)]">
-                        ${chat.user && chat.user.avatar ? `<img src="${chat.user.avatar}" class="w-full h-full rounded-full object-cover">` : (chat.user && chat.user.name ? chat.user.name.charAt(0) : 'U')}
-                    </div>
-                    ${isOnline ? '<div class="online-indicator"></div>' : ''}
-                </div>
-                <div class="flex-1 min-w-0">
-                    <h4 class="font-bold truncate">${chat.user ? chat.user.name : 'مستخدم'}</h4>
-                    <p class="text-sm text-[var(--text-muted)] truncate">${lastMessageText}</p>
-                </div>
-                <div class="text-xs text-[var(--text-muted)]">${time}</div>
-            `;
-            
-            return div;
-        }
+        function logout() { auth.signOut(); }
 
-        function openChat(chatId, otherUserId, otherUser) {
-            currentChat = chatId;
-            currentChatType = 'private';
-            
-            document.getElementById('noChatSelected').classList.add('hidden');
-            document.getElementById('activeChat').classList.remove('hidden');
-            
-            document.getElementById('chatName').textContent = otherUser ? otherUser.name : 'مستخدم';
-            document.getElementById('chatAvatar').textContent = otherUser && otherUser.name ? otherUser.name.charAt(0) : 'U';
-            
-            if (otherUser && otherUser.avatar) {
-                document.getElementById('chatAvatar').innerHTML = `<img src="${otherUser.avatar}" class="w-full h-full rounded-full object-cover">`;
-            }
-            
-            if (otherUser && otherUser.online) {
-                document.getElementById('chatOnlineStatus').classList.remove('hidden');
-                document.getElementById('chatStatus').textContent = 'متصل الآن';
-                document.getElementById('chatStatus').classList.add('text-[var(--online)]');
+        // Auth State Observer
+        auth.onAuthStateChanged(user => {
+            if(user) {
+                currentUser = user;
+                document.getElementById('auth-container').style.display = 'none';
+                document.getElementById('app-container').style.display = 'block';
+                initApp();
             } else {
-                document.getElementById('chatOnlineStatus').classList.add('hidden');
-                document.getElementById('chatStatus').textContent = otherUser && otherUser.lastSeen ? 'آخر ظهور: ' + formatTime(otherUser.lastSeen) : 'غير متصل';
-                document.getElementById('chatStatus').classList.remove('text-[var(--online)]');
+                currentUser = null;
+                document.getElementById('auth-container').style.display = 'flex';
+                document.getElementById('app-container').style.display = 'none';
             }
+        });
+
+        // =========================================
+        // Online/Offline Status (onDisconnect)
+        // =========================================
+        function initApp() {
+            const userStatusRef = db.ref('users/' + currentUser.uid);
+            const isOfflineForDatabase = { status: 'offline', lastSeen: firebase.database.ServerValue.TIMESTAMP };
+            const isOnlineForDatabase = { status: 'online', lastSeen: firebase.database.ServerValue.TIMESTAMP };
+
+            db.ref('.info/connected').on('value', snapshot => {
+                if (snapshot.val() === false) return;
+                userStatusRef.onDisconnect().update(isOfflineForDatabase).then(() => {
+                    userStatusRef.update(isOnlineForDatabase);
+                });
+            });
+
+            db.ref('users/' + currentUser.uid).on('value', snap => {
+                if(snap.val()) document.getElementById('my-avatar').src = snap.val().profilePictureUrl;
+            });
+
+            loadChats();
+            loadStories();
+        }
+
+        // =========================================
+        // Chat & Friends System (SQL Schema Adaptation)
+        // =========================================
+        function loadChats() {
+            const chatList = document.getElementById('chat-list');
+            chatList.innerHTML = '';
             
-            loadMessages(chatId);
-            
-            // Mark messages as read
-            database.ref('chats/' + chatId + '/messages').orderByChild('read').equalTo(false).once('value', (snapshot) => {
-                snapshot.forEach((msgSnapshot) => {
-                    const msg = msgSnapshot.val();
-                    if (msg.sender !== currentUser.uid) {
-                        msgSnapshot.ref.update({ read: true });
+            // Simulated Chat List (In real app, query 'Follow' table to get friends)
+            const usersRef = db.ref('users');
+            usersRef.on('value', snapshot => {
+                chatList.innerHTML = '';
+                snapshot.forEach(child => {
+                    if(child.key !== currentUser.uid) {
+                        const user = child.val();
+                        const chatItem = document.createElement('div');
+                        chatItem.className = 'chat-item';
+                        chatItem.onclick = () => openChat(child.key, user);
+                        chatItem.innerHTML = `
+                            <img src="${user.profilePictureUrl}">
+                            <div class="chat-info">
+                                <div class="chat-name">
+                                    <span>${user.username} ${user.status === 'online' ? '<span class="online-dot"></span>' : ''}</span>
+                                    <small style="color:var(--text-secondary)">12:00 م</small>
+                                </div>
+                                <div class="chat-last-msg">اضغط لبدء المحادثة</div>
+                            </div>
+                        `;
+                        chatList.appendChild(chatItem);
                     }
                 });
             });
         }
 
-        function closeChat() {
-            currentChat = null;
-            document.getElementById('noChatSelected').classList.remove('hidden');
-            document.getElementById('activeChat').classList.add('hidden');
-        }
-
-        // ==================== Messages ====================
-        function loadMessages(chatId) {
-            const messagesContainer = document.getElementById('messagesContainer');
-            messagesContainer.innerHTML = '';
+        function openChat(userId, userData) {
+            currentChatId = userId;
+            document.getElementById('chat-header').style.display = 'flex';
+            document.getElementById('chat-input-area').style.display = 'flex';
+            document.getElementById('chat-avatar').src = userData.profilePictureUrl;
+            document.getElementById('chat-name').innerText = userData.username;
             
-            database.ref('chats/' + chatId + '/messages').orderByChild('timestamp').on('child_added', (snapshot) => {
-                const message = snapshot.val();
-                const messageEl = createMessageElement(message, snapshot.key);
-                messagesContainer.appendChild(messageEl);
-                messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            // Update status dynamically
+            db.ref('users/' + userId).on('value', snap => {
+                if(snap.val()) {
+                    document.getElementById('chat-status').innerText = snap.val().status === 'online' ? 'متصل الآن' : 'آخر ظهور ' + new Date(snap.val().lastSeen).toLocaleTimeString('ar-EG');
+                }
             });
+
+            if(window.innerWidth < 768) {
+                document.getElementById('app-layout').classList.add('chat-open');
+                document.getElementById('back-btn').style.display = 'block';
+            }
+
+            loadMessages(userId);
+            playNotificationSound('open');
         }
 
-        function createMessageElement(message, messageId) {
-            const div = document.createElement('div');
-            const isSent = message.sender === currentUser.uid;
+        function closeChatMobile() {
+            document.getElementById('app-layout').classList.remove('chat-open');
+        }
+
+        function loadMessages(userId) {
+            const chatId = [currentUser.uid, userId].sort().join('_');
+            const msgArea = document.getElementById('messages-area');
+            msgArea.innerHTML = '';
             
-            div.className = `flex ${isSent ? 'justify-end' : 'justify-start'}`;
-            
-            let content = '';
-            
-            if (message.type === 'image') {
-                content = `<img src="${message.image}" class="max-w-full rounded-lg mb-2" style="max-height: 200px;">`;
-            } else if (message.type === 'voice') {
-                content = `
-                    <div class="voice-message">
-                        <button onclick="playVoice('${message.audio}')" class="w-8 h-8 rounded-full bg-[var(--accent)] flex items-center justify-center">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--bg-primary)" stroke-width="2">
-                                <polygon points="5 3 19 12 5 21 5 3"/>
-                            </svg>
-                        </button>
-                        <div class="voice-wave">
-                            ${Array(20).fill('<span style="animation-delay: ' + Math.random() + 's"></span>').join('')}
-                        </div>
-                        <span class="text-xs">${message.duration || '0:00'}</span>
-                    </div>
-                `;
-            } else if (message.text) {
-                content = `<p>${message.text}</p>`;
-            }
-            
-            const time = message.timestamp ? formatTime(message.timestamp) : '';
-            const readStatus = isSent ? (message.read ? 
-                '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>' : 
-                '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>') : '';
-            
-            div.innerHTML = `
-                <div class="chat-bubble ${isSent ? 'sent' : 'received'}">
-                    ${content}
-                    <div class="flex items-center justify-end gap-1 mt-1">
-                        <span class="text-xs opacity-70">${time}</span>
-                        ${readStatus}
-                    </div>
-                </div>
-            `;
-            
-            return div;
+            db.ref('chats/' + chatId).on('value', snapshot => {
+                msgArea.innerHTML = '';
+                snapshot.forEach(child => {
+                    const msg = child.val();
+                    const div = document.createElement('div');
+                    div.className = `message ${msg.senderId === currentUser.uid ? 'sent' : 'received'}`;
+                    
+                    if(msg.type === 'voice') {
+                        div.innerHTML = `
+                            <div class="voice-msg">
+                                <i class="fas fa-play"></i>
+                                <div class="voice-wave"></div>
+                                <small class="time">${msg.duration || '0:00'}</small>
+                            </div>`;
+                    } else {
+                        div.innerHTML = `${msg.text} <span class="time">${new Date(msg.timestamp).toLocaleTimeString('ar-EG', {hour: '2-digit', minute:'2-digit'})}</span>`;
+                    }
+                    msgArea.appendChild(div);
+                });
+                msgArea.scrollTop = msgArea.scrollHeight;
+            });
         }
 
         function sendMessage() {
-            const input = document.getElementById('messageInput');
-            const text = input.value.trim();
-            
-            if (!text || !currentChat) return;
-            
-            const messageData = {
+            const input = document.getElementById('msg-input');
+            const text = input.value;
+            if(!text || !currentChatId) return;
+
+            const chatId = [currentUser.uid, currentChatId].sort().join('_');
+            db.ref('chats/' + chatId).push({
+                senderId: currentUser.uid,
                 text: text,
-                sender: currentUser.uid,
                 timestamp: firebase.database.ServerValue.TIMESTAMP,
-                type: 'text',
-                read: false
-            };
-            
-            database.ref('chats/' + currentChat + '/messages').push(messageData);
-            database.ref('chats/' + currentChat).update({
-                lastMessage: messageData,
-                timestamp: firebase.database.ServerValue.TIMESTAMP
+                type: 'text'
             });
-            
             input.value = '';
-            input.style.height = 'auto';
+            playNotificationSound('send');
         }
 
-        function handleMessageKeydown(e) {
-            if (e.key === 'Enter' && !e.shiftKey) {
-                e.preventDefault();
-                sendMessage();
-            }
-        }
+        function handleEnter(e) { if(e.key === 'Enter') sendMessage(); }
 
-        function autoResize(textarea) {
-            textarea.style.height = 'auto';
-            textarea.style.height = Math.min(textarea.scrollHeight, 120) + 'px';
-        }
-
-        function setupMessageListener() {
-            // Listen for new messages in all user's chats
-            database.ref('userChats/' + currentUser.uid).on('child_added', (snapshot) => {
-                const chatId = snapshot.key;
-                database.ref('chats/' + chatId + '/messages').orderByChild('read').equalTo(false).on('child_added', (msgSnapshot) => {
-                    const message = msgSnapshot.val();
-                    if (message.sender !== currentUser.uid && currentChat !== chatId) {
-                        showNotification('رسالة جديدة', message.text || 'صورة/ملف');
-                    }
-                });
-            });
-        }
-
-        // ==================== Groups ====================
-        function loadGroups() {
-            database.ref('userGroups/' + currentUser.uid).on('value', (snapshot) => {
-                const groupsData = snapshot.val();
-                const groupsList = document.getElementById('groupsList');
-                groupsList.innerHTML = '';
-                
-                if (!groupsData) {
-                    groupsList.innerHTML = '<p class="p-4 text-center text-[var(--text-muted)]">لا توجد مجموعات بعد</p>';
-                    return;
-                }
-                
-                Object.keys(groupsData).forEach(groupId => {
-                    database.ref('groups/' + groupId).once('value').then(groupSnapshot => {
-                        const group = groupSnapshot.val();
-                        if (group) {
-                            const groupEl = createGroupElement(groupId, group);
-                            groupsList.appendChild(groupEl);
-                        }
-                    });
-                });
-            });
-        }
-
-        function createGroupElement(groupId, group) {
-            const div = document.createElement('div');
-            div.className = 'flex items-center gap-3 p-4 hover:bg-[var(--bg-hover)] cursor-pointer transition-colors';
-            div.onclick = () => openGroupChat(groupId, group);
-            
-            div.innerHTML = `
-                <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-[var(--accent)] to-[var(--accent-secondary)] flex items-center justify-center font-bold text-[var(--bg-primary)]">
-                    ${group.name ? group.name.charAt(0) : 'G'}
-                </div>
-                <div class="flex-1 min-w-0">
-                    <h4 class="font-bold truncate">${group.name || 'مجموعة'}</h4>
-                    <p class="text-sm text-[var(--text-muted)]">${group.members ? Object.keys(group.members).length : 0} عضو</p>
-                </div>
-            `;
-            
-            return div;
-        }
-
-        function openGroupChat(groupId, group) {
-            currentChat = groupId;
-            currentChatType = 'group';
-            
-            document.getElementById('noChatSelected').classList.add('hidden');
-            document.getElementById('activeChat').classList.remove('hidden');
-            
-            document.getElementById('chatName').textContent = group.name || 'مجموعة';
-            document.getElementById('chatAvatar').textContent = (group.name || 'م').charAt(0);
-            document.getElementById('chatOnlineStatus').classList.add('hidden');
-            document.getElementById('chatStatus').textContent = (group.members ? Object.keys(group.members).length : 0) + ' عضو';
-            
-            loadMessages(groupId);
-        }
-
-        function createGroup(e) {
-            e.preventDefault();
-            
-            const name = document.getElementById('groupName').value;
-            const desc = document.getElementById('groupDesc').value;
-            
-            const groupData = {
-                name: name,
-                description: desc,
-                createdBy: currentUser.uid,
-                createdAt: firebase.database.ServerValue.TIMESTAMP,
-                members: {}
-            };
-            
-            groupData.members[currentUser.uid] = true;
-            selectedFriends.forEach(friendId => {
-                groupData.members[friendId] = true;
-            });
-            
-            const groupRef = database.ref('groups').push(groupData);
-            const groupId = groupRef.key;
-            
-            // Add group to creator's groups
-            database.ref('userGroups/' + currentUser.uid + '/' + groupId).set(true);
-            
-            // Add group to members' groups
-            selectedFriends.forEach(friendId => {
-                database.ref('userGroups/' + friendId + '/' + groupId).set(true);
-            });
-            
-            // Create chat for the group
-            database.ref('chats/' + groupId).set({
-                participants: [currentUser.uid, ...selectedFriends],
-                isGroup: true,
-                groupId: groupId
-            });
-            
-            closeModal('createGroupModal');
-            showToast('تم إنشاء المجموعة بنجاح', 'success');
-            selectedFriends = [];
-        }
-
-        // ==================== Friends ====================
-        function loadFriends() {
-            database.ref('friends/' + currentUser.uid).on('value', (snapshot) => {
-                const friendsData = snapshot.val();
-                const friendsList = document.getElementById('friendsList');
-                friendsList.innerHTML = '';
-                
-                // Also update friends select list for group creation
-                const friendsSelectList = document.getElementById('friendsSelectList');
-                friendsSelectList.innerHTML = '';
-                
-                if (!friendsData) {
-                    friendsList.innerHTML = '<p class="text-center text-[var(--text-muted)]">لم تقم بإضافة أصدقاء بعد</p>';
-                    return;
-                }
-                
-                Object.keys(friendsData).forEach(friendId => {
-                    database.ref('users/' + friendId).once('value').then(userSnapshot => {
-                        const user = userSnapshot.val();
-                        if (user) {
-                            const friendEl = createFriendElement(friendId, user);
-                            friendsList.appendChild(friendEl);
-                            
-                            const selectEl = createFriendSelectElement(friendId, user);
-                            friendsSelectList.appendChild(selectEl);
-                        }
-                    });
-                });
-            });
-        }
-
-        function createFriendElement(friendId, user) {
-            const div = document.createElement('div');
-            div.className = 'flex items-center gap-3 p-3 rounded-xl hover:bg-[var(--bg-hover)] cursor-pointer transition-colors';
-            div.onclick = () => startChatWithFriend(friendId, user);
-            
-            div.innerHTML = `
-                <div class="relative">
-                    <div class="w-10 h-10 rounded-full bg-gradient-to-br from-[var(--accent)] to-[var(--accent-secondary)] flex items-center justify-center font-bold text-[var(--bg-primary)]">
-                        ${user.avatar ? `<img src="${user.avatar}" class="w-full h-full rounded-full object-cover">` : user.name.charAt(0)}
-                    </div>
-                    ${user.online ? '<div class="online-indicator" style="width: 8px; height: 8px;"></div>' : ''}
-                </div>
-                <div class="flex-1">
-                    <h4 class="font-medium">${user.name}</h4>
-                    <p class="text-xs text-[var(--text-muted)]">${user.online ? 'متصل' : 'غير متصل'}</p>
-                </div>
-                <button onclick="event.stopPropagation(); removeFriend('${friendId}')" class="w-8 h-8 rounded-full bg-[var(--bg-hover)] flex items-center justify-center hover:bg-[var(--danger)] hover:bg-opacity-20 text-[var(--danger)]">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <line x1="18" y1="6" x2="6" y2="18"/>
-                        <line x1="6" y1="6" x2="18" y2="18"/>
-                    </svg>
-                </button>
-            `;
-            
-            return div;
-        }
-
-        function createFriendSelectElement(friendId, user) {
-            const div = document.createElement('div');
-            div.className = 'flex items-center gap-3 p-2 rounded-lg hover:bg-[var(--bg-hover)] cursor-pointer';
-            div.onclick = () => toggleFriendSelection(friendId, div);
-            
-            div.innerHTML = `
-                <div class="w-8 h-8 rounded-full bg-gradient-to-br from-[var(--accent)] to-[var(--accent-secondary)] flex items-center justify-center font-bold text-sm text-[var(--bg-primary)]">
-                    ${user.avatar ? `<img src="${user.avatar}" class="w-full h-full rounded-full object-cover">` : user.name.charAt(0)}
-                </div>
-                <span class="flex-1">${user.name}</span>
-                <div class="w-6 h-6 rounded-md border-2 border-[var(--border)]"></div>
-            `;
-            
-            return div;
-        }
-
-        function toggleFriendSelection(friendId, element) {
-            const index = selectedFriends.indexOf(friendId);
-            const checkbox = element.querySelector('div:last-child');
-            
-            if (index === -1) {
-                selectedFriends.push(friendId);
-                checkbox.classList.add('bg-[var(--accent)]', 'border-[var(--accent)]');
-            } else {
-                selectedFriends.splice(index, 1);
-                checkbox.classList.remove('bg-[var(--accent)]', 'border-[var(--accent)]');
-            }
-        }
-
-        function startChatWithFriend(friendId, user) {
-            // Check if chat already exists
-            database.ref('userChats/' + currentUser.uid).orderByValue().once('value', (snapshot) => {
-                let existingChatId = null;
-                
-                snapshot.forEach((child) => {
-                    const chatId = child.key;
-                    database.ref('chats/' + chatId).once('value', (chatSnapshot) => {
-                        const chat = chatSnapshot.val();
-                        if (chat && !chat.isGroup && chat.participants && chat.participants.includes(friendId)) {
-                            existingChatId = chatId;
-                        }
-                    });
-                });
-                
-                setTimeout(() => {
-                    if (existingChatId) {
-                        openChat(existingChatId, friendId, user);
-                    } else {
-                        // Create new chat
-                        const chatData = {
-                            participants: [currentUser.uid, friendId],
-                            createdAt: firebase.database.ServerValue.TIMESTAMP,
-                            isGroup: false
-                        };
-                        
-                        const chatRef = database.ref('chats').push(chatData);
-                        const chatId = chatRef.key;
-                        
-                        database.ref('userChats/' + currentUser.uid + '/' + chatId).set(true);
-                        database.ref('userChats/' + friendId + '/' + chatId).set(true);
-                        
-                        openChat(chatId, friendId, user);
-                    }
-                }, 100);
-            });
-        }
-
-        // ==================== Friend Requests ====================
-        function loadFriendRequests() {
-            database.ref('friendRequests/' + currentUser.uid).on('value', (snapshot) => {
-                const requestsData = snapshot.val();
-                const requestsContainer = document.getElementById('friendRequests');
-                requestsContainer.innerHTML = '';
-                
-                if (!requestsData) {
-                    requestsContainer.innerHTML = '<p class="text-center text-[var(--text-muted)] text-sm">لا توجد طلبات صداقة</p>';
-                    return;
-                }
-                
-                Object.keys(requestsData).forEach(requestId => {
-                    const request = requestsData[requestId];
-                    database.ref('users/' + request.from).once('value').then(userSnapshot => {
-                        const user = userSnapshot.val();
-                        if (user) {
-                            const requestEl = createFriendRequestElement(requestId, request.from, user);
-                            requestsContainer.appendChild(requestEl);
-                        }
-                    });
-                });
-            });
-        }
-
-        function createFriendRequestElement(requestId, fromUserId, user) {
-            const div = document.createElement('div');
-            div.className = 'flex items-center gap-3 p-3 bg-[var(--bg-secondary)] rounded-xl';
-            
-            div.innerHTML = `
-                <div class="w-10 h-10 rounded-full bg-gradient-to-br from-[var(--accent)] to-[var(--accent-secondary)] flex items-center justify-center font-bold text-[var(--bg-primary)]">
-                    ${user.avatar ? `<img src="${user.avatar}" class="w-full h-full rounded-full object-cover">` : user.name.charAt(0)}
-                </div>
-                <div class="flex-1">
-                    <h4 class="font-medium">${user.name}</h4>
-                    <p class="text-xs text-[var(--text-muted)]">يريد أن يصبح صديقك</p>
-                </div>
-                <div class="flex gap-2">
-                    <button onclick="acceptFriend('${fromUserId}', '${requestId}')" class="w-8 h-8 rounded-full bg-[var(--success)] flex items-center justify-center hover:opacity-80">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
-                            <polyline points="20 6 9 17 4 12"/>
-                        </svg>
-                    </button>
-                    <button onclick="rejectFriend('${fromUserId}', '${requestId}')" class="w-8 h-8 rounded-full bg-[var(--danger)] flex items-center justify-center hover:opacity-80">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
-                            <line x1="18" y1="6" x2="6" y2="18"/>
-                            <line x1="6" y1="6" x2="18" y2="18"/>
-                        </svg>
-                    </button>
-                </div>
-            `;
-            
-            return div;
-        }
-
-        function acceptFriend(friendId, requestId) {
-            // Add to both users' friends list
-            database.ref('friends/' + currentUser.uid + '/' + friendId).set(true);
-            database.ref('friends/' + friendId + '/' + currentUser.uid).set(true);
-            
-            // Remove the request
-            database.ref('friendRequests/' + currentUser.uid + '/' + requestId).remove();
-            
-            showToast('تم قبول طلب الصداقة', 'success');
-        }
-
-        function rejectFriend(friendId, requestId) {
-            database.ref('friendRequests/' + currentUser.uid + '/' + requestId).remove();
-            showToast('تم رفض طلب الصداقة', 'info');
-        }
-
-        function searchUsers(query) {
-            const resultsContainer = document.getElementById('searchResults');
-            resultsContainer.innerHTML = '';
-            
-            if (!query) return;
-            
-            database.ref('users').orderByChild('name').startAt(query).endAt(query + '\uf8ff').limitToFirst(10).once('value', (snapshot) => {
-                snapshot.forEach((userSnapshot) => {
-                    const user = userSnapshot.val();
-                    const userId = userSnapshot.key;
-                    
-                    if (userId !== currentUser.uid) {
-                        const userEl = document.createElement('div');
-                        userEl.className = 'flex items-center gap-3 p-3 bg-[var(--bg-secondary)] rounded-xl';
-                        
-                        userEl.innerHTML = `
-                            <div class="w-10 h-10 rounded-full bg-gradient-to-br from-[var(--accent)] to-[var(--accent-secondary)] flex items-center justify-center font-bold text-[var(--bg-primary)]">
-                                ${user.avatar ? `<img src="${user.avatar}" class="w-full h-full rounded-full object-cover">` : user.name.charAt(0)}
-                            </div>
-                            <div class="flex-1">
-                                <h4 class="font-medium">${user.name}</h4>
-                                <p class="text-xs text-[var(--text-muted)]">@${user.username || 'user'}</p>
-                            </div>
-                            <button onclick="sendFriendRequest('${userId}')" class="btn-secondary text-sm px-4 py-2">إضافة</button>
-                        `;
-                        
-                        resultsContainer.appendChild(userEl);
-                    }
-                });
-            });
-        }
-
-        function sendFriendRequest(toUserId) {
-            // Check if already friends or request sent
-            database.ref('friends/' + currentUser.uid + '/' + toUserId).once('value', (snapshot) => {
-                if (snapshot.exists()) {
-                    showToast('هذا المستخدم صديق بالفعل', 'info');
-                    return;
-                }
-                
-                const requestRef = database.ref('friendRequests/' + toUserId).push({
-                    from: currentUser.uid,
-                    timestamp: firebase.database.ServerValue.TIMESTAMP
-                });
-                
-                showToast('تم إرسال طلب الصداقة', 'success');
-            });
-        }
-
-        function removeFriend(friendId) {
-            if (confirm('هل أنت متأكد من إزالة هذا الصديق؟')) {
-                database.ref('friends/' + currentUser.uid + '/' + friendId).remove();
-                database.ref('friends/' + friendId + '/' + currentUser.uid).remove();
-                showToast('تم إزالة الصديق', 'info');
-            }
-        }
-
-        // ==================== Stories ====================
-        function loadStories() {
-            database.ref('stories').orderByChild('timestamp').startAt(Date.now() - 86400000).on('value', (snapshot) => {
-                const storiesData = snapshot.val();
-                const storiesContainer = document.getElementById('storiesContainer');
-                storiesContainer.innerHTML = '';
-                
-                if (!storiesData) return;
-                
-                const userStories = {};
-                
-                Object.keys(storiesData).forEach(storyId => {
-                    const story = storiesData[storyId];
-                    if (!userStories[story.userId]) {
-                        userStories[story.userId] = [];
-                    }
-                    userStories[story.userId].push({ id: storyId, ...story });
-                });
-                
-                Object.keys(userStories).forEach(userId => {
-                    const stories = userStories[userId];
-                    const latestStory = stories[stories.length - 1];
-                    
-                    database.ref('users/' + userId).once('value').then(userSnapshot => {
-                        const user = userSnapshot.val();
-                        if (user) {
-                            const storyEl = document.createElement('div');
-                            storyEl.className = 'flex-shrink-0 text-center cursor-pointer';
-                            storyEl.onclick = () => viewStories(userId, stories);
-                            
-                            storyEl.innerHTML = `
-                                <div class="story-ring">
-                                    <div class="w-14 h-14 rounded-full bg-[var(--accent)] flex items-center justify-center font-bold text-[var(--bg-primary)]">
-                                        ${user.avatar ? `<img src="${user.avatar}" class="w-full h-full rounded-full object-cover">` : user.name.charAt(0)}
-                                    </div>
-                                </div>
-                                <span class="text-xs text-[var(--text-secondary)] block mt-1 truncate w-16">${user.name}</span>
-                            `;
-                            
-                            storiesContainer.appendChild(storyEl);
-                        }
-                    });
-                });
-            });
-        }
-
-        function handleStorySelect(event) {
-            const file = event.target.files[0];
-            if (!file) return;
-            
-            const reader = new FileReader();
-            reader.onload = (e) => {
-                document.getElementById('storyPreview').classList.remove('hidden');
-                document.getElementById('storyPreviewImg').src = e.target.result;
-            };
-            reader.readAsDataURL(file);
-        }
-
-        function postStory() {
-            const caption = document.getElementById('storyCaption').value;
-            const previewImg = document.getElementById('storyPreviewImg');
-            
-            if (!previewImg.src) {
-                showToast('الرجاء اختيار صورة أولاً', 'error');
-                return;
-            }
-            
-            const storyData = {
-                userId: currentUser.uid,
-                image: previewImg.src,
-                caption: caption,
-                timestamp: firebase.database.ServerValue.TIMESTAMP
-            };
-            
-            database.ref('stories').push(storyData);
-            
-            closeModal('addStoryModal');
-            showToast('تم نشر القصة بنجاح', 'success');
-            
-            // Reset
-            document.getElementById('storyPreview').classList.add('hidden');
-            document.getElementById('storyCaption').value = '';
-            document.getElementById('storyInput').value = '';
-        }
-
-        function viewStories(userId, stories) {
-            const viewer = document.getElementById('storyViewer');
-            viewer.classList.add('active');
-            
-            let currentIndex = 0;
-            
-            function showStory(index) {
-                if (index >= stories.length) {
-                    closeStoryViewer();
-                    return;
-                }
-                
-                const story = stories[index];
-                
-                database.ref('users/' + userId).once('value').then(userSnapshot => {
-                    const user = userSnapshot.val();
-                    document.getElementById('storyUserName').textContent = user ? user.name : 'مستخدم';
-                    document.getElementById('storyTime').textContent = formatTime(story.timestamp);
-                });
-                
-                document.getElementById('storyImage').src = story.image;
-                document.getElementById('storyCaption').textContent = story.caption || '';
-                
-                // Progress bars
-                const progressBars = document.getElementById('storyProgressBars');
-                progressBars.innerHTML = '';
-                stories.forEach((_, i) => {
-                    const bar = document.createElement('div');
-                    bar.className = 'story-progress-bar';
-                    bar.innerHTML = '<div class="story-progress-fill" style="width: ' + (i < index ? '100%' : '0%') + '"></div>';
-                    progressBars.appendChild(bar);
-                });
-                
-                // Animate current progress
-                const currentFill = progressBars.children[index].querySelector('.story-progress-fill');
-                let width = 0;
-                storyTimeout = setInterval(() => {
-                    width += 2;
-                    currentFill.style.width = width + '%';
-                    if (width >= 100) {
-                        clearInterval(storyTimeout);
-                        showStory(index + 1);
-                    }
-                }, 100);
-            }
-            
-            showStory(0);
-            
-            // Click to navigate
-            viewer.onclick = (e) => {
-                if (e.clientX > window.innerWidth / 2) {
-                    clearInterval(storyTimeout);
-                    showStory(currentIndex + 1);
-                } else {
-                    clearInterval(storyTimeout);
-                    currentIndex = Math.max(0, currentIndex - 1);
-                    showStory(currentIndex);
-                }
-            };
-        }
-
-        function closeStoryViewer() {
-            clearInterval(storyTimeout);
-            document.getElementById('storyViewer').classList.remove('active');
-        }
-
-        // ==================== Voice Messages ====================
-        async function startVoiceRecording() {
+        // =========================================
+        // Voice Recording (Messenger Style)
+        // =========================================
+        async function startRecording() {
             try {
                 const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
                 mediaRecorder = new MediaRecorder(stream);
                 audioChunks = [];
+                const micBtn = document.getElementById('mic-btn');
+                micBtn.classList.add('recording-btn');
                 
-                mediaRecorder.ondataavailable = (e) => {
-                    audioChunks.push(e.data);
-                };
+                mediaRecorder.ondataavailable = event => { audioChunks.push(event.data); };
+                mediaRecorder.start();
+            } catch(e) { alert('يجب السماح بالوصول إلى الميكروفون'); }
+        }
+
+        function stopRecording() {
+            if(mediaRecorder && mediaRecorder.state === 'recording') {
+                mediaRecorder.stop();
+                document.getElementById('mic-btn').classList.remove('recording-btn');
                 
                 mediaRecorder.onstop = () => {
-                    const audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
-                    sendVoiceMessage(audioBlob);
-                };
-                
-                mediaRecorder.start();
-                document.getElementById('voiceRecordBtn').classList.add('bg-[var(--danger)]');
-            } catch (err) {
-                showToast('فشل الوصول إلى الميكروفون', 'error');
-            }
-        }
-
-        function stopVoiceRecording() {
-            if (mediaRecorder && mediaRecorder.state !== 'inactive') {
-                mediaRecorder.stop();
-                document.getElementById('voiceRecordBtn').classList.remove('bg-[var(--danger)]');
-            }
-        }
-
-        function sendVoiceMessage(audioBlob) {
-            if (!currentChat) return;
-            
-            const reader = new FileReader();
-            reader.onload = (e) => {
-                const messageData = {
-                    audio: e.target.result,
-                    sender: currentUser.uid,
-                    timestamp: firebase.database.ServerValue.TIMESTAMP,
-                    type: 'voice',
-                    duration: '0:05',
-                    read: false
-                };
-                
-                database.ref('chats/' + currentChat + '/messages').push(messageData);
-                database.ref('chats/' + currentChat).update({
-                    lastMessage: { text: 'رسالة صوتية' },
-                    timestamp: firebase.database.ServerValue.TIMESTAMP
-                });
-            };
-            reader.readAsDataURL(audioBlob);
-        }
-
-        function playVoice(audioData) {
-            const audio = new Audio(audioData);
-            audio.play();
-        }
-
-        // ==================== File Sharing ====================
-        function handleFileSelect(event) {
-            const file = event.target.files[0];
-            if (!file || !currentChat) return;
-            
-            if (file.type.startsWith('image/')) {
-                const reader = new FileReader();
-                reader.onload = (e) => {
-                    const messageData = {
-                        image: e.target.result,
-                        sender: currentUser.uid,
-                        timestamp: firebase.database.ServerValue.TIMESTAMP,
-                        type: 'image',
-                        read: false
-                    };
-                    
-                    database.ref('chats/' + currentChat + '/messages').push(messageData);
-                    database.ref('chats/' + currentChat).update({
-                        lastMessage: { text: 'صورة' },
+                    const audioBlob = new Blob(audioChunks, { type: 'audio/mp3' });
+                    // In a real app, upload to Firebase Storage, get URL, then send message.
+                    // Here we simulate sending the voice note directly.
+                    const chatId = [currentUser.uid, currentChatId].sort().join('_');
+                    db.ref('chats/' + chatId).push({
+                        senderId: currentUser.uid,
+                        type: 'voice',
+                        duration: '0:05', // Simulated
+                        // audioUrl: downloadURL, 
                         timestamp: firebase.database.ServerValue.TIMESTAMP
                     });
+                    playNotificationSound('send');
                 };
-                reader.readAsDataURL(file);
             }
         }
 
-        // ==================== Calls ====================
-        function startCall(type) {
-            openModal('callModal');
-            document.getElementById('callStatus').textContent = type === 'video' ? 'جاري الاتصال بالفيديو...' : 'جاري الاتصال...';
+        // =========================================
+        // Calls (Realistic Simulation)
+        // =========================================
+        function startCall() {
+            if(!currentChatId) return;
+            const overlay = document.getElementById('call-overlay');
+            overlay.style.display = 'flex';
+            document.getElementById('call-status').innerText = 'جاري الاتصال...';
             
-            // Simulate call (in real app, use WebRTC)
-            setTimeout(() => {
-                document.getElementById('callStatus').textContent = 'لا يوجد رد';
-                setTimeout(() => {
-                    closeModal('callModal');
-                }, 2000);
-            }, 5000);
+            // Simulate 15s wait
+            setTimeout(() => { document.getElementById('call-status').innerText = 'مكالمة جارية 00:15'; }, 15000);
+            
+            // Auto end after 1 min for demo
+            setTimeout(() => { endCall(); }, 60000);
         }
 
         function endCall() {
-            closeModal('callModal');
+            document.getElementById('call-overlay').style.display = 'none';
         }
 
-        // ==================== AI Assistant ====================
-        function sendAiMessage() {
-            const input = document.getElementById('aiInput');
-            const message = input.value.trim();
-            if (!message) return;
-            
-            const container = document.getElementById('aiChatContainer');
-            
-            // User message
-            const userMsg = document.createElement('div');
-            userMsg.className = 'chat-bubble sent ml-auto';
-            userMsg.innerHTML = `<p>${message}</p>`;
-            container.appendChild(userMsg);
-            
-            // AI response
-            setTimeout(() => {
-                const aiMsg = document.createElement('div');
-                aiMsg.className = 'chat-bubble received';
-                const response = getAiResponse(message);
-                aiMsg.innerHTML = `<p style="white-space: pre-line">${response}</p>`;
-                container.appendChild(aiMsg);
-                container.scrollTop = container.scrollHeight;
-            }, 500);
-            
-            input.value = '';
-            container.scrollTop = container.scrollHeight;
-        }
+        // =========================================
+        // Stories (Hold to pause, Video support)
+        // =========================================
+        let stories = [
+            { userId: 'bot1', username: 'جاسر اشلاف', img: 'https://via.placeholder.com/100', type: 'image', url: 'https://picsum.photos/400/700' },
+            { userId: 'bot2', username: 'مستخدم DZ', img: 'https://via.placeholder.com/100', type: 'image', url: 'https://picsum.photos/400/700?random=1' }
+        ];
+        let currentStory = 0;
 
-        function askAi(question) {
-            document.getElementById('aiInput').value = question;
-            sendAiMessage();
-        }
-
-        function getAiResponse(message) {
-            const lowerMessage = message.toLowerCase();
+        function loadStories() {
+            const bar = document.querySelector('.stories-bar');
+            // Add "Add Story" button
+            bar.innerHTML = `<div class="story-item" onclick="alert('إضافة ستوري جديدة')"><img src="https://via.placeholder.com/60" style="border: 2px dashed var(--text-secondary);"><span>إضافة</span></div>`;
             
-            for (const [key, value] of Object.entries(aiResponses)) {
-                if (lowerMessage.includes(key.toLowerCase()) || lowerMessage.includes(key)) {
-                    return value;
-                }
-            }
-            
-            if (lowerMessage.includes('مرحبا') || lowerMessage.includes('اهلا')) {
-                return 'أهلاً بك! كيف يمكنني مساعدتك في استخدام DZ CLOSE؟';
-            }
-            
-            if (lowerMessage.includes('شكرا')) {
-                return 'العفو! أنا هنا للمساعدة دائماً.';
-            }
-            
-            if (lowerMessage.includes('ميزات')) {
-                return 'DZ CLOSE يوفر العديد من الميزات:\n- محادثات خاصة ومشفرة\n- مجموعات دردشة\n- قصص (ستوريز)\n- مكالمات صوتية ومرئية\n- مشاركة الصور والملفات\n- رسائل صوتية\n- مظهر قابل للتخصيص\nوالمزيد!';
-            }
-            
-            return 'عذراً، لم أفهم سؤالك. يمكنك السؤال عن:\n- إنشاء مجموعة\n- إضافة أصدقاء\n- تغيير المظهر\n- نشر قصة\n- أو أي ميزة أخرى في التطبيق';
-        }
-
-        // ==================== Settings ====================
-        function setTheme(theme) {
-            document.body.className = theme === 'default' ? '' : `theme-${theme}`;
-            document.querySelectorAll('.theme-option').forEach(btn => btn.classList.remove('active'));
-            document.querySelector(`[data-theme="${theme}"]`).classList.add('active');
-            localStorage.setItem('dzclose-theme', theme);
-        }
-
-        function loadTheme() {
-            const savedTheme = localStorage.getItem('dzclose-theme') || 'default';
-            setTheme(savedTheme);
-        }
-
-        function saveSettings() {
-            const name = document.getElementById('settingsName').value;
-            const bio = document.getElementById('settingsBio').value;
-            
-            database.ref('users/' + currentUser.uid).update({
-                name: name,
-                bio: bio
-            });
-            
-            closeModal('settingsModal');
-            showToast('تم حفظ الإعدادات', 'success');
-        }
-
-        function handleAvatarChange(event) {
-            const file = event.target.files[0];
-            if (!file) return;
-            
-            const reader = new FileReader();
-            reader.onload = (e) => {
-                database.ref('users/' + currentUser.uid).update({
-                    avatar: e.target.result
-                });
-                showToast('تم تحديث الصورة الشخصية', 'success');
-            };
-            reader.readAsDataURL(file);
-        }
-
-        // ==================== Emoji Picker ====================
-        function loadEmojiPicker() {
-            const picker = document.getElementById('emojiPicker');
-            emojis.forEach(emoji => {
-                const btn = document.createElement('button');
-                btn.className = 'emoji-btn';
-                btn.textContent = emoji;
-                btn.onclick = () => insertEmoji(emoji);
-                picker.appendChild(btn);
+            stories.forEach((story, index) => {
+                bar.innerHTML += `<div class="story-item" onclick="viewStory(${index})"><img src="${story.img}"><span>${story.username}</span></div>`;
             });
         }
 
-        function openEmojiPicker() {
-            const picker = document.getElementById('emojiPicker');
-            picker.classList.toggle('hidden');
-        }
-
-        function insertEmoji(emoji) {
-            const input = document.getElementById('messageInput');
-            input.value += emoji;
-            input.focus();
-            document.getElementById('emojiPicker').classList.add('hidden');
-        }
-
-        // ==================== Utility Functions ====================
-        function openModal(modalId) {
-            document.getElementById(modalId).classList.add('active');
-        }
-
-        function closeModal(modalId) {
-            document.getElementById(modalId).classList.remove('active');
-        }
-
-        function toggleSidebar() {
-            document.getElementById('sidebar').classList.toggle('open');
-        }
-
-        function togglePassword(inputId) {
-            const input = document.getElementById(inputId);
-            input.type = input.type === 'password' ? 'text' : 'password';
-        }
-
-        function switchTab(tabName) {
-            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-            document.querySelectorAll('.tab-content').forEach(content => content.classList.add('hidden'));
+        function viewStory(index) {
+            currentStory = index;
+            isStoryPaused = false;
+            const viewer = document.getElementById('story-viewer');
+            viewer.style.display = 'flex';
             
-            event.target.classList.add('active');
-            document.getElementById(tabName + 'Tab').classList.remove('hidden');
-        }
-
-        function switchNav(nav) {
-            // Mobile navigation
-            document.querySelectorAll('.nav-btn').forEach(btn => {
-                btn.classList.remove('text-[var(--accent)]');
-                btn.classList.add('text-[var(--text-muted)]');
-            });
-            event.currentTarget.classList.remove('text-[var(--text-muted)]');
-            event.currentTarget.classList.add('text-[var(--accent)]');
-        }
-
-        function handleSearch(query) {
-            // Implement search functionality
-            console.log('Searching:', query);
-        }
-
-        function formatTime(timestamp) {
-            const date = new Date(timestamp);
-            const now = new Date();
-            const diff = now - date;
+            const story = stories[index];
+            document.getElementById('story-user-avatar').src = story.img;
+            document.getElementById('story-user-name').innerText = story.username;
             
-            if (diff < 60000) return 'الآن';
-            if (diff < 3600000) return Math.floor(diff / 60000) + ' د';
-            if (diff < 86400000) return Math.floor(diff / 3600000) + ' س';
-            return date.toLocaleDateString('ar-DZ');
-        }
-
-        function showNotification(title, body) {
-            if ('Notification' in window && Notification.permission === 'granted') {
-                new Notification(title, { body: body });
-            }
-        }
-
-        function showToast(message, type = 'success') {
-            const toast = document.getElementById('toast');
-            const icon = document.getElementById('toastIcon');
-            const msg = document.getElementById('toastMessage');
-            
-            msg.textContent = message;
-            
-            if (type === 'success') {
-                icon.setAttribute('stroke', 'var(--success)');
-            } else if (type === 'error') {
-                icon.setAttribute('stroke', 'var(--danger)');
+            const content = document.getElementById('story-content');
+            if(story.type === 'image') {
+                content.innerHTML = `<img src="${story.url}" style="height: 70vh; object-fit: contain;">`;
             } else {
-                icon.setAttribute('stroke', 'var(--accent)');
+                // Video Simulation
+                content.innerHTML = `<video src="${story.url}" autoplay style="height: 70vh;"></video>`;
             }
+
+            // Progress Bar
+            const progress = document.getElementById('story-progress');
+            progress.innerHTML = '';
+            stories.forEach((_, i) => {
+                const bar = document.createElement('div');
+                bar.className = `progress-bar ${i <= index ? 'active' : ''}`;
+                progress.appendChild(bar);
+            });
+
+            // Auto Next Story (5 seconds)
+            clearInterval(storyTimer);
+            let timeLeft = 5000;
+            storyTimer = setInterval(() => {
+                if(!isStoryPaused) {
+                    timeLeft -= 100;
+                    if(timeLeft <= 0) {
+                        clearInterval(storyTimer);
+                        if(index < stories.length - 1) viewStory(index + 1);
+                        else closeStory();
+                    }
+                }
+            }, 100);
+        }
+
+        function pauseStory() { isStoryPaused = true; }
+        function resumeStory() { isStoryPaused = false; }
+        function closeStory() { clearInterval(storyTimer); document.getElementById('story-viewer').style.display = 'none'; }
+
+        // =========================================
+        // Themes & Sounds
+        // =========================================
+        const themes = ['', 'light', 'red'];
+        let themeIndex = 0;
+
+        function changeTheme() {
+            themeIndex++;
+            if(themeIndex >= themes.length) themeIndex = 0;
+            document.documentElement.setAttribute('data-theme', themes[themeIndex]);
+            playNotificationSound('click');
+        }
+
+        function playNotificationSound(type) {
+            // Base64 Encoded short beep sounds to avoid external files
+            const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            const oscillator = audioCtx.createOscillator();
+            const gainNode = audioCtx.createGain();
+            oscillator.connect(gainNode);
+            gainNode.connect(audioCtx.destination);
             
-            toast.classList.add('show');
-            setTimeout(() => {
-                toast.classList.remove('show');
-            }, 3000);
+            if(type === 'send') { oscillator.frequency.value = 800; gainNode.gain.value = 0.1; }
+            else if(type === 'open') { oscillator.frequency.value = 600; gainNode.gain.value = 0.1; }
+            else { oscillator.frequency.value = 500; gainNode.gain.value = 0.05; }
+            
+            oscillator.start();
+            oscillator.stop(audioCtx.currentTime + 0.1);
         }
 
-        function getArabicError(errorCode) {
-            const errors = {
-                'auth/user-not-found': 'المستخدم غير موجود',
-                'auth/wrong-password': 'كلمة المرور غير صحيحة',
-                'auth/email-already-in-use': 'البريد الإلكتروني مستخدم بالفعل',
-                'auth/weak-password': 'كلمة المرور ضعيفة جداً',
-                'auth/invalid-email': 'البريد الإلكتروني غير صالح',
-                'auth/user-disabled': 'تم تعطيل هذا الحساب',
-                'auth/too-many-requests': 'عدد محاولات كثيرة، حاول لاحقاً'
-            };
-            return errors[errorCode] || errorCode;
-        }
+        // =========================================
+        // AI Assistant (Teaches the App)
+        // =========================================
+        function toggleAI() { const w = document.getElementById('ai-window'); w.style.display = w.style.display === 'flex' ? 'none' : 'flex'; }
 
-        function playMessageTone() {
-            const tone = document.getElementById('messageTone').value;
-            if (tone === 'none') return;
-            // Play tone (in real app, load actual audio files)
-            console.log('Playing tone:', tone);
-        }
+        function sendAiMsg() {
+            const input = document.getElementById('ai-input');
+            const text = input.value.toLowerCase();
+            if(!text) return;
+            
+            addAiBubble(text, 'ai-user');
+            input.value = '';
 
-        // Request notification permission
-        if ('Notification' in window) {
-            Notification.requestPermission();
-        }
-
-        // Close emoji picker when clicking outside
-        document.addEventListener('click', (e) => {
-            const picker = document.getElementById('emojiPicker');
-            if (!picker.contains(e.target) && !e.target.closest('[onclick="openEmojiPicker()"]')) {
-                picker.classList.add('hidden');
+            let reply = "عذراً، لم أفهم سؤالك. حاول السؤال عن: الستوريز، المكالمات، تغيير الثيم، أو كيفية التسجيل.";
+            
+            if(text.includes('ستوري') || text.includes('قصص')) {
+                reply = "لمشاهدة الستوري، اضغط على صورة صديقك في أعلى القائمة. يمكنك **الضغط مع الاستمرار (Hold)** لإيقاف الستوري مؤقتاً، ورفع إصبعك للاستمرار. إذا كانت الستوري فيديو، ستشتغل تلقائياً!";
+            } else if(text.includes('مكالم') || text.includes('اتصال')) {
+                reply = "لإجراء مكالمة، افتح دردشة الصديق واضغط على أيقونة الهاتف أو الفيديو في الأعلى. المكالمة ستبدأ بحالة 'جاري الاتصال...' لمدة 15 ثانية واقعية قبل أن تبدأ المكالمة الوهمية!";
+            } else if(text.includes('ثيم') || text.includes('وضع') || text.includes('ليلي')) {
+                reply = "لتغيير الثيم، اضغط على أيقونة **اللوحة (🎨)** في أعلى القائمة الجانبية. التطبيق يدعم الوضع الليلي، الفاتح، والوردي!";
+            } else if(text.includes('صوت') || text.includes('رسالة صوتية')) {
+                reply = "لتسجيل رسالة صوتية مثل الماسنجر، اضغط مع الاستمرار على أيقونة **الميكروفون (🎤)**. أثناء التسجيل، سيتحول اللون لأحمر. ارفع إصبعك لإرسالها فوراً!";
+            } else if(text.includes('من صنع') || text.includes('مبرمج')) {
+                reply = "تم صنع هذا التطبيق بالكامل بواسطة المبرمج الجزائري الشاب **جاسر اشلاف**! 🇩🇿";
             }
-        });
 
-        // Keyboard shortcuts
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape') {
-                document.querySelectorAll('.modal-overlay.active').forEach(modal => {
-                    modal.classList.remove('active');
-                });
-                closeStoryViewer();
-            }
-        });
+            setTimeout(() => addAiBubble(reply, 'ai-bot'), 1000);
+        }
+
+        function addAiBubble(text, cls) {
+            const div = document.createElement('div');
+            div.className = `ai-msg ${cls}`;
+            div.innerText = text;
+            document.getElementById('ai-messages').appendChild(div);
+            document.getElementById('ai-messages').scrollTop = 99999;
+        }
+
+        // Tab switching logic (Simulated)
+        function switchTab(tab) {
+            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+            event.target.closest('.nav-item').classList.add('active');
+            // In a full app, this would filter the chat-list based on Friends/Groups schema.
+            if(tab === 'groups') alert('ميزة الغروبات قيد التطوير باستخدام الـ Schema الخاص بك!');
+        }
+
     </script>
 </body>
 </html>
