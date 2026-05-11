@@ -1125,24 +1125,25 @@
         </div>
     </div>
 
-    <!-- Firebase Compat SDK -->
-    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-storage-compat.js"></script>
+    <!-- Firebase Compat SDK (Updated to v10.12.0 for compatibility) -->
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-storage-compat.js"></script>
 
     <script>
         // ============================================
-        // FIREBASE CONFIGURATION
+        // FIREBASE CONFIGURATION (Updated)
         // ============================================
         const firebaseConfig = {
-            apiKey: "AIzaSyAT0NJkXBVzMGk4Watp7PsCHfBq27HGl9E",
-            authDomain: "djasser-chat-d39b3.firebaseapp.com",
-            projectId: "djasser-chat-d39b3",
-            storageBucket: "djasser-chat-d39b3.firebasestorage.app",
-            messagingSenderId: "27428589819",
-            appId: "1:27428589819:web:907b0c6d790b4cc3f1e05e",
-            measurementId: "G-ZMPNELY0XP"
+            apiKey: "AIzaSyDQmWof8RhM8yef5MQDQ2Cc3KtMr7RQVHA",
+            authDomain: "djasser-137e1.firebaseapp.com",
+            databaseURL: "https://djasser-137e1-default-rtdb.firebaseio.com",
+            projectId: "djasser-137e1",
+            storageBucket: "djasser-137e1.firebasestorage.app",
+            messagingSenderId: "204637393208",
+            appId: "1:204637393208:web:236fea510daa1d0f66f1cd",
+            measurementId: "G-HCDEQ72HYD"
         };
 
         // Initialize Firebase
@@ -1374,7 +1375,6 @@
                 });
             } catch (error) {
                 console.error('Error loading conversations:', error);
-                // Show user-friendly message about Firestore index
                 showNotification('Note: If this is your first time, you may need to create a Firestore composite index. Check the console for details.', 'error');
                 console.log('If you see an error about a composite index, please create one in Firebase Console with:');
                 console.log('- Collection: conversations');
