@@ -1,785 +1,3048 @@
-<!DOCTYPE html>
-<html lang="ar" dir="rtl">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DZ CLOSE - by Jasser Achalaf</title>
-    
-    <!-- Firebase SDKs -->
-    <script src="https://www.gstatic.com/firebasejs/9.8.4/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.8.4/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.8.4/firebase-database-compat.js"></script>
-    
-    <!-- Icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
-    <style>
-        /* =========================================
-           CSS Variables & Themes (DZ CLOSE Style)
-           ========================================= */
-        :root {
-            --primary: #0088cc; /* WhatsApp/Twitter like blue */
-            --bg-main: #0b141a;
-            --bg-secondary: #111b21;
-            --bg-chat: #0b141a;
-            --text-main: #e9edef;
-            --text-secondary: #8696a0;
-            --border-color: #222d34;
-            --msg-sent: #005c4b;
-            --msg-received: #202c33;
-            --hover-bg: #202c33;
-        }
+<!DOCTYPE html><html lang="ar" dir="rtl"><head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>DZ CLOSE — تواصل بلا حدود</title>
+  <meta name="description" content="DZ CLOSE — تطبيق الدردشة الأكثر تميزاً. دردش، شارك، اتصل بأصدقائك في لحظة."/>
+  <meta property="og:title" content="DZ CLOSE — تواصل بلا حدود"/>
+  <meta property="og:description" content="تطبيق الدردشة الأكثر تميزاً في الجزائر. دردش، شارك، اتصل."/>
+  <meta property="og:url" content="https://www.onspace.ai"/>
+  <meta property="og:type" content="website"/>
+  <meta property="og:site_name" content="DZ CLOSE"/>
+  <meta property="og:image" content="https://cdn-ai.onspace.ai/onspace/project/screenshot/online/pre-site/9bhu6l.jpg"/>
+  <meta property="og:image:width" content="1200"/>
+  <meta property="og:image:height" content="630"/>
+  <meta name="twitter:card" content="summary_large_image"/>
+  <meta name="twitter:title" content="DZ CLOSE — تواصل بلا حدود"/>
+  <meta name="twitter:description" content="تطبيق الدردشة الأكثر تميزاً في الجزائر."/>
+  <meta name="twitter:image" content="https://cdn-ai.onspace.ai/onspace/project/screenshot/online/pre-site/9bhu6l.jpg"/>
 
-        [data-theme="light"] {
-            --bg-main: #f0f2f5;
-            --bg-secondary: #ffffff;
-            --bg-chat: #efeae2;
-            --text-main: #111b21;
-            --text-secondary: #667781;
-            --border-color: #e9edef;
-            --msg-sent: #d9fdd3;
-            --msg-received: #ffffff;
-            --hover-bg: #f5f6f6;
-        }
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin=""/>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800;900&amp;family=Tajawal:wght@300;400;500;700;800&amp;display=swap" rel="stylesheet"/>
 
-        [data-theme="red"] {
-            --primary: #e91e63;
-            --msg-sent: #880e4f;
-        }
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            transition: background-color 0.3s, color 0.3s;
-        }
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
 
-        body {
-            background-color: var(--bg-main);
-            color: var(--text-main);
-            height: 100vh;
-            overflow: hidden;
-        }
+  <!-- Firebase SDKs (compat) -->
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-storage-compat.js"></script>
 
-        /* =========================================
-           Auth Screens
-           ========================================= */
-        .auth-container {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            background: linear-gradient(135deg, var(--primary), #0b141a);
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: { cairo: ['Cairo','Tajawal','sans-serif'] },
+          colors: {
+            dz: {
+              50:'#f0f9ff', 100:'#e0f2fe', 200:'#bae6fd',
+              300:'#7dd3fc', 400:'#38bdf8', 500:'#0ea5e9',
+              600:'#0284c7', 700:'#0369a1', 800:'#075985', 900:'#0c4a6e'
+            }
+          }
         }
-        .auth-box {
-            background: var(--bg-secondary);
-            padding: 40px;
-            border-radius: 15px;
-            width: 400px;
-            max-width: 90%;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-            text-align: center;
-        }
-        .auth-box h1 { color: var(--primary); margin-bottom: 10px; font-size: 2.5em; }
-        .auth-box p { color: var(--text-secondary); margin-bottom: 20px; }
-        .auth-box input {
-            width: 100%; padding: 12px; margin: 10px 0;
-            background: var(--bg-main); border: none; border-radius: 8px;
-            color: var(--text-main); font-size: 16px; outline: none;
-        }
-        .btn {
-            width: 100%; padding: 12px; margin: 10px 0;
-            background: var(--primary); border: none; border-radius: 8px;
-            color: white; font-size: 16px; cursor: pointer; font-weight: bold;
-        }
-        .btn:hover { opacity: 0.8; }
-        .link-btn { background: none; border: none; color: var(--primary); cursor: pointer; margin-top: 10px; }
+      }
+    };
+  </script>
 
-        /* =========================================
-           Main App Layout (Responsive)
-           ========================================= */
-        #app-container { display: none; height: 100vh; }
-        .app-layout { display: flex; height: 100vh; }
-        
-        /* Sidebar */
-        .sidebar {
-            width: 400px; background: var(--bg-secondary);
-            border-left: 1px solid var(--border-color);
-            display: flex; flex-direction: column; position: relative;
-        }
-        .sidebar-header {
-            padding: 15px; display: flex; justify-content: space-between;
-            align-items: center; background: var(--bg-secondary);
-            border-bottom: 1px solid var(--border-color);
-        }
-        .sidebar-header .user-avatar { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; }
-        .sidebar-nav { display: flex; justify-content: space-around; padding: 10px 0; border-bottom: 1px solid var(--border-color); }
-        .nav-item { color: var(--text-secondary); font-size: 20px; cursor: pointer; padding: 10px 20px; border-radius: 8px; }
-        .nav-item.active { color: var(--primary); background: var(--hover-bg); }
-        
-        .search-bar { padding: 10px; }
-        .search-bar input {
-            width: 100%; padding: 10px 15px; background: var(--bg-main);
-            border: none; border-radius: 20px; color: var(--text-main); outline: none;
-        }
-        
-        .chat-list { flex: 1; overflow-y: auto; }
-        .chat-item {
-            display: flex; padding: 15px; cursor: pointer; border-bottom: 1px solid var(--border-color);
-        }
-        .chat-item:hover { background: var(--hover-bg); }
-        .chat-item img { width: 50px; height: 50px; border-radius: 50%; margin-left: 15px; }
-        .chat-info { flex: 1; }
-        .chat-name { font-weight: bold; display: flex; justify-content: space-between; }
-        .chat-last-msg { color: var(--text-secondary); font-size: 14px; margin-top: 5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 200px;}
-        .online-dot { width: 10px; height: 10px; background: #4caf50; border-radius: 50%; display: inline-block; margin-right: 5px; }
+  <style>
+    /* ========== BASE RESET ========== */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { height: 100%; overflow: hidden; font-family: 'Cairo', 'Tajawal', sans-serif; }
 
-        /* Stories Bar */
-        .stories-bar { display: flex; padding: 15px; overflow-x: auto; border-bottom: 1px solid var(--border-color); }
-        .story-item { margin-left: 15px; text-align: center; cursor: pointer; }
-        .story-item img { width: 60px; height: 60px; border-radius: 50%; border: 2px solid var(--primary); padding: 2px; }
-        .story-item span { font-size: 12px; display: block; margin-top: 5px; }
+    /* ========== THEME VARIABLES ========== */
+    :root {
+      --bg-primary: #0f172a;
+      --bg-secondary: #1e293b;
+      --bg-tertiary: #334155;
+      --bg-card: rgba(30,41,59,0.85);
+      --text-primary: #f1f5f9;
+      --text-secondary: #94a3b8;
+      --text-muted: #64748b;
+      --accent: #38bdf8;
+      --accent-hover: #0ea5e9;
+      --accent-glow: rgba(56,189,248,0.3);
+      --accent2: #a78bfa;
+      --success: #22c55e;
+      --danger: #ef4444;
+      --warning: #f59e0b;
+      --border: rgba(51,65,85,0.7);
+      --glass: rgba(15,23,42,0.6);
+      --shadow: 0 8px 32px rgba(0,0,0,0.4);
+      --msg-out: linear-gradient(135deg, #0284c7, #0ea5e9);
+      --msg-in: rgba(30,41,59,0.95);
+      --scrollbar-track: #1e293b;
+      --scrollbar-thumb: #334155;
+    }
+    body.theme-ocean {
+      --bg-primary: #001f3f; --bg-secondary: #00366d; --bg-tertiary: #004b9a;
+      --bg-card: rgba(0,54,109,0.85); --accent: #00d4ff; --accent-hover:#00b8d9;
+      --accent-glow:rgba(0,212,255,0.3); --msg-out: linear-gradient(135deg,#004b9a,#00d4ff);
+    }
+    body.theme-purple {
+      --bg-primary: #0d0b1e; --bg-secondary: #1a1535; --bg-tertiary: #2d2060;
+      --bg-card: rgba(26,21,53,0.85); --accent: #c084fc; --accent-hover:#a855f7;
+      --accent-glow:rgba(192,132,252,0.3); --msg-out: linear-gradient(135deg,#7c3aed,#c084fc);
+    }
+    body.theme-emerald {
+      --bg-primary: #022c22; --bg-secondary: #064e3b; --bg-tertiary: #065f46;
+      --bg-card: rgba(6,78,59,0.85); --accent: #34d399; --accent-hover:#10b981;
+      --accent-glow:rgba(52,211,153,0.3); --msg-out: linear-gradient(135deg,#065f46,#34d399);
+    }
+    body.theme-sunset {
+      --bg-primary: #1a0a00; --bg-secondary: #2d1500; --bg-tertiary: #4a2000;
+      --bg-card: rgba(45,21,0,0.85); --accent: #fb923c; --accent-hover:#ea580c;
+      --accent-glow:rgba(251,146,60,0.3); --msg-out: linear-gradient(135deg,#c2410c,#fb923c);
+    }
+    body.theme-light {
+      --bg-primary: #f8fafc; --bg-secondary: #f1f5f9; --bg-tertiary: #e2e8f0;
+      --bg-card: rgba(241,245,249,0.95); --text-primary: #0f172a;
+      --text-secondary: #475569; --text-muted: #94a3b8;
+      --border: rgba(226,232,240,0.8); --glass: rgba(248,250,252,0.7);
+      --msg-in: rgba(226,232,240,0.8); --accent: #0ea5e9;
+      --shadow: 0 4px 20px rgba(0,0,0,0.1);
+    }
 
-        /* Main Chat Area */
-        .main-chat {
-            flex: 1; display: flex; flex-direction: column;
-            background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
-            background-color: var(--bg-chat);
-        }
-        .chat-header {
-            padding: 15px; background: var(--bg-secondary);
-            border-bottom: 1px solid var(--border-color);
-            display: flex; align-items: center; justify-content: space-between;
-        }
-        .chat-header-info { display: flex; align-items: center; }
-        .chat-header-info img { width: 40px; height: 40px; border-radius: 50%; margin-left: 15px; }
-        .chat-header-icons i { margin: 0 10px; font-size: 20px; color: var(--text-secondary); cursor: pointer; }
+    body { background: var(--bg-primary); color: var(--text-primary); }
 
-        .messages-area { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; }
-        .message {
-            max-width: 65%; padding: 10px 15px; border-radius: 10px;
-            margin-bottom: 10px; position: relative; font-size: 15px;
-        }
-        .message.sent { background: var(--msg-sent); align-self: flex-end; border-bottom-right-radius: 0; }
-        .message.received { background: var(--msg-received); align-self: flex-start; border-bottom-left-radius: 0; }
-        .message .time { font-size: 11px; color: var(--text-secondary); text-align: left; margin-top: 5px; display: block;}
-        .voice-msg { display: flex; align-items: center; }
-        .voice-msg i { margin-left: 10px; cursor: pointer; }
-        .voice-wave { flex: 1; height: 20px; background: var(--primary); opacity: 0.5; border-radius: 10px; position: relative; overflow: hidden; }
-        .voice-wave::after { content: ''; position: absolute; top:0; left:0; width: 40%; height: 100%; background: var(--primary); }
+    /* ========== SCROLLBAR ========== */
+    ::-webkit-scrollbar { width: 5px; height: 5px; }
+    ::-webkit-scrollbar-track { background: var(--scrollbar-track); }
+    ::-webkit-scrollbar-thumb { background: var(--scrollbar-thumb); border-radius: 9999px; }
+    ::-webkit-scrollbar-thumb:hover { background: var(--accent); }
 
-        .chat-input-area {
-            padding: 15px; background: var(--bg-secondary);
-            display: flex; align-items: center; border-top: 1px solid var(--border-color);
-        }
-        .chat-input-area input { flex: 1; padding: 12px 15px; background: var(--bg-main); border: none; border-radius: 20px; color: var(--text-main); outline: none; }
-        .chat-input-area .input-actions i { margin: 0 10px; font-size: 24px; color: var(--text-secondary); cursor: pointer; }
-        .recording-btn { color: #f44336 !important; animation: pulse 1s infinite; }
-        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
+    /* ========== APP LAYOUT ========== */
+    #app { display: flex; height: 100vh; width: 100vw; overflow: hidden; position: relative; }
 
-        /* Call UI */
-        .call-overlay {
-            display: none; position: fixed; top:0; left:0; width:100%; height:100%;
-            background: rgba(0,0,0,0.9); z-index: 100; flex-direction: column;
-            justify-content: center; align-items: center; color: white;
-        }
-        .call-overlay img { width: 100px; height: 100px; border-radius: 50%; margin-bottom: 20px; }
-        .call-overlay h2 { margin-bottom: 10px; }
-        .call-overlay p { color: #4caf50; margin-bottom: 40px; }
-        .call-actions i { font-size: 30px; margin: 0 20px; padding: 15px; border-radius: 50%; cursor: pointer; }
-        .call-end { background: #f44336; color: white; }
+    /* ========== SIDEBAR ========== */
+    #sidebar {
+      width: 340px; min-width: 340px; background: var(--bg-secondary);
+      border-left: 1px solid var(--border); display: flex; flex-direction: column;
+      height: 100vh; overflow: hidden; position: relative; z-index: 10;
+      transition: transform 0.3s ease;
+    }
+    @media (max-width: 768px) {
+      #sidebar { position: fixed; top: 0; right: 0; width: 100%; min-width: unset; z-index: 50;
+        transform: translateX(0); }
+      #sidebar.hidden-mobile { transform: translateX(100%); }
+      #chat-panel { width: 100%; }
+      #chat-panel.hidden-mobile { display: none; }
+    }
 
-        /* Story Viewer */
-        .story-viewer {
-            display: none; position: fixed; top:0; left:0; width:100%; height:100%;
-            background: black; z-index: 200; justify-content: center; align-items: center;
-            flex-direction: column; color: white;
-        }
-        .story-viewer video, .story-viewer img { max-width: 100%; max-height: 80vh; }
-        .story-progress { position: absolute; top: 20px; width: 90%; display: flex; }
-        .progress-bar { flex: 1; height: 3px; background: rgba(255,255,255,0.3); margin: 0 2px; }
-        .progress-bar.active { background: white; }
-        .story-header { position: absolute; top: 40px; width: 90%; display: flex; align-items: center; }
-        .story-header img { width: 40px; height: 40px; border-radius: 50%; margin-left: 10px; }
-        .story-close { position: absolute; top: 40px; left: 40px; font-size: 30px; cursor: pointer; }
+    /* ========== GLASS CARD ========== */
+    .glass {
+      background: var(--bg-card);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid var(--border);
+    }
 
-        /* AI Assistant */
-        .ai-window {
-            display: none; position: fixed; bottom: 20px; left: 20px; width: 350px; height: 500px;
-            background: var(--bg-secondary); border-radius: 15px; box-shadow: 0 5px 25px rgba(0,0,0,0.5);
-            flex-direction: column; z-index: 50; overflow: hidden;
-        }
-        .ai-header { padding: 15px; background: var(--primary); color: white; display: flex; justify-content: space-between; }
-        .ai-messages { flex: 1; padding: 15px; overflow-y: auto; }
-        .ai-msg { margin-bottom: 10px; padding: 10px; border-radius: 10px; max-width: 80%; }
-        .ai-bot { background: var(--hover-bg); }
-        .ai-user { background: var(--primary); color: white; margin-right: auto; margin-left: 0; text-align: left;}
-        .ai-input { padding: 10px; border-top: 1px solid var(--border-color); display: flex; }
-        .ai-input input { flex: 1; padding: 8px; background: var(--bg-main); border: none; color: var(--text-main); outline: none; border-radius: 15px;}
+    /* ========== GLOW BUTTON ========== */
+    .btn-accent {
+      background: var(--accent); color: #0f172a; font-weight: 700;
+      border: none; border-radius: 12px; cursor: pointer;
+      transition: all 0.2s ease; position: relative; overflow: hidden;
+    }
+    .btn-accent:hover {
+      background: var(--accent-hover);
+      box-shadow: 0 0 20px var(--accent-glow);
+      transform: translateY(-1px);
+    }
+    .btn-accent:active { transform: translateY(0); }
 
-        /* Responsive */
-        @media (max-width: 768px) {
-            .sidebar { width: 100%; position: absolute; z-index: 10; }
-            .main-chat { display: none; }
-            .app-layout.chat-open .sidebar { display: none; }
-            .app-layout.chat-open .main-chat { display: flex; }
-            .ai-window { width: 90%; left: 5%; bottom: 10px; height: 60vh; }
-        }
+    /* ========== AVATAR ========== */
+    .avatar {
+      border-radius: 50%; object-fit: cover;
+      border: 2px solid var(--border); flex-shrink: 0;
+    }
+    .avatar-online { border-color: var(--success) !important; }
+    .online-dot {
+      width: 11px; height: 11px; background: var(--success);
+      border-radius: 50%; border: 2px solid var(--bg-secondary);
+      position: absolute; bottom: 1px; left: 1px;
+    }
+    .offline-dot {
+      width: 11px; height: 11px; background: var(--text-muted);
+      border-radius: 50%; border: 2px solid var(--bg-secondary);
+      position: absolute; bottom: 1px; left: 1px;
+    }
 
-        /* Scrollbar */
-        ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-track { background: var(--bg-main); }
-        ::-webkit-scrollbar-thumb { background: var(--text-secondary); border-radius: 3px; }
-    </style>
+    /* ========== CHAT BUBBLE ========== */
+    .msg-out {
+      background: var(--msg-out);
+      color: #fff;
+      border-radius: 18px 4px 18px 18px;
+      max-width: 72%; align-self: flex-start;
+      word-break: break-word;
+    }
+    .msg-in {
+      background: var(--msg-in);
+      color: var(--text-primary);
+      border: 1px solid var(--border);
+      border-radius: 4px 18px 18px 18px;
+      max-width: 72%; align-self: flex-end;
+      word-break: break-word;
+    }
+    .msg-container { display: flex; flex-direction: column; gap: 4px; padding: 0 16px; }
+    .msg-row { display: flex; gap: 8px; margin-bottom: 4px; align-items: flex-end; }
+    .msg-row.out { flex-direction: row; }
+    .msg-row.in { flex-direction: row-reverse; }
+
+    /* ========== INPUT ========== */
+    .dz-input {
+      background: var(--bg-tertiary); border: 1px solid var(--border);
+      color: var(--text-primary); border-radius: 12px;
+      padding: 10px 14px; width: 100%; outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+      font-family: 'Cairo', sans-serif;
+    }
+    .dz-input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-glow); }
+    .dz-input::placeholder { color: var(--text-muted); }
+
+    /* ========== CHAT LIST ITEM ========== */
+    .chat-item {
+      display: flex; align-items: center; gap: 10px; padding: 10px 14px;
+      cursor: pointer; transition: background 0.15s; border-radius: 12px; margin: 2px 8px;
+    }
+    .chat-item:hover, .chat-item.active {
+      background: var(--bg-tertiary);
+    }
+    .chat-item.active { border-right: 3px solid var(--accent); }
+
+    /* ========== STORY RING ========== */
+    .story-ring {
+      border-radius: 50%; padding: 2px;
+      background: linear-gradient(135deg, var(--accent), var(--accent2), #f43f5e);
+    }
+    .story-ring-seen { background: var(--bg-tertiary); }
+
+    /* ========== STORIES VIEWER ========== */
+    #stories-viewer {
+      position: fixed; inset: 0; z-index: 200;
+      background: rgba(0,0,0,0.95);
+      display: none; align-items: center; justify-content: center;
+    }
+    #stories-viewer.open { display: flex; }
+    .story-progress {
+      height: 3px; background: rgba(255,255,255,0.3);
+      border-radius: 9999px; overflow: hidden; flex: 1;
+    }
+    .story-progress-fill {
+      height: 100%; background: #fff; width: 0%;
+      transition: width linear;
+    }
+
+    /* ========== CALL OVERLAY ========== */
+    #call-overlay {
+      position: fixed; inset: 0; z-index: 300;
+      background: var(--bg-primary);
+      display: none; flex-direction: column;
+      align-items: center; justify-content: center; gap: 24px;
+    }
+    #call-overlay.open { display: flex; }
+    .call-btn {
+      width: 60px; height: 60px; border-radius: 50%; border: none;
+      cursor: pointer; font-size: 22px; display: flex;
+      align-items: center; justify-content: center;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .call-btn:hover { transform: scale(1.1); }
+    .pulse-ring {
+      position: absolute; inset: -8px; border-radius: 50%;
+      border: 2px solid var(--accent); animation: pulse-ring 1.5s ease infinite;
+    }
+    @keyframes pulse-ring { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.3;transform:scale(1.15)} }
+
+    /* ========== VOICE RECORD ========== */
+    #voice-recorder {
+      position: absolute; bottom: 70px; left: 0; right: 0;
+      background: var(--bg-secondary); border-top: 1px solid var(--border);
+      padding: 12px 16px; display: none; align-items: center; gap: 12px;
+    }
+    #voice-recorder.open { display: flex; }
+    .waveform-bar {
+      width: 3px; background: var(--accent); border-radius: 9999px;
+      animation: wave 0.6s ease-in-out infinite;
+    }
+    @keyframes wave {
+      0%,100%{height:8px} 50%{height:24px}
+    }
+
+    /* ========== TYPING INDICATOR ========== */
+    .typing-dot {
+      width: 6px; height: 6px; border-radius: 50%;
+      background: var(--accent); animation: typing 1s infinite;
+    }
+    .typing-dot:nth-child(2){animation-delay:0.2s}
+    .typing-dot:nth-child(3){animation-delay:0.4s}
+    @keyframes typing{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+
+    /* ========== MODAL ========== */
+    .modal-overlay {
+      position: fixed; inset: 0; z-index: 150;
+      background: rgba(0,0,0,0.7);
+      display: none; align-items: center; justify-content: center;
+      padding: 16px;
+    }
+    .modal-overlay.open { display: flex; }
+    .modal-box {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      border-radius: 20px; width: 100%; max-width: 460px;
+      max-height: 85vh; overflow-y: auto;
+      padding: 28px; position: relative;
+    }
+
+    /* ========== AI ASSISTANT ========== */
+    #ai-panel {
+      position: fixed; bottom: 0; left: 0; right: 0;
+      z-index: 100; transform: translateY(100%);
+      transition: transform 0.4s cubic-bezier(0.34,1.56,0.64,1);
+      background: var(--bg-secondary);
+      border-top: 1px solid var(--border);
+      border-radius: 24px 24px 0 0;
+      padding: 16px; max-height: 70vh;
+    }
+    #ai-panel.open { transform: translateY(0); }
+    @media(min-width:769px){
+      #ai-panel { right: unset; width: 380px; bottom: 20px; left: 20px;
+        border-radius: 20px; transform: scale(0.9) translateY(20px);
+        opacity: 0; pointer-events: none; }
+      #ai-panel.open { transform: scale(1) translateY(0); opacity: 1; pointer-events: all; }
+    }
+
+    /* ========== NOTIFICATION TOAST ========== */
+    #toast-container {
+      position: fixed; top: 20px; left: 50%; transform: translateX(-50%);
+      z-index: 999; display: flex; flex-direction: column; gap: 8px;
+      pointer-events: none;
+    }
+    .toast {
+      background: var(--bg-secondary); border: 1px solid var(--border);
+      border-radius: 14px; padding: 12px 20px; color: var(--text-primary);
+      font-size: 14px; font-family:'Cairo',sans-serif;
+      box-shadow: var(--shadow); pointer-events: all;
+      animation: slideDown 0.3s ease, fadeOut 0.3s ease 2.7s forwards;
+      display: flex; align-items: center; gap: 10px;
+    }
+    @keyframes slideDown { from{transform:translateY(-20px);opacity:0} to{transform:translateY(0);opacity:1} }
+    @keyframes fadeOut { to{opacity:0;transform:translateY(-10px)} }
+
+    /* ========== AUTH SCREEN ========== */
+    #auth-screen {
+      position: fixed; inset: 0; z-index: 500;
+      background: var(--bg-primary);
+      display: flex; align-items: center; justify-content: center;
+      overflow-y: auto; padding: 20px;
+    }
+    .auth-card {
+      width: 100%; max-width: 420px;
+      background: var(--bg-card);
+      backdrop-filter: blur(20px);
+      border: 1px solid var(--border);
+      border-radius: 24px; padding: 36px 32px;
+    }
+
+    /* ========== ANIMATED BACKGROUND ========== */
+    .bg-orb {
+      position: fixed; border-radius: 50%;
+      filter: blur(80px); opacity: 0.15; pointer-events: none; z-index: 0;
+      animation: float 8s ease-in-out infinite;
+    }
+    @keyframes float{0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(-30px) scale(1.05)}}
+
+    /* ========== MISC ========== */
+    .badge {
+      min-width: 18px; height: 18px; background: var(--danger);
+      border-radius: 9999px; font-size: 10px; font-weight: 700;
+      display: flex; align-items: center; justify-content: center;
+      color: #fff; padding: 0 4px;
+    }
+    .divider { height: 1px; background: var(--border); margin: 8px 0; }
+    .tab-btn {
+      flex: 1; padding: 8px; border: none; background: transparent;
+      color: var(--text-muted); cursor: pointer; border-radius: 10px;
+      font-family: 'Cairo',sans-serif; font-weight: 600; font-size: 13px;
+      transition: all 0.2s;
+    }
+    .tab-btn.active { background: var(--bg-tertiary); color: var(--accent); }
+
+    /* ========== EMOJI PICKER ========== */
+    .emoji-grid { display: grid; grid-template-columns: repeat(8,1fr); gap: 4px; }
+    .emoji-btn { font-size: 22px; padding: 4px; cursor: pointer; border-radius: 8px;
+      text-align: center; transition: background 0.15s; border:none; background:transparent; }
+    .emoji-btn:hover { background: var(--bg-tertiary); }
+
+    /* ========== REACTION POPUP ========== */
+    .reaction-popup {
+      position: absolute; bottom: 100%; background: var(--bg-secondary);
+      border: 1px solid var(--border); border-radius: 30px;
+      padding: 6px 10px; display: none; gap: 4px; z-index: 20;
+    }
+    .msg-row:hover .reaction-popup { display: flex; }
+    .reaction-emoji { font-size: 20px; cursor: pointer; transition: transform 0.15s; }
+    .reaction-emoji:hover { transform: scale(1.4); }
+
+    /* ========== LOADING SPINNER ========== */
+    .spinner {
+      width: 36px; height: 36px; border: 3px solid var(--border);
+      border-top-color: var(--accent); border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+    @keyframes spin { to{transform:rotate(360deg)} }
+
+    /* ========== STATUS BAR ========== */
+    .status-indicator {
+      display: inline-flex; align-items: center; gap: 5px;
+      font-size: 12px; color: var(--text-secondary);
+    }
+
+    /* ========== IMAGE PREVIEW ========== */
+    #img-preview-overlay {
+      position: fixed; inset: 0; z-index: 400; background: rgba(0,0,0,0.95);
+      display: none; align-items: center; justify-content: center;
+    }
+    #img-preview-overlay.open { display: flex; }
+
+    /* ========== MESSAGE SEARCH ========== */
+    #search-bar {
+      background: var(--bg-tertiary); border-radius: 12px;
+      padding: 8px 12px; display: flex; align-items: center; gap: 8px;
+    }
+
+    /* ========== PROFILE PANEL ========== */
+    #profile-panel {
+      width: 280px; min-width: 280px; background: var(--bg-secondary);
+      border-left: 1px solid var(--border); height: 100vh;
+      overflow-y: auto; transition: all 0.3s; display: none;
+    }
+    #profile-panel.open { display: block; }
+    @media(max-width:1100px){ #profile-panel { position: fixed; right: 0; top: 0; z-index: 60; } }
+
+    /* ========== BOTTOM NAV (MOBILE) ========== */
+    #bottom-nav {
+      display: none; position: fixed; bottom: 0; left: 0; right: 0;
+      background: var(--bg-secondary); border-top: 1px solid var(--border);
+      z-index: 55; padding: 6px 0;
+    }
+    @media(max-width:768px){ #bottom-nav { display: flex; } }
+
+    /* ========== CONTEXT MENU ========== */
+    #ctx-menu {
+      position: fixed; z-index: 500; background: var(--bg-secondary);
+      border: 1px solid var(--border); border-radius: 14px;
+      min-width: 180px; overflow: hidden; display: none;
+      box-shadow: var(--shadow);
+    }
+    #ctx-menu.open { display: block; }
+    .ctx-item {
+      padding: 10px 16px; display: flex; align-items: center; gap: 10px;
+      cursor: pointer; transition: background 0.15s; font-size: 14px;
+      font-family:'Cairo',sans-serif; color: var(--text-primary);
+    }
+    .ctx-item:hover { background: var(--bg-tertiary); }
+    .ctx-item.danger { color: var(--danger); }
+
+    /* ========== SCROLL TO BOTTOM ========== */
+    #scroll-bottom-btn {
+      position: absolute; bottom: 80px; left: 50%; transform: translateX(-50%);
+      background: var(--accent); color: #0f172a; border: none;
+      border-radius: 9999px; padding: 8px 16px; cursor: pointer;
+      font-family:'Cairo',sans-serif; font-size: 13px; font-weight: 700;
+      display: none; align-items: center; gap: 6px; z-index: 20;
+      box-shadow: 0 4px 20px var(--accent-glow);
+    }
+    #scroll-bottom-btn.show { display: flex; }
+
+    /* ========== MEDIA MSG ========== */
+    .media-msg img {
+      max-width: 260px; max-height: 220px; border-radius: 12px;
+      object-fit: cover; cursor: pointer; display: block;
+      transition: opacity 0.2s;
+    }
+    .media-msg img:hover { opacity: 0.9; }
+
+    /* ========== AUDIO MSG ========== */
+    .audio-msg {
+      display: flex; align-items: center; gap: 8px; padding: 8px 12px;
+      min-width: 200px;
+    }
+    .audio-wave { display: flex; align-items: center; gap: 2px; flex: 1; height: 30px; }
+    .audio-bar {
+      width: 3px; background: rgba(255,255,255,0.5); border-radius: 9999px;
+    }
+
+    /* ========== GROUP BADGE ========== */
+    .group-icon {
+      width: 44px; height: 44px; border-radius: 50%; background: var(--bg-tertiary);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 18px; color: var(--accent); flex-shrink: 0;
+    }
+
+    /* ========== SEARCH HIGHLIGHT ========== */
+    .highlight { background: rgba(56,189,248,0.3); border-radius: 3px; }
+
+    /* ========== SETTINGS PANEL ========== */
+    #settings-panel {
+      position: fixed; inset: 0; z-index: 200;
+      background: var(--bg-primary); overflow-y: auto;
+      display: none; padding: 20px;
+    }
+    #settings-panel.open { display: block; }
+
+    /* ========== SOUND SELECTOR ========== */
+    .sound-item {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 10px 14px; border-radius: 12px; cursor: pointer;
+      transition: background 0.15s; border: 2px solid transparent;
+    }
+    .sound-item:hover { background: var(--bg-tertiary); }
+    .sound-item.selected { border-color: var(--accent); }
+
+    /* ========== GRADIENT GLOW LOGO ========== */
+    .logo-glow {
+      font-size: 28px; font-weight: 900; letter-spacing: -1px;
+      background: linear-gradient(135deg, var(--accent), var(--accent2), #f43f5e);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text; text-fill-color: transparent;
+    }
+
+    /* ========== STORY ADD BTN ========== */
+    .story-add-overlay {
+      position: absolute; bottom: 0; right: 0;
+      width: 18px; height: 18px; background: var(--accent);
+      border-radius: 50%; display: flex; align-items: center;
+      justify-content: center; font-size: 12px; color: #0f172a;
+      font-weight: 900; border: 2px solid var(--bg-secondary);
+    }
+
+    /* ========== INCOMING CALL ========== */
+    #incoming-call {
+      position: fixed; top: 20px; left: 50%; transform: translateX(-50%);
+      z-index: 400; background: var(--bg-secondary);
+      border: 1px solid var(--border); border-radius: 20px;
+      padding: 16px 24px; display: none; align-items: center; gap: 16px;
+      box-shadow: 0 8px 40px var(--accent-glow);
+      animation: callSlide 0.4s ease;
+    }
+    #incoming-call.show { display: flex; }
+    @keyframes callSlide { from{transform:translateX(-50%) translateY(-30px);opacity:0} to{transform:translateX(-50%) translateY(0);opacity:1} }
+
+    /* ========== MESSAGE STATUS TICKS ========== */
+    .tick-sent { color: var(--text-muted); }
+    .tick-read { color: var(--accent); }
+
+    /* ========== FORWARD MODAL ========== */
+    .fwd-contact { display:flex; align-items:center; gap:10px; padding:8px 12px;
+      cursor:pointer; border-radius:10px; transition:background 0.15s; }
+    .fwd-contact:hover { background:var(--bg-tertiary); }
+
+    /* ========== PIN MESSAGE ========== */
+    #pinned-msg {
+      background: var(--bg-secondary); border-bottom: 1px solid var(--border);
+      padding: 8px 16px; display: none; align-items: center; gap: 8px;
+    }
+    #pinned-msg.show { display: flex; }
+
+    /* ========== LOADING SCREEN ========== */
+    #loading-screen {
+      position: fixed; inset: 0; z-index: 600;
+      background: var(--bg-primary); display: flex;
+      flex-direction: column; align-items: center; justify-content: center; gap: 20px;
+    }
+
+    /* group create chips */
+    .member-chip {
+      display:inline-flex; align-items:center; gap:6px; background:var(--bg-tertiary);
+      border-radius:20px; padding:4px 10px; font-size:12px;
+    }
+  </style>
 </head>
-<body>
+<body class="theme-dark">
 
-    <!-- ================= AUTH SCREENS ================= -->
-    <div id="auth-container" class="auth-container">
-        <div class="auth-box">
-            <h1>DZ CLOSE</h1>
-            <p>بواسطة المبرمج جاسر اشلاف</p>
-            
-            <div id="login-form">
-                <input type="email" id="login-email" placeholder="البريد الإلكتروني">
-                <input type="password" id="login-password" placeholder="كلمة السر">
-                <button class="btn" onclick="login()">تسجيل الدخول</button>
-                <button class="link-btn" onclick="showRegister()">إنشاء حساب جديد</button>
-                <button class="link-btn" onclick="showResetPassword()">نسيت كلمة السر؟</button>
-            </div>
+  <!-- ===== LOADING SCREEN ===== -->
+  <div id="loading-screen">
+    <div style="position:relative;">
+      <div class="bg-orb" style="width:300px;height:300px;background:var(--accent);top:-100px;left:-100px;"></div>
+      <div class="bg-orb" style="width:200px;height:200px;background:var(--accent2);bottom:-80px;right:-60px;animation-delay:3s;"></div>
+    </div>
+    <div style="text-align:center;position:relative;z-index:1;">
+      <div class="logo-glow" style="font-size:48px;margin-bottom:8px;">DZ CLOSE</div>
+      <div style="color:var(--text-secondary);font-size:14px;">تواصل بلا حدود...</div>
+    </div>
+    <div class="spinner"></div>
+  </div>
 
-            <div id="register-form" style="display:none;">
-                <input type="text" id="reg-username" placeholder="اسم المستخدم">
-                <input type="email" id="reg-email" placeholder="البريد الإلكتروني">
-                <input type="password" id="reg-password" placeholder="كلمة السر">
-                <button class="btn" onclick="register()">تسجيل</button>
-                <button class="link-btn" onclick="showLogin()">لدي حساب بالفعل</button>
-            </div>
+  <!-- ===== AUTH SCREEN ===== -->
+  <div id="auth-screen" style="display:none;">
+    <div style="position:fixed;inset:0;overflow:hidden;pointer-events:none;">
+      <div class="bg-orb" style="width:400px;height:400px;background:var(--accent);top:-150px;right:-100px;"></div>
+      <div class="bg-orb" style="width:300px;height:300px;background:var(--accent2);bottom:-100px;left:-100px;animation-delay:4s;"></div>
+    </div>
+    <div class="auth-card" style="position:relative;z-index:1;">
+      <div style="text-align:center;margin-bottom:28px;">
+        <div class="logo-glow" style="font-size:36px;margin-bottom:6px;">DZ CLOSE</div>
+        <p style="color:var(--text-secondary);font-size:13px;">تواصل مع أصدقائك بأسلوب مختلف</p>
+      </div>
 
-            <div id="reset-form" style="display:none;">
-                <input type="email" id="reset-email" placeholder="أدخل بريدك الإلكتروني لاستعادة كلمة السر">
-                <button class="btn" onclick="resetPassword()">إرسال رابط الاستعادة</button>
-                <button class="link-btn" onclick="showLogin()">العودة لتسجيل الدخول</button>
-            </div>
+      <!-- Login Form -->
+      <div id="form-login">
+        <div style="margin-bottom:16px;">
+          <label style="font-size:13px;color:var(--text-secondary);display:block;margin-bottom:6px;">البريد الإلكتروني</label>
+          <input id="login-email" type="email" class="dz-input" placeholder="example@email.com"/>
         </div>
+        <div style="margin-bottom:8px;">
+          <label style="font-size:13px;color:var(--text-secondary);display:block;margin-bottom:6px;">كلمة المرور</label>
+          <div style="position:relative;">
+            <input id="login-pass" type="password" class="dz-input" placeholder="••••••••" style="padding-left:42px;"/>
+            <button onclick="togglePassVis(&#39;login-pass&#39;,this)" style="position:absolute;left:12px;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--text-muted);cursor:pointer;"><i class="fa fa-eye"></i></button>
+          </div>
+        </div>
+        <div style="text-align:left;margin-bottom:20px;">
+          <button onclick="showForm(&#39;forgot&#39;)" style="background:none;border:none;color:var(--accent);font-size:12px;cursor:pointer;font-family:&#39;Cairo&#39;,sans-serif;">نسيت كلمة المرور؟</button>
+        </div>
+        <button onclick="doLogin()" class="btn-accent" style="width:100%;padding:13px;font-size:16px;font-family:&#39;Cairo&#39;,sans-serif;">
+          <i class="fa fa-sign-in-alt" style="margin-left:8px;"></i>تسجيل الدخول
+        </button>
+        <div style="text-align:center;margin-top:16px;">
+          <span style="color:var(--text-muted);font-size:13px;">ليس لديك حساب؟ </span>
+          <button onclick="showForm(&#39;register&#39;)" style="background:none;border:none;color:var(--accent);font-size:13px;cursor:pointer;font-family:&#39;Cairo&#39;,sans-serif;font-weight:700;">إنشاء حساب</button>
+        </div>
+        <div id="login-error" style="color:var(--danger);font-size:13px;text-align:center;margin-top:10px;display:none;"></div>
+      </div>
+
+      <!-- Register Form -->
+      <div id="form-register" style="display:none;">
+        <div style="margin-bottom:14px;">
+          <label style="font-size:13px;color:var(--text-secondary);display:block;margin-bottom:6px;">الاسم الكامل</label>
+          <input id="reg-name" type="text" class="dz-input" placeholder="اسمك الكامل"/>
+        </div>
+        <div style="margin-bottom:14px;">
+          <label style="font-size:13px;color:var(--text-secondary);display:block;margin-bottom:6px;">اسم المستخدم</label>
+          <input id="reg-username" type="text" class="dz-input" placeholder="@username"/>
+        </div>
+        <div style="margin-bottom:14px;">
+          <label style="font-size:13px;color:var(--text-secondary);display:block;margin-bottom:6px;">البريد الإلكتروني</label>
+          <input id="reg-email" type="email" class="dz-input" placeholder="example@email.com"/>
+        </div>
+        <div style="margin-bottom:20px;">
+          <label style="font-size:13px;color:var(--text-secondary);display:block;margin-bottom:6px;">كلمة المرور</label>
+          <div style="position:relative;">
+            <input id="reg-pass" type="password" class="dz-input" placeholder="8 أحرف على الأقل" style="padding-left:42px;"/>
+            <button onclick="togglePassVis(&#39;reg-pass&#39;,this)" style="position:absolute;left:12px;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--text-muted);cursor:pointer;"><i class="fa fa-eye"></i></button>
+          </div>
+        </div>
+        <button onclick="doRegister()" class="btn-accent" style="width:100%;padding:13px;font-size:16px;font-family:&#39;Cairo&#39;,sans-serif;">
+          <i class="fa fa-user-plus" style="margin-left:8px;"></i>إنشاء الحساب
+        </button>
+        <div style="text-align:center;margin-top:16px;">
+          <span style="color:var(--text-muted);font-size:13px;">لديك حساب؟ </span>
+          <button onclick="showForm(&#39;login&#39;)" style="background:none;border:none;color:var(--accent);font-size:13px;cursor:pointer;font-family:&#39;Cairo&#39;,sans-serif;font-weight:700;">تسجيل الدخول</button>
+        </div>
+        <div id="reg-error" style="color:var(--danger);font-size:13px;text-align:center;margin-top:10px;display:none;"></div>
+      </div>
+
+      <!-- Forgot Password -->
+      <div id="form-forgot" style="display:none;">
+        <div style="text-align:center;margin-bottom:20px;">
+          <div style="font-size:40px;margin-bottom:8px;">🔑</div>
+          <h3 style="font-size:18px;font-weight:700;margin-bottom:4px;">استعادة كلمة المرور</h3>
+          <p style="color:var(--text-secondary);font-size:13px;">سنرسل لك رابط إعادة التعيين</p>
+        </div>
+        <div style="margin-bottom:20px;">
+          <input id="forgot-email" type="email" class="dz-input" placeholder="أدخل بريدك الإلكتروني"/>
+        </div>
+        <button onclick="doForgotPass()" class="btn-accent" style="width:100%;padding:13px;font-size:16px;font-family:&#39;Cairo&#39;,sans-serif;">
+          إرسال رابط الاستعادة
+        </button>
+        <div style="text-align:center;margin-top:16px;">
+          <button onclick="showForm(&#39;login&#39;)" style="background:none;border:none;color:var(--accent);font-size:13px;cursor:pointer;font-family:&#39;Cairo&#39;,sans-serif;">← العودة لتسجيل الدخول</button>
+        </div>
+        <div id="forgot-msg" style="font-size:13px;text-align:center;margin-top:10px;display:none;"></div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ===== MAIN APP ===== -->
+  <div id="app" style="display:none;">
+
+    <!-- Ambient orbs -->
+    <div class="bg-orb" style="width:500px;height:500px;background:var(--accent);top:-200px;right:-200px;z-index:0;"></div>
+    <div class="bg-orb" style="width:300px;height:300px;background:var(--accent2);bottom:-100px;left:-100px;animation-delay:5s;z-index:0;"></div>
+
+    <!-- ===== SIDEBAR ===== -->
+    <div id="sidebar">
+      <!-- Sidebar Header -->
+      <div style="padding:14px 16px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border);">
+        <div class="logo-glow" style="font-size:22px;">DZ CLOSE</div>
+        <div style="display:flex;gap:8px;">
+          <button onclick="openModal(&#39;create-story-modal&#39;)" title="إضافة ستوري" style="width:34px;height:34px;border-radius:50%;background:var(--bg-tertiary);border:none;color:var(--text-secondary);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.2s;" onmouseover="this.style.color=getComputedStyle(document.documentElement).getPropertyValue(&#39;--accent&#39;)" onmouseout="this.style.color=getComputedStyle(document.documentElement).getPropertyValue(&#39;--text-secondary&#39;)"><i class="fa fa-circle-plus"></i></button>
+          <button onclick="openSettings()" title="الإعدادات" style="width:34px;height:34px;border-radius:50%;background:var(--bg-tertiary);border:none;color:var(--text-secondary);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.2s;" onmouseover="this.style.color=getComputedStyle(document.documentElement).getPropertyValue(&#39;--accent&#39;)" onmouseout="this.style.color=getComputedStyle(document.documentElement).getPropertyValue(&#39;--text-secondary&#39;)"><i class="fa fa-gear"></i></button>
+          <div style="position:relative;cursor:pointer;" onclick="openModal(&#39;profile-edit-modal&#39;)">
+            <img id="sidebar-avatar" src="https://api.dicebear.com/7.x/avataaars/svg?seed=default" class="avatar" style="width:34px;height:34px;" alt="صورتي"/>
+            <div id="my-online-dot" class="online-dot"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tabs -->
+      <div style="display:flex;gap:4px;padding:10px 12px 6px;">
+        <button class="tab-btn active" id="tab-chats" onclick="switchSidebarTab(&#39;chats&#39;)">💬 الدردشات</button>
+        <button class="tab-btn" id="tab-friends" onclick="switchSidebarTab(&#39;friends&#39;)">👥 الأصدقاء</button>
+        <button class="tab-btn" id="tab-groups" onclick="switchSidebarTab(&#39;groups&#39;)">🏘️ المجموعات</button>
+      </div>
+
+      <!-- Search -->
+      <div style="padding:0 12px 8px;">
+        <div id="search-bar">
+          <i class="fa fa-search" style="color:var(--text-muted);font-size:13px;"></i>
+          <input id="sidebar-search" type="text" placeholder="بحث..." style="background:none;border:none;outline:none;color:var(--text-primary);width:100%;font-family:&#39;Cairo&#39;,sans-serif;font-size:14px;" oninput="filterSidebar(this.value)"/>
+        </div>
+      </div>
+
+      <!-- Stories Bar -->
+      <div id="stories-bar" style="padding:0 12px 10px;overflow-x:auto;display:flex;gap:12px;scrollbar-width:none;">
+        <!-- dynamically populated -->
+      </div>
+
+      <!-- Chat/Friends/Groups List -->
+      <div id="sidebar-content" style="flex:1;overflow-y:auto;padding-bottom:60px;"></div>
     </div>
 
-    <!-- ================= MAIN APP ================= -->
-    <div id="app-container">
-        <div class="app-layout" id="app-layout">
-            
-            <!-- Sidebar -->
-            <div class="sidebar">
-                <div class="sidebar-header">
-                    <img src="https://via.placeholder.com/40" class="user-avatar" id="my-avatar">
-                    <div>
-                        <i class="fas fa-robot" onclick="toggleAI()" style="margin-left: 15px; cursor:pointer;" title="المساعد الذكي"></i>
-                        <i class="fas fa-palette" onclick="changeTheme()" style="margin-left: 15px; cursor:pointer;" title="تغيير الثيم"></i>
-                        <i class="fas fa-sign-out-alt" onclick="logout()" style="cursor:pointer;" title="تسجيل الخروج"></i>
-                    </div>
-                </div>
-                
-                <div class="sidebar-nav">
-                    <div class="nav-item active" onclick="switchTab('chats')"><i class="fas fa-comment-dots"></i></div>
-                    <div class="nav-item" onclick="switchTab('stories')"><i class="fas fa-circle-notch"></i></div>
-                    <div class="nav-item" onclick="switchTab('friends')"><i class="fas fa-user-friends"></i></div>
-                    <div class="nav-item" onclick="switchTab('groups')"><i class="fas fa-users"></i></div>
-                </div>
+    <!-- ===== CHAT PANEL ===== -->
+    <div id="chat-panel" class="hidden-mobile" style="flex:1;display:flex;flex-direction:column;height:100vh;position:relative;overflow:hidden;background:var(--bg-primary);">
 
-                <div class="search-bar">
-                    <input type="text" placeholder="بحث في DZ CLOSE..." id="search-input">
-                </div>
+      <!-- Empty state -->
+      <div id="chat-empty" style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;opacity:0.6;">
+        <div style="font-size:72px;">💬</div>
+        <div class="logo-glow" style="font-size:28px;">DZ CLOSE</div>
+        <p style="color:var(--text-secondary);font-size:14px;text-align:center;">اختر محادثة لبدء الدردشة<br/>أو ابدأ محادثة جديدة</p>
+        <p style="color:var(--text-muted);font-size:12px;">صُنع بـ ❤️ من طرف جاسر اشلاف</p>
+      </div>
 
-                <div class="chat-list" id="chat-list">
-                    <!-- Dynamic List -->
-                </div>
+      <!-- Active Chat -->
+      <div id="chat-active" style="display:none;flex-direction:column;height:100%;">
+
+        <!-- Chat Header -->
+        <div style="padding:12px 16px;background:var(--bg-secondary);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px;flex-shrink:0;">
+          <button id="back-btn" onclick="backToSidebar()" style="display:none;background:none;border:none;color:var(--text-secondary);cursor:pointer;font-size:18px;"><i class="fa fa-arrow-right"></i></button>
+          <div style="position:relative;cursor:pointer;" onclick="toggleProfilePanel()">
+            <img id="chat-header-avatar" src="" class="avatar" style="width:42px;height:42px;" alt="صورة المستخدم"/>
+            <div id="chat-online-indicator" class="online-dot" style="display:none;"></div>
+          </div>
+          <div style="flex:1;cursor:pointer;" onclick="toggleProfilePanel()">
+            <div id="chat-header-name" style="font-weight:700;font-size:15px;"></div>
+            <div id="chat-header-status" class="status-indicator">
+              <span id="chat-status-dot" style="width:7px;height:7px;border-radius:50%;background:var(--text-muted);display:inline-block;"></span>
+              <span id="chat-status-text" style="font-size:12px;color:var(--text-muted);">غير متصل</span>
             </div>
-
-            <!-- Main Chat Section -->
-            <div class="main-chat" id="main-chat">
-                <div class="chat-header" id="chat-header" style="display:none;">
-                    <div class="chat-header-info">
-                        <i class="fas fa-arrow-right" onclick="closeChatMobile()" style="margin-left: 15px; display:none;" id="back-btn"></i>
-                        <img src="https://via.placeholder.com/40" id="chat-avatar">
-                        <div>
-                            <h4 id="chat-name">المستخدم</h4>
-                            <small id="chat-status">متصل</small>
-                        </div>
-                    </div>
-                    <div class="chat-header-icons">
-                        <i class="fas fa-video" onclick="startCall()"></i>
-                        <i class="fas fa-phone" onclick="startCall()"></i>
-                    </div>
-                </div>
-                
-                <div class="messages-area" id="messages-area">
-                    <div style="text-align:center; color:var(--text-secondary); margin-top:20vh;">
-                        <h2>DZ CLOSE</h2>
-                        <p>اختر دردشة للبدء أو استخدم المساعد الذكي</p>
-                    </div>
-                </div>
-
-                <div class="chat-input-area" id="chat-input-area" style="display:none;">
-                    <div class="input-actions">
-                        <i class="fas fa-smile"></i>
-                        <i class="fas fa-paperclip"></i>
-                    </div>
-                    <input type="text" placeholder="اكتب رسالة..." id="msg-input" onkeypress="handleEnter(event)">
-                    <div class="input-actions">
-                        <i class="fas fa-microphone" id="mic-btn" onmousedown="startRecording()" onmouseup="stopRecording()"></i>
-                        <i class="fas fa-paper-plane" onclick="sendMessage()"></i>
-                    </div>
-                </div>
-            </div>
+          </div>
+          <div style="display:flex;gap:6px;">
+            <button onclick="startCall(&#39;audio&#39;)" title="مكالمة صوتية" style="width:36px;height:36px;border-radius:50%;background:var(--bg-tertiary);border:none;color:var(--text-secondary);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.2s;" onmouseover="this.style.color=&#39;#22c55e&#39;" onmouseout="this.style.color=getComputedStyle(document.documentElement).getPropertyValue(&#39;--text-secondary&#39;)"><i class="fa fa-phone"></i></button>
+            <button onclick="startCall(&#39;video&#39;)" title="مكالمة فيديو" style="width:36px;height:36px;border-radius:50%;background:var(--bg-tertiary);border:none;color:var(--text-secondary);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.2s;" onmouseover="this.style.color=&#39;var(--accent)&#39;" onmouseout="this.style.color=getComputedStyle(document.documentElement).getPropertyValue(&#39;--text-secondary&#39;)"><i class="fa fa-video"></i></button>
+            <button onclick="openSearchChat()" title="بحث في الرسائل" style="width:36px;height:36px;border-radius:50%;background:var(--bg-tertiary);border:none;color:var(--text-secondary);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.2s;" onmouseover="this.style.color=getComputedStyle(document.documentElement).getPropertyValue(&#39;--accent&#39;)" onmouseout="this.style.color=getComputedStyle(document.documentElement).getPropertyValue(&#39;--text-secondary&#39;)"><i class="fa fa-search"></i></button>
+            <button onclick="openChatMenu(event)" style="width:36px;height:36px;border-radius:50%;background:var(--bg-tertiary);border:none;color:var(--text-secondary);cursor:pointer;display:flex;align-items:center;justify-content:center;"><i class="fa fa-ellipsis-v"></i></button>
+          </div>
         </div>
 
-        <!-- Call UI -->
-        <div class="call-overlay" id="call-overlay">
-            <img src="https://via.placeholder.com/100" id="call-avatar">
-            <h2 id="call-name">المستخدم</h2>
-            <p id="call-status">جاري الاتصال...</p>
-            <div class="call-actions">
-                <i class="fas fa-microphone-slash"></i>
-                <i class="fas fa-volume-up"></i>
-                <i class="fas fa-video"></i>
-                <i class="fas fa-phone-slash call-end" onclick="endCall()"></i>
-            </div>
+        <!-- Pinned Message -->
+        <div id="pinned-msg">
+          <i class="fa fa-thumbtack" style="color:var(--accent);font-size:14px;"></i>
+          <span id="pinned-msg-text" style="font-size:13px;color:var(--text-secondary);flex:1;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;"></span>
+          <button onclick="document.getElementById(&#39;pinned-msg&#39;).classList.remove(&#39;show&#39;)" style="background:none;border:none;color:var(--text-muted);cursor:pointer;"><i class="fa fa-times"></i></button>
         </div>
 
-        <!-- Story Viewer -->
-        <div class="story-viewer" id="story-viewer">
-            <div class="story-progress" id="story-progress"></div>
-            <div class="story-header">
-                <img src="https://via.placeholder.com/40" id="story-user-avatar">
-                <span id="story-user-name" style="margin-right:10px;">جاسر</span>
-            </div>
-            <i class="fas fa-times story-close" onclick="closeStory()"></i>
-            <div id="story-content" onmousedown="pauseStory()" onmouseup="resumeStory()" ontouchstart="pauseStory()" ontouchend="resumeStory()">
-                <!-- Image or Video -->
-            </div>
+        <!-- Search in Chat -->
+        <div id="chat-search-bar" style="padding:8px 16px;background:var(--bg-secondary);border-bottom:1px solid var(--border);display:none;align-items:center;gap:8px;">
+          <i class="fa fa-search" style="color:var(--text-muted);"></i>
+          <input id="chat-search-input" type="text" class="dz-input" placeholder="بحث في الرسائل..." style="flex:1;" oninput="searchInChat(this.value)"/>
+          <button onclick="closeChatSearch()" style="background:none;border:none;color:var(--text-muted);cursor:pointer;"><i class="fa fa-times"></i></button>
         </div>
 
-        <!-- AI Assistant -->
-        <div class="ai-window" id="ai-window">
-            <div class="ai-header">
-                <h3><i class="fas fa-robot"></i> مساعد DZ CLOSE</h3>
-                <i class="fas fa-times" onclick="toggleAI()" style="cursor:pointer;"></i>
-            </div>
-            <div class="ai-messages" id="ai-messages">
-                <div class="ai-msg ai-bot">مرحباً! أنا مساعدك الذكي. كيف أستطيع مساعدتك؟ يمكنك سؤالي عن كيفية استخدام الستوريز، المكالمات، أو أي ميزة أخرى!</div>
-            </div>
-            <div class="ai-input">
-                <input type="text" placeholder="اسألني..." id="ai-input" onkeypress="if(event.key==='Enter')sendAiMsg()">
-            </div>
+        <!-- Messages Area -->
+        <div id="messages-area" style="flex:1;overflow-y:auto;padding:16px 0;" onscroll="handleMsgScroll()">
+          <!-- messages injected here -->
         </div>
+
+        <!-- Scroll to bottom btn -->
+        <button id="scroll-bottom-btn" onclick="scrollToBottom(true)">
+          <i class="fa fa-arrow-down"></i> رسائل جديدة
+        </button>
+
+        <!-- Typing indicator -->
+        <div id="typing-indicator" style="padding:6px 24px;display:none;align-items:center;gap:6px;">
+          <div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div>
+          <span id="typing-text" style="font-size:12px;color:var(--text-muted);"></span>
+        </div>
+
+        <!-- Voice Recorder -->
+        <div id="voice-recorder" class="">
+          <div style="width:36px;height:36px;border-radius:50%;background:var(--danger);display:flex;align-items:center;justify-content:center;color:#fff;font-size:14px;">
+            <i class="fa fa-microphone"></i>
+          </div>
+          <div id="voice-waveform" style="display:flex;align-items:center;gap:2px;flex:1;height:32px;overflow:hidden;"></div>
+          <div id="voice-timer" style="font-size:13px;color:var(--accent);font-weight:700;font-variant-numeric:tabular-nums;">0:00</div>
+          <button onclick="cancelVoice()" style="background:none;border:none;color:var(--danger);cursor:pointer;font-size:18px;"><i class="fa fa-trash"></i></button>
+          <button onclick="sendVoice()" style="width:36px;height:36px;border-radius:50%;background:var(--accent);border:none;color:#0f172a;cursor:pointer;display:flex;align-items:center;justify-content:center;"><i class="fa fa-paper-plane"></i></button>
+        </div>
+
+        <!-- Message Input -->
+        <div id="msg-input-area" style="padding:10px 12px;background:var(--bg-secondary);border-top:1px solid var(--border);flex-shrink:0;">
+          <!-- Reply Preview -->
+          <div id="reply-preview" style="display:none;background:var(--bg-tertiary);border-radius:10px;padding:8px 12px;margin-bottom:8px;border-right:3px solid var(--accent);display:none;align-items:center;gap:8px;">
+            <div style="flex:1;">
+              <div style="font-size:11px;color:var(--accent);font-weight:700;">ردّاً على</div>
+              <div id="reply-preview-text" style="font-size:13px;color:var(--text-secondary);overflow:hidden;white-space:nowrap;text-overflow:ellipsis;max-width:300px;"></div>
+            </div>
+            <button onclick="cancelReply()" style="background:none;border:none;color:var(--text-muted);cursor:pointer;"><i class="fa fa-times"></i></button>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;">
+            <!-- Emoji toggle -->
+            <button onclick="toggleEmojiPicker()" style="width:38px;height:38px;border-radius:50%;background:var(--bg-tertiary);border:none;color:var(--text-secondary);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:18px;transition:all 0.2s;flex-shrink:0;" onmouseover="this.style.color=getComputedStyle(document.documentElement).getPropertyValue(&#39;--accent&#39;)" onmouseout="this.style.color=getComputedStyle(document.documentElement).getPropertyValue(&#39;--text-secondary&#39;)">😊</button>
+            <!-- Attachments -->
+            <button onclick="triggerImgUpload()" style="width:38px;height:38px;border-radius:50%;background:var(--bg-tertiary);border:none;color:var(--text-secondary);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:16px;transition:all 0.2s;flex-shrink:0;" onmouseover="this.style.color=getComputedStyle(document.documentElement).getPropertyValue(&#39;--accent&#39;)" onmouseout="this.style.color=getComputedStyle(document.documentElement).getPropertyValue(&#39;--text-secondary&#39;)"><i class="fa fa-image"></i></button>
+            <input id="img-upload-input" type="file" accept="image/*" style="display:none;" onchange="handleImgUpload(event)"/>
+            <!-- Text input -->
+            <div style="flex:1;position:relative;">
+              <textarea id="msg-input" class="dz-input" rows="1" placeholder="اكتب رسالة..." style="resize:none;padding-left:14px;padding-right:14px;line-height:1.5;max-height:120px;overflow-y:auto;" oninput="handleMsgInput(this)" onkeydown="handleMsgKeydown(event)"></textarea>
+            </div>
+            <!-- Voice / Send -->
+            <button id="send-btn" onclick="sendMessage()" style="width:42px;height:42px;border-radius:50%;background:var(--accent);border:none;color:#0f172a;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:18px;transition:all 0.2s;flex-shrink:0;box-shadow:0 0 0 0 var(--accent-glow);" onmouseover="this.style.boxShadow=&#39;0 0 20px var(--accent-glow)&#39;" onmouseout="this.style.boxShadow=&#39;0 0 0 0 var(--accent-glow)&#39;">
+              <i class="fa fa-paper-plane"></i>
+            </button>
+            <button id="voice-btn" onmousedown="startVoiceRecord()" onmouseup="stopVoiceRecord()" ontouchstart="startVoiceRecord()" ontouchend="stopVoiceRecord()" style="width:42px;height:42px;border-radius:50%;background:var(--bg-tertiary);border:none;color:var(--text-secondary);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:18px;transition:all 0.2s;flex-shrink:0;display:none;" title="اضغط مطولاً للتسجيل">
+              <i class="fa fa-microphone"></i>
+            </button>
+          </div>
+          <!-- Emoji Picker -->
+          <div id="emoji-picker" style="display:none;background:var(--bg-secondary);border:1px solid var(--border);border-radius:16px;padding:12px;margin-top:8px;max-height:200px;overflow-y:auto;">
+            <div style="display:flex;gap:8px;margin-bottom:8px;flex-wrap:wrap;">
+              <button onclick="filterEmoji(&#39;all&#39;)" class="tab-btn active" style="padding:4px 10px;flex:unset;font-size:12px;">الكل</button>
+              <button onclick="filterEmoji(&#39;face&#39;)" class="tab-btn" style="padding:4px 10px;flex:unset;font-size:12px;">😊 وجوه</button>
+              <button onclick="filterEmoji(&#39;love&#39;)" class="tab-btn" style="padding:4px 10px;flex:unset;font-size:12px;">❤️ قلوب</button>
+              <button onclick="filterEmoji(&#39;gesture&#39;)" class="tab-btn" style="padding:4px 10px;flex:unset;font-size:12px;">👋 إيماءات</button>
+            </div>
+            <div id="emoji-grid" class="emoji-grid"></div>
+          </div>
+        </div>
+
+      </div>
     </div>
 
-    <script>
-        // =========================================
-        // Firebase Configuration & Init
-        // =========================================
-        const firebaseConfig = {
-            apiKey: "AIzaSyDQmWof8RhM8yef5MQDQ2Cc3KtMr7RQVHA",
-            authDomain: "djasser-137e1.firebaseapp.com",
-            databaseURL: "https://djasser-137e1-default-rtdb.firebaseio.com",
-            projectId: "djasser-137e1",
-            storageBucket: "djasser-137e1.firebasestorage.app",
-            messagingSenderId: "204637393208",
-            appId: "1:204637393208:web:236fea510daa1d0f66f1cd",
-            measurementId: "G-HCDEQ72HYD"
-        };
-        
-        firebase.initializeApp(firebaseConfig);
-        const auth = firebase.auth();
-        const db = firebase.database();
-        
-        let currentUser = null;
-        let currentChatId = null;
-        let mediaRecorder = null;
-        let audioChunks = [];
-        let storyTimer = null;
-        let isStoryPaused = false;
+    <!-- ===== PROFILE SIDE PANEL ===== -->
+    <div id="profile-panel">
+      <div style="padding:16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;">
+        <h3 style="font-weight:700;">معلومات</h3>
+        <button onclick="toggleProfilePanel()" style="background:none;border:none;color:var(--text-muted);cursor:pointer;"><i class="fa fa-times fa-lg"></i></button>
+      </div>
+      <div style="padding:20px;text-align:center;border-bottom:1px solid var(--border);">
+        <img id="pp-avatar" src="" class="avatar" style="width:80px;height:80px;margin:0 auto 12px;" alt="الصورة الشخصية"/>
+        <div id="pp-name" style="font-size:18px;font-weight:700;margin-bottom:4px;"></div>
+        <div id="pp-status" style="font-size:13px;color:var(--text-secondary);"></div>
+        <div id="pp-bio" style="font-size:13px;color:var(--text-muted);margin-top:8px;line-height:1.5;"></div>
+      </div>
+      <div style="padding:16px;">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:16px;">
+          <button onclick="startCall(&#39;audio&#39;)" class="btn-accent" style="padding:10px;font-size:13px;font-family:&#39;Cairo&#39;,sans-serif;display:flex;align-items:center;justify-content:center;gap:6px;"><i class="fa fa-phone"></i>اتصال</button>
+          <button onclick="startCall(&#39;video&#39;)" style="padding:10px;font-size:13px;background:var(--bg-tertiary);border:1px solid var(--border);color:var(--text-primary);border-radius:12px;cursor:pointer;font-family:&#39;Cairo&#39;,sans-serif;display:flex;align-items:center;justify-content:center;gap:6px;"><i class="fa fa-video"></i>فيديو</button>
+        </div>
+        <div id="pp-media-grid" style="display:grid;grid-template-columns:repeat(3,1fr);gap:4px;"></div>
+      </div>
+    </div>
 
-        // =========================================
-        // Authentication System
-        // =========================================
-        function showRegister() { document.getElementById('login-form').style.display='none'; document.getElementById('register-form').style.display='block'; document.getElementById('reset-form').style.display='none'; }
-        function showLogin() { document.getElementById('login-form').style.display='block'; document.getElementById('register-form').style.display='none'; document.getElementById('reset-form').style.display='none'; }
-        function showResetPassword() { document.getElementById('login-form').style.display='none'; document.getElementById('register-form').style.display='none'; document.getElementById('reset-form').style.display='block'; }
+  </div><!-- end #app -->
 
-        function register() {
-            const email = document.getElementById('reg-email').value;
-            const pass = document.getElementById('reg-password').value;
-            const username = document.getElementById('reg-username').value;
-            if(!email || !pass || !username) return alert('كل الحقول مطلوبة');
-            auth.createUserWithEmailAndPassword(email, pass).then(cred => {
-                return db.ref('users/' + cred.user.uid).set({
-                    username: username,
-                    email: email,
-                    profilePictureUrl: 'https://via.placeholder.com/100',
-                    bio: 'مستخدم جديد على DZ CLOSE',
-                    createdAt: firebase.database.ServerValue.TIMESTAMP,
-                    status: 'online',
-                    lastSeen: firebase.database.ServerValue.TIMESTAMP
-                });
-            }).catch(e => alert(e.message));
+  <!-- ===== STORIES VIEWER ===== -->
+  <div id="stories-viewer">
+    <div style="position:absolute;inset:0;" onclick="nextStory()"></div>
+    <div style="position:relative;width:100%;max-width:420px;height:100vh;max-height:760px;display:flex;flex-direction:column;overflow:hidden;border-radius:0;background:#000;">
+      <!-- Progress bars -->
+      <div id="story-progress-bars" style="display:flex;gap:3px;padding:8px 10px;position:absolute;top:0;left:0;right:0;z-index:10;"></div>
+      <!-- Header -->
+      <div style="padding:40px 12px 8px;display:flex;align-items:center;gap:10px;position:absolute;top:0;left:0;right:0;z-index:10;background:linear-gradient(to bottom,rgba(0,0,0,0.5),transparent);">
+        <img id="story-viewer-avatar" src="" class="avatar" style="width:38px;height:38px;" alt=""/>
+        <div>
+          <div id="story-viewer-name" style="font-size:14px;font-weight:700;color:#fff;"></div>
+          <div id="story-viewer-time" style="font-size:11px;color:rgba(255,255,255,0.7);"></div>
+        </div>
+        <div style="margin-right:auto;display:flex;gap:8px;">
+          <button id="story-pause-btn" onclick="toggleStoryPause()" style="background:none;border:none;color:#fff;cursor:pointer;font-size:18px;"><i class="fa fa-pause"></i></button>
+          <button onclick="closeStoriesViewer()" style="background:none;border:none;color:#fff;cursor:pointer;font-size:18px;"><i class="fa fa-times"></i></button>
+        </div>
+      </div>
+      <!-- Content -->
+      <div id="story-content" style="flex:1;display:flex;align-items:center;justify-content:center;overflow:hidden;position:relative;">
+        <img id="story-img" src="" style="width:100%;height:100%;object-fit:cover;display:none;" alt="ستوري"/>
+        <div id="story-text-content" style="padding:24px;font-size:20px;font-weight:700;color:#fff;text-align:center;line-height:1.5;display:none;"></div>
+        <video id="story-video" style="width:100%;height:100%;object-fit:cover;display:none;" muted="" autoplay="" playsinline=""></video>
+      </div>
+      <!-- Reply input -->
+      <div style="padding:12px;background:rgba(0,0,0,0.5);position:absolute;bottom:0;left:0;right:0;">
+        <div style="display:flex;gap:8px;align-items:center;">
+          <input id="story-reply-input" type="text" placeholder="ردّ على الستوري..." style="flex:1;background:rgba(255,255,255,0.15);border:1px solid rgba(255,255,255,0.3);border-radius:24px;padding:10px 14px;color:#fff;outline:none;font-family:&#39;Cairo&#39;,sans-serif;font-size:14px;" onkeydown="if(event.key===&#39;Enter&#39;)sendStoryReply()"/>
+          <button onclick="sendStoryReply()" style="width:40px;height:40px;border-radius:50%;background:var(--accent);border:none;color:#0f172a;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;"><i class="fa fa-paper-plane"></i></button>
+          <button onclick="reactToStory()" style="width:40px;height:40px;border-radius:50%;background:rgba(255,255,255,0.15);border:none;color:#fff;cursor:pointer;font-size:20px;display:flex;align-items:center;justify-content:center;">❤️</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== CALL OVERLAY ===== -->
+  <div id="call-overlay">
+    <div style="position:absolute;inset:0;background:radial-gradient(circle at 50% 30%,var(--accent-glow),transparent 70%);pointer-events:none;"></div>
+    <div style="text-align:center;z-index:1;display:flex;flex-direction:column;align-items:center;gap:12px;">
+      <div style="position:relative;display:inline-block;">
+        <img id="call-avatar" src="" class="avatar" style="width:100px;height:100px;" alt="المتصل"/>
+        <div class="pulse-ring"></div>
+      </div>
+      <div id="call-name" style="font-size:22px;font-weight:800;"></div>
+      <div id="call-status" style="font-size:15px;color:var(--text-secondary);"></div>
+      <div id="call-timer" style="font-size:18px;font-weight:700;color:var(--accent);font-variant-numeric:tabular-nums;display:none;"></div>
+    </div>
+    <div style="display:flex;gap:20px;z-index:1;margin-top:20px;">
+      <button id="call-mute-btn" onclick="toggleMute()" class="call-btn" style="background:var(--bg-tertiary);color:var(--text-primary);" title="كتم">
+        <i class="fa fa-microphone"></i>
+      </button>
+      <button onclick="endCall()" class="call-btn" style="background:var(--danger);color:#fff;width:68px;height:68px;font-size:24px;" title="إنهاء">
+        <i class="fa fa-phone-slash"></i>
+      </button>
+      <button id="call-speaker-btn" onclick="toggleSpeaker()" class="call-btn" style="background:var(--bg-tertiary);color:var(--text-primary);" title="مكبر الصوت">
+        <i class="fa fa-volume-up"></i>
+      </button>
+    </div>
+  </div>
+
+  <!-- ===== INCOMING CALL ===== -->
+  <div id="incoming-call">
+    <img id="inc-call-avatar" src="" class="avatar" style="width:48px;height:48px;" alt="متصل"/>
+    <div>
+      <div id="inc-call-name" style="font-weight:700;font-size:15px;"></div>
+      <div style="font-size:12px;color:var(--text-secondary);">يتصل بك...</div>
+    </div>
+    <button onclick="acceptCall()" style="width:42px;height:42px;border-radius:50%;background:var(--success);border:none;color:#fff;cursor:pointer;font-size:18px;display:flex;align-items:center;justify-content:center;margin-right:8px;"><i class="fa fa-phone"></i></button>
+    <button onclick="declineCall()" style="width:42px;height:42px;border-radius:50%;background:var(--danger);border:none;color:#fff;cursor:pointer;font-size:18px;display:flex;align-items:center;justify-content:center;"><i class="fa fa-phone-slash"></i></button>
+  </div>
+
+  <!-- ===== IMAGE PREVIEW ===== -->
+  <div id="img-preview-overlay" onclick="closeImgPreview()">
+    <img id="img-preview-full" src="" style="max-width:95vw;max-height:90vh;object-fit:contain;border-radius:12px;" alt="صورة كاملة"/>
+    <button onclick="closeImgPreview()" style="position:absolute;top:20px;left:20px;width:40px;height:40px;border-radius:50%;background:rgba(0,0,0,0.6);border:1px solid rgba(255,255,255,0.2);color:#fff;cursor:pointer;font-size:18px;display:flex;align-items:center;justify-content:center;"><i class="fa fa-times"></i></button>
+  </div>
+
+  <!-- ===== CONTEXT MENU ===== -->
+  <div id="ctx-menu">
+    <div class="ctx-item" onclick="ctxAction(&#39;reply&#39;)"><i class="fa fa-reply" style="color:var(--accent);"></i>ردّ</div>
+    <div class="ctx-item" onclick="ctxAction(&#39;copy&#39;)"><i class="fa fa-copy" style="color:var(--text-muted);"></i>نسخ</div>
+    <div class="ctx-item" onclick="ctxAction(&#39;forward&#39;)"><i class="fa fa-forward" style="color:var(--text-muted);"></i>إعادة توجيه</div>
+    <div class="ctx-item" onclick="ctxAction(&#39;pin&#39;)"><i class="fa fa-thumbtack" style="color:var(--warning);"></i>تثبيت</div>
+    <div class="ctx-item" onclick="ctxAction(&#39;star&#39;)"><i class="fa fa-star" style="color:var(--warning);"></i>تمييز</div>
+    <div class="ctx-item danger" onclick="ctxAction(&#39;delete&#39;)"><i class="fa fa-trash"></i>حذف</div>
+  </div>
+
+  <!-- ===== AI ASSISTANT ===== -->
+  <div id="ai-panel">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+      <div style="display:flex;align-items:center;gap:8px;">
+        <div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-size:18px;">🤖</div>
+        <div>
+          <div style="font-weight:700;font-size:15px;">مساعد DZ CLOSE</div>
+          <div style="font-size:11px;color:var(--success);display:flex;align-items:center;gap:4px;"><span style="width:6px;height:6px;border-radius:50%;background:var(--success);display:inline-block;"></span>متاح دائماً</div>
+        </div>
+      </div>
+      <button onclick="toggleAI()" style="background:none;border:none;color:var(--text-muted);cursor:pointer;"><i class="fa fa-times fa-lg"></i></button>
+    </div>
+    <div id="ai-messages" style="height:220px;overflow-y:auto;display:flex;flex-direction:column;gap:8px;margin-bottom:10px;"></div>
+    <div style="display:flex;gap:6px;margin-bottom:8px;flex-wrap:wrap;">
+      <button onclick="sendAISuggestion(this)" class="tab-btn" style="flex:unset;padding:5px 10px;font-size:12px;background:var(--bg-tertiary);">كيف أرسل رسالة؟</button>
+      <button onclick="sendAISuggestion(this)" class="tab-btn" style="flex:unset;padding:5px 10px;font-size:12px;background:var(--bg-tertiary);">كيف أضيف صديق؟</button>
+      <button onclick="sendAISuggestion(this)" class="tab-btn" style="flex:unset;padding:5px 10px;font-size:12px;background:var(--bg-tertiary);">ما هي الستوريز؟</button>
+      <button onclick="sendAISuggestion(this)" class="tab-btn" style="flex:unset;padding:5px 10px;font-size:12px;background:var(--bg-tertiary);">كيف أغير الثيم؟</button>
+    </div>
+    <div style="display:flex;gap:8px;">
+      <input id="ai-input" type="text" class="dz-input" placeholder="اسألني أي شيء..." style="flex:1;" onkeydown="if(event.key===&#39;Enter&#39;)sendAIMsg()"/>
+      <button onclick="sendAIMsg()" class="btn-accent" style="padding:10px 14px;"><i class="fa fa-paper-plane"></i></button>
+    </div>
+  </div>
+
+  <!-- AI Toggle Button -->
+  <button onclick="toggleAI()" id="ai-fab" style="position:fixed;bottom:80px;left:16px;width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent2));border:none;color:#fff;cursor:pointer;font-size:22px;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 20px var(--accent-glow);z-index:99;transition:transform 0.2s;" onmouseover="this.style.transform=&#39;scale(1.1)&#39;" onmouseout="this.style.transform=&#39;scale(1)&#39;">🤖</button>
+
+  <!-- ===== TOAST CONTAINER ===== -->
+  <div id="toast-container"></div>
+
+  <!-- ===== MODALS ===== -->
+
+  <!-- Create Story Modal -->
+  <div id="create-story-modal" class="modal-overlay">
+    <div class="modal-box">
+      <h3 style="font-size:18px;font-weight:800;margin-bottom:20px;display:flex;align-items:center;gap:8px;"><span>✨</span> إنشاء ستوري</h3>
+      <div style="display:flex;gap:10px;margin-bottom:16px;">
+        <button onclick="setStoryType(&#39;text&#39;)" id="story-type-text" class="tab-btn active" style="flex:1;padding:10px;">📝 نص</button>
+        <button onclick="setStoryType(&#39;image&#39;)" id="story-type-image" class="tab-btn" style="flex:1;padding:10px;">🖼️ صورة</button>
+      </div>
+      <div id="story-text-form">
+        <textarea id="story-text-input" class="dz-input" rows="4" placeholder="اكتب نص الستوري..." style="resize:none;margin-bottom:12px;font-size:18px;text-align:center;"></textarea>
+        <div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap;">
+          <span style="font-size:13px;color:var(--text-secondary);align-self:center;">لون الخلفية:</span>
+          <button onclick="setStoryBg(&#39;#0f172a&#39;)" style="width:28px;height:28px;border-radius:50%;background:#0f172a;border:2px solid var(--border);cursor:pointer;"></button>
+          <button onclick="setStoryBg(&#39;linear-gradient(135deg,#0ea5e9,#a78bfa)&#39;)" style="width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,#0ea5e9,#a78bfa);border:2px solid var(--border);cursor:pointer;"></button>
+          <button onclick="setStoryBg(&#39;linear-gradient(135deg,#f43f5e,#fb923c)&#39;)" style="width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,#f43f5e,#fb923c);border:2px solid var(--border);cursor:pointer;"></button>
+          <button onclick="setStoryBg(&#39;linear-gradient(135deg,#22c55e,#0ea5e9)&#39;)" style="width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,#22c55e,#0ea5e9);border:2px solid var(--border);cursor:pointer;"></button>
+          <button onclick="setStoryBg(&#39;linear-gradient(135deg,#7c3aed,#c084fc)&#39;)" style="width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,#7c3aed,#c084fc);border:2px solid var(--border);cursor:pointer;"></button>
+        </div>
+      </div>
+      <div id="story-image-form" style="display:none;">
+        <div onclick="document.getElementById(&#39;story-img-input&#39;).click()" style="border:2px dashed var(--border);border-radius:14px;padding:30px;text-align:center;cursor:pointer;margin-bottom:12px;transition:border-color 0.2s;" onmouseover="this.style.borderColor=getComputedStyle(document.documentElement).getPropertyValue(&#39;--accent&#39;)" onmouseout="this.style.borderColor=getComputedStyle(document.documentElement).getPropertyValue(&#39;--border&#39;)">
+          <div style="font-size:40px;margin-bottom:8px;">📸</div>
+          <div style="font-size:14px;color:var(--text-secondary);">انقر لاختيار صورة</div>
+        </div>
+        <input id="story-img-input" type="file" accept="image/*" style="display:none;" onchange="previewStoryImg(event)"/>
+        <img id="story-img-preview" src="" style="display:none;width:100%;border-radius:14px;max-height:200px;object-fit:cover;margin-bottom:12px;" alt="معاينة الستوري"/>
+      </div>
+      <div style="display:flex;gap:10px;">
+        <button onclick="closeModal(&#39;create-story-modal&#39;)" style="flex:1;padding:12px;background:var(--bg-tertiary);border:1px solid var(--border);color:var(--text-primary);border-radius:12px;cursor:pointer;font-family:&#39;Cairo&#39;,sans-serif;font-size:14px;">إلغاء</button>
+        <button onclick="publishStory()" class="btn-accent" style="flex:1;padding:12px;font-size:14px;font-family:&#39;Cairo&#39;,sans-serif;">✨ نشر الستوري</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add Friend Modal -->
+  <div id="add-friend-modal" class="modal-overlay">
+    <div class="modal-box">
+      <h3 style="font-size:18px;font-weight:800;margin-bottom:20px;">👥 إضافة صديق</h3>
+      <div style="margin-bottom:16px;">
+        <input id="add-friend-query" type="text" class="dz-input" placeholder="بحث باسم المستخدم أو البريد..." oninput="searchUsers(this.value)"/>
+      </div>
+      <div id="user-search-results" style="max-height:300px;overflow-y:auto;"></div>
+      <button onclick="closeModal(&#39;add-friend-modal&#39;)" style="width:100%;padding:12px;margin-top:12px;background:var(--bg-tertiary);border:1px solid var(--border);color:var(--text-primary);border-radius:12px;cursor:pointer;font-family:&#39;Cairo&#39;,sans-serif;font-size:14px;">إغلاق</button>
+    </div>
+  </div>
+
+  <!-- Create Group Modal -->
+  <div id="create-group-modal" class="modal-overlay">
+    <div class="modal-box">
+      <h3 style="font-size:18px;font-weight:800;margin-bottom:20px;">🏘️ إنشاء مجموعة</h3>
+      <div style="margin-bottom:14px;">
+        <label style="font-size:13px;color:var(--text-secondary);display:block;margin-bottom:6px;">اسم المجموعة</label>
+        <input id="group-name-input" type="text" class="dz-input" placeholder="اسم المجموعة..."/>
+      </div>
+      <div style="margin-bottom:14px;">
+        <label style="font-size:13px;color:var(--text-secondary);display:block;margin-bottom:6px;">وصف المجموعة (اختياري)</label>
+        <input id="group-desc-input" type="text" class="dz-input" placeholder="وصف قصير..."/>
+      </div>
+      <div style="margin-bottom:14px;">
+        <label style="font-size:13px;color:var(--text-secondary);display:block;margin-bottom:8px;">إضافة أعضاء</label>
+        <input id="group-member-search" type="text" class="dz-input" placeholder="بحث عن أصدقاء..." oninput="searchGroupMembers(this.value)" style="margin-bottom:8px;"/>
+        <div id="group-member-results" style="max-height:180px;overflow-y:auto;"></div>
+        <div id="group-selected-members" style="display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;min-height:28px;"></div>
+      </div>
+      <div style="display:flex;gap:10px;">
+        <button onclick="closeModal(&#39;create-group-modal&#39;)" style="flex:1;padding:12px;background:var(--bg-tertiary);border:1px solid var(--border);color:var(--text-primary);border-radius:12px;cursor:pointer;font-family:&#39;Cairo&#39;,sans-serif;">إلغاء</button>
+        <button onclick="createGroup()" class="btn-accent" style="flex:1;padding:12px;font-family:&#39;Cairo&#39;,sans-serif;">إنشاء</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Profile Edit Modal -->
+  <div id="profile-edit-modal" class="modal-overlay">
+    <div class="modal-box">
+      <h3 style="font-size:18px;font-weight:800;margin-bottom:20px;">✏️ تعديل الملف الشخصي</h3>
+      <div style="text-align:center;margin-bottom:20px;">
+        <div style="position:relative;display:inline-block;">
+          <img id="edit-avatar-img" src="" class="avatar" style="width:80px;height:80px;" alt="صورتي"/>
+          <button onclick="document.getElementById(&#39;avatar-upload&#39;).click()" style="position:absolute;bottom:0;left:0;width:26px;height:26px;border-radius:50%;background:var(--accent);border:none;cursor:pointer;color:#0f172a;font-size:12px;display:flex;align-items:center;justify-content:center;"><i class="fa fa-camera"></i></button>
+          <input id="avatar-upload" type="file" accept="image/*" style="display:none;" onchange="uploadAvatar(event)"/>
+        </div>
+      </div>
+      <div style="margin-bottom:14px;">
+        <label style="font-size:13px;color:var(--text-secondary);display:block;margin-bottom:6px;">الاسم الكامل</label>
+        <input id="edit-name" type="text" class="dz-input" placeholder="اسمك الكامل"/>
+      </div>
+      <div style="margin-bottom:14px;">
+        <label style="font-size:13px;color:var(--text-secondary);display:block;margin-bottom:6px;">اسم المستخدم</label>
+        <input id="edit-username" type="text" class="dz-input" placeholder="@username"/>
+      </div>
+      <div style="margin-bottom:14px;">
+        <label style="font-size:13px;color:var(--text-secondary);display:block;margin-bottom:6px;">نبذة عني</label>
+        <textarea id="edit-bio" class="dz-input" rows="2" placeholder="أخبر أصدقاءك عن نفسك..." style="resize:none;"></textarea>
+      </div>
+      <div style="margin-bottom:20px;">
+        <label style="font-size:13px;color:var(--text-secondary);display:block;margin-bottom:6px;">حالتي</label>
+        <select id="edit-status-type" class="dz-input">
+          <option value="متاح">🟢 متاح</option>
+          <option value="مشغول">🔴 مشغول</option>
+          <option value="بعيد">🟡 بعيد</option>
+          <option value="مخفي">⚫ مخفي</option>
+        </select>
+      </div>
+      <div style="display:flex;gap:10px;">
+        <button onclick="closeModal(&#39;profile-edit-modal&#39;)" style="flex:1;padding:12px;background:var(--bg-tertiary);border:1px solid var(--border);color:var(--text-primary);border-radius:12px;cursor:pointer;font-family:&#39;Cairo&#39;,sans-serif;">إلغاء</button>
+        <button onclick="saveProfile()" class="btn-accent" style="flex:1;padding:12px;font-family:&#39;Cairo&#39;,sans-serif;">💾 حفظ</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Forward Modal -->
+  <div id="forward-modal" class="modal-overlay">
+    <div class="modal-box" style="max-width:360px;">
+      <h3 style="font-size:18px;font-weight:800;margin-bottom:16px;">↗️ إعادة توجيه</h3>
+      <p style="font-size:13px;color:var(--text-secondary);margin-bottom:12px;">اختر المحادثة التي ستوجّه إليها الرسالة</p>
+      <div id="forward-list" style="max-height:300px;overflow-y:auto;margin-bottom:12px;"></div>
+      <button onclick="closeModal(&#39;forward-modal&#39;)" style="width:100%;padding:12px;background:var(--bg-tertiary);border:1px solid var(--border);color:var(--text-primary);border-radius:12px;cursor:pointer;font-family:&#39;Cairo&#39;,sans-serif;">إلغاء</button>
+    </div>
+  </div>
+
+  <!-- ===== SETTINGS PANEL ===== -->
+  <div id="settings-panel">
+    <div style="max-width:680px;margin:0 auto;">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:28px;">
+        <button onclick="closeSettings()" style="background:none;border:none;color:var(--text-muted);cursor:pointer;font-size:18px;"><i class="fa fa-arrow-right"></i></button>
+        <h2 style="font-size:22px;font-weight:800;">⚙️ الإعدادات</h2>
+      </div>
+
+      <!-- Themes -->
+      <div class="glass" style="border-radius:16px;padding:20px;margin-bottom:16px;">
+        <h3 style="font-size:16px;font-weight:700;margin-bottom:14px;display:flex;align-items:center;gap:8px;">🎨 الثيم</h3>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;" id="theme-grid">
+          <div onclick="applyTheme(&#39;dark&#39;)" class="sound-item" id="theme-dark" style="flex-direction:column;gap:4px;padding:12px;text-align:center;">
+            <div style="width:40px;height:40px;border-radius:50%;background:#0f172a;border:2px solid #38bdf8;margin:0 auto;"></div>
+            <span style="font-size:12px;">داكن</span>
+          </div>
+          <div onclick="applyTheme(&#39;ocean&#39;)" class="sound-item" id="theme-ocean" style="flex-direction:column;gap:4px;padding:12px;text-align:center;">
+            <div style="width:40px;height:40px;border-radius:50%;background:#001f3f;border:2px solid #00d4ff;margin:0 auto;"></div>
+            <span style="font-size:12px;">المحيط</span>
+          </div>
+          <div onclick="applyTheme(&#39;purple&#39;)" class="sound-item" id="theme-purple" style="flex-direction:column;gap:4px;padding:12px;text-align:center;">
+            <div style="width:40px;height:40px;border-radius:50%;background:#0d0b1e;border:2px solid #c084fc;margin:0 auto;"></div>
+            <span style="font-size:12px;">بنفسجي</span>
+          </div>
+          <div onclick="applyTheme(&#39;emerald&#39;)" class="sound-item" id="theme-emerald" style="flex-direction:column;gap:4px;padding:12px;text-align:center;">
+            <div style="width:40px;height:40px;border-radius:50%;background:#022c22;border:2px solid #34d399;margin:0 auto;"></div>
+            <span style="font-size:12px;">زمرد</span>
+          </div>
+          <div onclick="applyTheme(&#39;sunset&#39;)" class="sound-item" id="theme-sunset" style="flex-direction:column;gap:4px;padding:12px;text-align:center;">
+            <div style="width:40px;height:40px;border-radius:50%;background:#1a0a00;border:2px solid #fb923c;margin:0 auto;"></div>
+            <span style="font-size:12px;">غروب</span>
+          </div>
+          <div onclick="applyTheme(&#39;light&#39;)" class="sound-item" id="theme-light" style="flex-direction:column;gap:4px;padding:12px;text-align:center;">
+            <div style="width:40px;height:40px;border-radius:50%;background:#f8fafc;border:2px solid #0ea5e9;margin:0 auto;"></div>
+            <span style="font-size:12px;">فاتح</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Notification Sounds -->
+      <div class="glass" style="border-radius:16px;padding:20px;margin-bottom:16px;">
+        <h3 style="font-size:16px;font-weight:700;margin-bottom:14px;display:flex;align-items:center;gap:8px;">🔔 نغمة الإشعارات</h3>
+        <div style="display:flex;flex-direction:column;gap:8px;" id="sound-list">
+          <div onclick="selectSound(&#39;ding&#39;)" class="sound-item selected" id="sound-ding">
+            <div style="display:flex;align-items:center;gap:10px;"><span style="font-size:20px;">🔔</span><span>دينج</span></div>
+            <button onclick="event.stopPropagation();previewSound(&#39;ding&#39;)" style="background:var(--bg-tertiary);border:1px solid var(--border);border-radius:8px;padding:5px 10px;color:var(--text-secondary);cursor:pointer;font-size:12px;font-family:&#39;Cairo&#39;,sans-serif;">▶ تجربة</button>
+          </div>
+          <div onclick="selectSound(&#39;pop&#39;)" class="sound-item" id="sound-pop">
+            <div style="display:flex;align-items:center;gap:10px;"><span style="font-size:20px;">🫧</span><span>بوب</span></div>
+            <button onclick="event.stopPropagation();previewSound(&#39;pop&#39;)" style="background:var(--bg-tertiary);border:1px solid var(--border);border-radius:8px;padding:5px 10px;color:var(--text-secondary);cursor:pointer;font-size:12px;font-family:&#39;Cairo&#39;,sans-serif;">▶ تجربة</button>
+          </div>
+          <div onclick="selectSound(&#39;chime&#39;)" class="sound-item" id="sound-chime">
+            <div style="display:flex;align-items:center;gap:10px;"><span style="font-size:20px;">🎵</span><span>رنّة</span></div>
+            <button onclick="event.stopPropagation();previewSound(&#39;chime&#39;)" style="background:var(--bg-tertiary);border:1px solid var(--border);border-radius:8px;padding:5px 10px;color:var(--text-secondary);cursor:pointer;font-size:12px;font-family:&#39;Cairo&#39;,sans-serif;">▶ تجربة</button>
+          </div>
+          <div onclick="selectSound(&#39;bell&#39;)" class="sound-item" id="sound-bell">
+            <div style="display:flex;align-items:center;gap:10px;"><span style="font-size:20px;">🔕</span><span>بدون صوت</span></div>
+            <button onclick="event.stopPropagation();previewSound(&#39;bell&#39;)" style="background:var(--bg-tertiary);border:1px solid var(--border);border-radius:8px;padding:5px 10px;color:var(--text-secondary);cursor:pointer;font-size:12px;font-family:&#39;Cairo&#39;,sans-serif;">▶ تجربة</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Privacy -->
+      <div class="glass" style="border-radius:16px;padding:20px;margin-bottom:16px;">
+        <h3 style="font-size:16px;font-weight:700;margin-bottom:14px;">🔐 الخصوصية</h3>
+        <div style="display:flex;flex-direction:column;gap:12px;">
+          <div style="display:flex;align-items:center;justify-content:space-between;">
+            <span style="font-size:14px;">إظهار حالة &#34;آخر ظهور&#34;</span>
+            <label style="position:relative;display:inline-block;width:44px;height:24px;">
+              <input type="checkbox" id="pref-last-seen" checked="" onchange="savePref(&#39;lastSeen&#39;,this.checked)" style="opacity:0;width:0;height:0;"/>
+              <span onclick="this.previousElementSibling.click()" style="position:absolute;cursor:pointer;inset:0;background:var(--bg-tertiary);border-radius:24px;transition:0.3s;" id="toggle-last-seen"></span>
+            </label>
+          </div>
+          <div style="display:flex;align-items:center;justify-content:space-between;">
+            <span style="font-size:14px;">إظهار &#34;يكتب...&#34; للآخرين</span>
+            <label style="position:relative;display:inline-block;width:44px;height:24px;">
+              <input type="checkbox" id="pref-typing" checked="" onchange="savePref(&#39;showTyping&#39;,this.checked)" style="opacity:0;width:0;height:0;"/>
+              <span onclick="this.previousElementSibling.click()" style="position:absolute;cursor:pointer;inset:0;background:var(--bg-tertiary);border-radius:24px;transition:0.3s;" id="toggle-typing"></span>
+            </label>
+          </div>
+          <div style="display:flex;align-items:center;justify-content:space-between;">
+            <span style="font-size:14px;">إشعارات الرسائل</span>
+            <label style="position:relative;display:inline-block;width:44px;height:24px;">
+              <input type="checkbox" id="pref-notif" checked="" onchange="savePref(&#39;notifications&#39;,this.checked)" style="opacity:0;width:0;height:0;"/>
+              <span onclick="this.previousElementSibling.click()" style="position:absolute;cursor:pointer;inset:0;background:var(--bg-tertiary);border-radius:24px;transition:0.3s;"></span>
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <!-- About -->
+      <div class="glass" style="border-radius:16px;padding:20px;margin-bottom:16px;">
+        <h3 style="font-size:16px;font-weight:700;margin-bottom:14px;">ℹ️ حول التطبيق</h3>
+        <div style="text-align:center;">
+          <div class="logo-glow" style="font-size:32px;margin-bottom:8px;">DZ CLOSE</div>
+          <p style="font-size:13px;color:var(--text-secondary);margin-bottom:4px;">الإصدار 2.0.0</p>
+          <p style="font-size:13px;color:var(--text-muted);">صُنع بـ ❤️ من طرف <strong style="color:var(--accent);">جاسر اشلاف</strong></p>
+          <p style="font-size:12px;color:var(--text-muted);margin-top:4px;">جميع الحقوق محفوظة © 2025</p>
+        </div>
+      </div>
+
+      <!-- Logout -->
+      <button onclick="doLogout()" style="width:100%;padding:14px;background:rgba(239,68,68,0.15);border:1px solid rgba(239,68,68,0.3);color:var(--danger);border-radius:14px;cursor:pointer;font-family:&#39;Cairo&#39;,sans-serif;font-size:15px;font-weight:700;display:flex;align-items:center;justify-content:center;gap:8px;">
+        <i class="fa fa-sign-out-alt"></i> تسجيل الخروج
+      </button>
+    </div>
+  </div>
+
+  <!-- ===== BOTTOM NAV (MOBILE) ===== -->
+  <div id="bottom-nav">
+    <button onclick="switchSidebarTab(&#39;chats&#39;);showSidebar()" style="flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;background:none;border:none;color:var(--text-muted);cursor:pointer;padding:6px;font-family:&#39;Cairo&#39;,sans-serif;font-size:10px;">
+      <i class="fa fa-comment fa-lg"></i>دردشة
+    </button>
+    <button onclick="switchSidebarTab(&#39;friends&#39;);showSidebar()" style="flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;background:none;border:none;color:var(--text-muted);cursor:pointer;padding:6px;font-family:&#39;Cairo&#39;,sans-serif;font-size:10px;">
+      <i class="fa fa-users fa-lg"></i>أصدقاء
+    </button>
+    <button onclick="openModal(&#39;create-story-modal&#39;)" style="flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;background:none;border:none;cursor:pointer;padding:6px;">
+      <div style="width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-size:20px;margin-top:-20px;box-shadow:0 4px 15px var(--accent-glow);">+</div>
+    </button>
+    <button onclick="switchSidebarTab(&#39;groups&#39;);showSidebar()" style="flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;background:none;border:none;color:var(--text-muted);cursor:pointer;padding:6px;font-family:&#39;Cairo&#39;,sans-serif;font-size:10px;">
+      <i class="fa fa-layer-group fa-lg"></i>مجموعات
+    </button>
+    <button onclick="openSettings()" style="flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;background:none;border:none;color:var(--text-muted);cursor:pointer;padding:6px;font-family:&#39;Cairo&#39;,sans-serif;font-size:10px;">
+      <i class="fa fa-gear fa-lg"></i>إعدادات
+    </button>
+  </div>
+
+  <!-- ===== JAVASCRIPT ===== -->
+  <script>
+  // ==========================================
+  // FIREBASE INITIALIZATION
+  // ==========================================
+  const firebaseConfig = {
+    apiKey: "AIzaSyDQmWof8RhM8yef5MQDQ2Cc3KtMr7RQVHA",
+    authDomain: "djasser-137e1.firebaseapp.com",
+    databaseURL: "https://djasser-137e1-default-rtdb.firebaseio.com",
+    projectId: "djasser-137e1",
+    storageBucket: "djasser-137e1.firebasestorage.app",
+    messagingSenderId: "204637393208",
+    appId: "1:204637393208:web:236fea510daa1d0f66f1cd",
+    measurementId: "G-HCDEQ72HYD"
+  };
+  firebase.initializeApp(firebaseConfig);
+  const auth = firebase.auth();
+  const db = firebase.database();
+  const storage = firebase.storage();
+
+  // ==========================================
+  // APP STATE
+  // ==========================================
+  let currentUser = null;
+  let currentUserData = null;
+  let currentChatId = null;
+  let currentChatType = 'dm'; // 'dm' | 'group'
+  let currentChatPartner = null;
+  let messagesListener = null;
+  let typingTimeout = null;
+  let typingListeners = {};
+  let onlineListeners = {};
+  let mediaRecorder = null;
+  let audioChunks = [];
+  let voiceTimer = null;
+  let voiceSeconds = 0;
+  let isVoiceRecording = false;
+  let waveInterval = null;
+  let callTimer = null;
+  let callSeconds = 0;
+  let isMuted = false;
+  let storyBgColor = '#0f172a';
+  let storyType = 'text';
+  let storyImgBase64 = null;
+  let selectedSound = localStorage.getItem('dzSound') || 'ding';
+  let currentTheme = localStorage.getItem('dzTheme') || 'dark';
+  let selectedMsgId = null;
+  let replyTo = null;
+  let storyCurrentIndex = 0;
+  let storyOwners = [];
+  let storyAutoTimer = null;
+  let storyPaused = false;
+  let groupSelectedMembers = [];
+  let friendsMap = {};
+  let allChats = [];
+  let aiConversation = [];
+  let currentCallPartner = null;
+
+  // Emojis
+  const EMOJIS = {
+    all: ['😀','😂','🥹','😍','🤩','😎','🥳','😭','😡','🤔','😴','🤑','😈','👻','💀','🔥','✨','💯','❤️','🧡','💛','💚','💙','💜','🖤','🤍','❤️‍🔥','💔','💕','🌟','⭐','🎉','🎊','🎈','🎁','🎶','🎵','🏆','🥇','👑','💎','🌹','🌻','🌺','🍎','🍕','🍟','☕','🧋','🚀','✈️','🌍','🌊','⛰️','🦁','🐺','🦊','🐼','🦋','💐'],
+    face: ['😀','😁','😂','🥹','😍','🤩','😎','🥳','😭','😡','🤔','😴','🤑','😈','👻','💀','😮','😱','😤','😠','🥺','😢','😞','😔'],
+    love: ['❤️','🧡','💛','💚','💙','💜','🖤','🤍','❤️‍🔥','💔','💕','💞','💓','💗','💖','💘','💝','🫀','😍','🥰','😘'],
+    gesture: ['👋','🤚','🖐️','✋','🖖','👌','🤌','🤏','✌️','🤞','🤟','🤘','🤙','👈','👉','👆','🖕','👇','☝️','👍','👎','✊','👊','🤛','🤜','👏','🙌','🫶','🤲','🙏']
+  };
+
+  // AI Knowledge Base
+  const AI_KNOWLEDGE = {
+    'كيف أرسل رسالة': 'لإرسال رسالة: اختر محادثة من القائمة اليسرى، اكتب رسالتك في مربع النص في الأسفل، ثم اضغط زر الإرسال أو Enter. يمكنك أيضاً إرسال صور 🖼️ ورسائل صوتية 🎤.',
+    'كيف أضيف صديق': 'لإضافة صديق: اذهب لتبويب "الأصدقاء" في الشريط الجانبي، ثم اضغط زر "+ إضافة صديق"، ابحث باسم المستخدم أو البريد الإلكتروني وأرسل طلب الصداقة.',
+    'ما هي الستوريز': 'الستوريز قصص مؤقتة تظهر لأصدقائك لمدة 24 ساعة! يمكنك نشر صور أو نصوص. اضغط على زر "+" أعلى الشريط الجانبي لنشر ستوري جديد. اضغط على ستوري أي صديق لمشاهدته.',
+    'كيف أغير الثيم': 'لتغيير الثيم: اذهب لـ الإعدادات ⚙️ (أيقونة الترس) ثم قسم "الثيم" واختر من بين 6 ثيمات: داكن، المحيط، بنفسجي، زمرد، غروب، فاتح.',
+    'كيف أنشئ مجموعة': 'لإنشاء مجموعة: اذهب لتبويب "المجموعات" ثم اضغط "إنشاء مجموعة"، أدخل اسم المجموعة، أضف الأعضاء من أصدقائك، واضغط "إنشاء".',
+    'كيف أجري مكالمة': 'لإجراء مكالمة: افتح محادثة مع الشخص المطلوب، ثم اضغط أيقونة الهاتف 📞 للمكالمة الصوتية، أو أيقونة الكاميرا 📹 لمكالمة الفيديو.',
+    'كيف أرسل صوتية': 'لإرسال رسالة صوتية: في نافذة الدردشة، اضغط مطولاً على أيقونة المايكروفون 🎤 واستمر بالضغط أثناء الكلام، ثم ارفع إصبعك للإرسال.',
+    'كيف أغير الصورة': 'لتغيير صورتك الشخصية: اضغط على صورتك في أعلى الشريط الجانبي، ستظهر نافذة تعديل الملف الشخصي، اضغط على أيقونة الكاميرا لتغيير الصورة.',
+    'default': 'مرحباً! أنا مساعد DZ CLOSE. يمكنني مساعدتك في: إرسال الرسائل، إضافة الأصدقاء، إنشاء المجموعات، نشر الستوريز، إجراء المكالمات، وتخصيص التطبيق. ماذا تريد أن تعرف؟'
+  };
+
+  // ==========================================
+  // FIREBASE AUTH LISTENER
+  // ==========================================
+  auth.onAuthStateChanged(user => {
+    if (user) {
+      currentUser = user;
+      onUserLoggedIn();
+    } else {
+      currentUser = null;
+      showAuthScreen();
+    }
+    setTimeout(() => {
+      document.getElementById('loading-screen').style.display = 'none';
+    }, 1200);
+  });
+
+  // ==========================================
+  // AUTH FUNCTIONS
+  // ==========================================
+  function showForm(f) {
+    ['login','register','forgot'].forEach(id => {
+      document.getElementById('form-'+id).style.display = id===f ? 'block' : 'none';
+    });
+  }
+
+  function togglePassVis(id, btn) {
+    const input = document.getElementById(id);
+    const isPass = input.type === 'password';
+    input.type = isPass ? 'text' : 'password';
+    btn.innerHTML = isPass ? '<i class="fa fa-eye-slash"></i>' : '<i class="fa fa-eye"></i>';
+  }
+
+  async function doLogin() {
+    const email = document.getElementById('login-email').value.trim();
+    const pass = document.getElementById('login-pass').value;
+    const errEl = document.getElementById('login-error');
+    errEl.style.display = 'none';
+    if (!email || !pass) { showErr('login-error','يرجى ملء جميع الحقول'); return; }
+    try {
+      await auth.signInWithEmailAndPassword(email, pass);
+    } catch(e) {
+      const msgs = { 'auth/user-not-found':'البريد الإلكتروني غير مسجّل', 'auth/wrong-password':'كلمة المرور خاطئة', 'auth/invalid-email':'البريد الإلكتروني غير صحيح', 'auth/too-many-requests':'محاولات كثيرة، انتظر قليلاً' };
+      showErr('login-error', msgs[e.code] || 'خطأ في تسجيل الدخول');
+    }
+  }
+
+  async function doRegister() {
+    const name = document.getElementById('reg-name').value.trim();
+    const username = document.getElementById('reg-username').value.trim().replace('@','');
+    const email = document.getElementById('reg-email').value.trim();
+    const pass = document.getElementById('reg-pass').value;
+    if (!name||!username||!email||!pass) { showErr('reg-error','يرجى ملء جميع الحقول'); return; }
+    if (pass.length < 6) { showErr('reg-error','كلمة المرور يجب أن تكون 6 أحرف على الأقل'); return; }
+    try {
+      const cred = await auth.createUserWithEmailAndPassword(email, pass);
+      await cred.user.updateProfile({ displayName: name });
+      const uid = cred.user.uid;
+      const avatar = `https://api.dicebear.com/7.x/avataaars/svg?seed=${username}`;
+      await db.ref(`users/${uid}`).set({
+        uid, name, username: username.toLowerCase(), email,
+        avatar, bio: 'مرحباً! أنا أستخدم DZ CLOSE 👋',
+        status: 'متاح', online: true, lastSeen: Date.now(),
+        createdAt: Date.now(), theme: 'dark', sound: 'ding'
+      });
+    } catch(e) {
+      const msgs = { 'auth/email-already-in-use':'البريد مستخدم مسبقاً', 'auth/weak-password':'كلمة المرور ضعيفة', 'auth/invalid-email':'البريد غير صحيح' };
+      showErr('reg-error', msgs[e.code] || 'خطأ في إنشاء الحساب');
+    }
+  }
+
+  async function doForgotPass() {
+    const email = document.getElementById('forgot-email').value.trim();
+    const msgEl = document.getElementById('forgot-msg');
+    if (!email) { showMsg('forgot-msg','أدخل بريدك الإلكتروني','var(--danger)'); return; }
+    try {
+      await auth.sendPasswordResetEmail(email);
+      showMsg('forgot-msg','✅ تم إرسال رابط الاستعادة لبريدك الإلكتروني','var(--success)');
+    } catch(e) {
+      showMsg('forgot-msg','❌ لم يتم إيجاد الحساب أو البريد خاطئ','var(--danger)');
+    }
+  }
+
+  async function doLogout() {
+    if (currentUser) {
+      await db.ref(`users/${currentUser.uid}/online`).set(false);
+      await db.ref(`users/${currentUser.uid}/lastSeen`).set(Date.now());
+    }
+    await auth.signOut();
+    closeSettings();
+    showToast('👋 تم تسجيل الخروج بنجاح');
+  }
+
+  function showErr(id, msg) {
+    const el = document.getElementById(id);
+    el.textContent = msg; el.style.display = 'block';
+    setTimeout(() => el.style.display = 'none', 4000);
+  }
+  function showMsg(id, msg, color) {
+    const el = document.getElementById(id);
+    el.textContent = msg; el.style.color = color; el.style.display = 'block';
+  }
+
+  function showAuthScreen() {
+    document.getElementById('auth-screen').style.display = 'flex';
+    document.getElementById('app').style.display = 'none';
+    showForm('login');
+  }
+
+  // ==========================================
+  // ON USER LOGGED IN
+  // ==========================================
+  async function onUserLoggedIn() {
+    document.getElementById('auth-screen').style.display = 'none';
+    document.getElementById('app').style.display = 'flex';
+    loadPrefs();
+    await loadCurrentUser();
+    setupOnlinePresence();
+    loadSidebarChats();
+    loadStories();
+    loadFriendRequests();
+    initAI();
+    updateToggleStyles();
+  }
+
+  async function loadCurrentUser() {
+    const snap = await db.ref(`users/${currentUser.uid}`).get();
+    if (snap.exists()) {
+      currentUserData = snap.val();
+      document.getElementById('sidebar-avatar').src = currentUserData.avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${currentUser.uid}`;
+      applyTheme(currentUserData.theme || currentTheme);
+    }
+    // Listen for updates
+    db.ref(`users/${currentUser.uid}`).on('value', snap => {
+      if (snap.exists()) currentUserData = snap.val();
+    });
+  }
+
+  // ==========================================
+  // ONLINE PRESENCE
+  // ==========================================
+  function setupOnlinePresence() {
+    const userRef = db.ref(`users/${currentUser.uid}`);
+    const onlineRef = db.ref(`users/${currentUser.uid}/online`);
+    userRef.update({ online: true, lastSeen: Date.now() });
+    onlineRef.onDisconnect().set(false);
+    db.ref(`users/${currentUser.uid}/lastSeen`).onDisconnect().set(firebase.database.ServerValue.TIMESTAMP);
+    // Heartbeat
+    setInterval(() => {
+      if (currentUser) userRef.update({ online: true, lastSeen: Date.now() });
+    }, 30000);
+  }
+
+  function watchUserOnline(uid, callback) {
+    if (onlineListeners[uid]) return;
+    onlineListeners[uid] = db.ref(`users/${uid}/online`).on('value', snap => {
+      callback(snap.val() === true);
+    });
+  }
+
+  // ==========================================
+  // SIDEBAR
+  // ==========================================
+  let currentTab = 'chats';
+
+  function switchSidebarTab(tab) {
+    currentTab = tab;
+    ['chats','friends','groups'].forEach(t => {
+      document.getElementById('tab-'+t).classList.toggle('active', t===tab);
+    });
+    renderSidebarContent();
+  }
+
+  function loadSidebarChats() {
+    db.ref(`userChats/${currentUser.uid}`).on('value', snap => {
+      allChats = [];
+      if (snap.exists()) {
+        snap.forEach(child => allChats.push({ id: child.key, ...child.val() }));
+        allChats.sort((a,b) => (b.lastTime||0)-(a.lastTime||0));
+      }
+      if (currentTab === 'chats') renderSidebarContent();
+    });
+  }
+
+  function renderSidebarContent(filter='') {
+    const container = document.getElementById('sidebar-content');
+    container.innerHTML = '';
+
+    if (currentTab === 'chats') {
+      const filtered = allChats.filter(c =>
+        !filter || (c.name||'').toLowerCase().includes(filter.toLowerCase())
+      );
+      if (filtered.length === 0) {
+        container.innerHTML = `<div style="text-align:center;padding:40px 20px;color:var(--text-muted);font-size:14px;">
+          لا توجد محادثات بعد<br/><br/>
+          <button onclick="openModal('add-friend-modal')" class="btn-accent" style="padding:10px 20px;font-family:'Cairo',sans-serif;font-size:13px;">إضافة صديق</button>
+        </div>`;
+        return;
+      }
+      filtered.forEach(chat => renderChatItem(container, chat));
+    }
+
+    else if (currentTab === 'friends') {
+      const header = document.createElement('div');
+      header.style.cssText = 'padding:8px 12px;display:flex;align-items:center;justify-content:space-between;';
+      header.innerHTML = `
+        <span style="font-size:13px;color:var(--text-secondary);font-weight:600;">أصدقاؤك</span>
+        <button onclick="openModal('add-friend-modal')" class="btn-accent" style="padding:6px 12px;font-size:12px;border-radius:8px;font-family:'Cairo',sans-serif;display:flex;align-items:center;gap:6px;">
+          <i class="fa fa-plus"></i>إضافة
+        </button>`;
+      container.appendChild(header);
+      loadFriendsList(container, filter);
+    }
+
+    else if (currentTab === 'groups') {
+      const header = document.createElement('div');
+      header.style.cssText = 'padding:8px 12px;display:flex;align-items:center;justify-content:space-between;';
+      header.innerHTML = `
+        <span style="font-size:13px;color:var(--text-secondary);font-weight:600;">مجموعاتك</span>
+        <button onclick="openModal('create-group-modal')" class="btn-accent" style="padding:6px 12px;font-size:12px;border-radius:8px;font-family:'Cairo',sans-serif;display:flex;align-items:center;gap:6px;">
+          <i class="fa fa-plus"></i>جديدة
+        </button>`;
+      container.appendChild(header);
+      loadGroupsList(container, filter);
+    }
+  }
+
+  function renderChatItem(container, chat) {
+    const item = document.createElement('div');
+    item.className = 'chat-item' + (currentChatId === chat.id ? ' active' : '');
+    item.dataset.chatId = chat.id;
+    const isGroup = chat.type === 'group';
+    const avatarSrc = chat.avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${chat.id}`;
+    const unread = chat.unread || 0;
+    item.innerHTML = `
+      <div style="position:relative;flex-shrink:0;">
+        ${isGroup
+          ? `<div class="group-icon">${chat.name?.charAt(0)||'G'}</div>`
+          : `<img src="${avatarSrc}" class="avatar" style="width:44px;height:44px;" loading="lazy" alt="${chat.name}" />`
         }
+        <div class="${isGroup?'offline-dot':'online-dot'}" id="status-dot-${chat.id}" style="display:none;"></div>
+      </div>
+      <div style="flex:1;min-width:0;">
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:4px;">
+          <span style="font-weight:700;font-size:14px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;">${chat.name||'محادثة'}</span>
+          <span style="font-size:11px;color:var(--text-muted);flex-shrink:0;">${formatTime(chat.lastTime)}</span>
+        </div>
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:4px;">
+          <span style="font-size:12px;color:var(--text-muted);overflow:hidden;white-space:nowrap;text-overflow:ellipsis;flex:1;">${escHtml(chat.lastMsg||'')}</span>
+          ${unread>0 ? `<div class="badge">${unread}</div>` : ''}
+        </div>
+      </div>`;
+    item.addEventListener('click', () => openChat(chat));
+    container.appendChild(item);
 
-        function login() {
-            const email = document.getElementById('login-email').value;
-            const pass = document.getElementById('login-password').value;
-            auth.signInWithEmailAndPassword(email, pass).catch(e => alert(e.message));
+    if (!isGroup && chat.partnerId) {
+      watchUserOnline(chat.partnerId, online => {
+        const dot = document.getElementById('status-dot-'+chat.id);
+        if (dot) {
+          dot.style.display = 'block';
+          dot.className = online ? 'online-dot' : 'offline-dot';
         }
+      });
+    }
+  }
 
-        function resetPassword() {
-            const email = document.getElementById('reset-email').value;
-            auth.sendPasswordResetEmail(email).then(() => { alert('تم إرسال رابط استعادة كلمة السر'); showLogin(); }).catch(e => alert(e.message));
+  function loadFriendsList(container, filter='') {
+    db.ref(`friends/${currentUser.uid}`).get().then(snap => {
+      if (!snap.exists()) {
+        container.innerHTML += `<div style="text-align:center;padding:40px 20px;color:var(--text-muted);font-size:14px;">لا يوجد أصدقاء بعد<br/>أضف أصدقاء جدد!</div>`;
+        return;
+      }
+      const promises = [];
+      snap.forEach(child => {
+        if (child.val() === true) {
+          promises.push(db.ref(`users/${child.key}`).get().then(u => u.exists() ? u.val() : null));
         }
-
-        function logout() { auth.signOut(); }
-
-        // Auth State Observer
-        auth.onAuthStateChanged(user => {
-            if(user) {
-                currentUser = user;
-                document.getElementById('auth-container').style.display = 'none';
-                document.getElementById('app-container').style.display = 'block';
-                initApp();
-            } else {
-                currentUser = null;
-                document.getElementById('auth-container').style.display = 'flex';
-                document.getElementById('app-container').style.display = 'none';
-            }
+      });
+      Promise.all(promises).then(users => {
+        users.filter(u=>u&&(!filter||(u.name||'').toLowerCase().includes(filter.toLowerCase()))).forEach(user => {
+          const item = document.createElement('div');
+          item.className = 'chat-item';
+          item.innerHTML = `
+            <div style="position:relative;">
+              <img src="${user.avatar||`https://api.dicebear.com/7.x/avataaars/svg?seed=${user.uid}`}" class="avatar" style="width:44px;height:44px;" loading="lazy" alt="${user.name}" />
+              <div class="offline-dot" id="friend-dot-${user.uid}"></div>
+            </div>
+            <div style="flex:1;">
+              <div style="font-weight:700;font-size:14px;">${escHtml(user.name||'')}</div>
+              <div style="font-size:12px;color:var(--text-muted);">@${user.username||''}</div>
+            </div>
+            <button onclick="event.stopPropagation();openDMWithUser('${user.uid}')" style="padding:6px 12px;background:var(--bg-tertiary);border:1px solid var(--border);border-radius:8px;color:var(--accent);cursor:pointer;font-size:12px;font-family:'Cairo',sans-serif;">رسالة</button>`;
+          item.addEventListener('click', () => openDMWithUser(user.uid));
+          container.appendChild(item);
+          friendsMap[user.uid] = user;
+          watchUserOnline(user.uid, online => {
+            const dot = document.getElementById('friend-dot-'+user.uid);
+            if (dot) { dot.className = online?'online-dot':'offline-dot'; }
+          });
         });
+      });
+    });
 
-        // =========================================
-        // Online/Offline Status (onDisconnect)
-        // =========================================
-        function initApp() {
-            const userStatusRef = db.ref('users/' + currentUser.uid);
-            const isOfflineForDatabase = { status: 'offline', lastSeen: firebase.database.ServerValue.TIMESTAMP };
-            const isOnlineForDatabase = { status: 'online', lastSeen: firebase.database.ServerValue.TIMESTAMP };
-
-            db.ref('.info/connected').on('value', snapshot => {
-                if (snapshot.val() === false) return;
-                userStatusRef.onDisconnect().update(isOfflineForDatabase).then(() => {
-                    userStatusRef.update(isOnlineForDatabase);
-                });
-            });
-
-            db.ref('users/' + currentUser.uid).on('value', snap => {
-                if(snap.val()) document.getElementById('my-avatar').src = snap.val().profilePictureUrl;
-            });
-
-            loadChats();
-            loadStories();
+    // Friend Requests
+    db.ref(`friendRequests/${currentUser.uid}`).get().then(snap => {
+      if (!snap.exists()) return;
+      const reqSection = document.createElement('div');
+      reqSection.style.cssText = 'padding:8px 12px;';
+      reqSection.innerHTML = `<div style="font-size:13px;color:var(--warning);font-weight:700;margin-bottom:8px;">🔔 طلبات الصداقة</div>`;
+      snap.forEach(child => {
+        if (child.val().status === 'pending') {
+          const req = child.val();
+          const item = document.createElement('div');
+          item.style.cssText = 'display:flex;align-items:center;gap:10px;padding:8px 0;';
+          item.innerHTML = `
+            <img src="${req.avatar||`https://api.dicebear.com/7.x/avataaars/svg?seed=${req.fromUid}`}" class="avatar" style="width:40px;height:40px;" loading="lazy" alt="${req.fromName}" />
+            <div style="flex:1;"><div style="font-weight:600;font-size:13px;">${escHtml(req.fromName||'')}</div></div>
+            <button onclick="acceptFriendRequest('${req.fromUid}','${child.key}')" style="padding:5px 10px;background:var(--success);border:none;border-radius:8px;color:#fff;cursor:pointer;font-size:12px;font-family:'Cairo',sans-serif;">قبول</button>
+            <button onclick="declineFriendRequest('${child.key}')" style="padding:5px 10px;background:var(--bg-tertiary);border:1px solid var(--border);border-radius:8px;color:var(--danger);cursor:pointer;font-size:12px;font-family:'Cairo',sans-serif;">رفض</button>`;
+          reqSection.appendChild(item);
         }
+      });
+      container.insertBefore(reqSection, container.firstChild.nextSibling);
+    });
+  }
 
-        // =========================================
-        // Chat & Friends System (SQL Schema Adaptation)
-        // =========================================
-        function loadChats() {
-            const chatList = document.getElementById('chat-list');
-            chatList.innerHTML = '';
-            
-            // Simulated Chat List (In real app, query 'Follow' table to get friends)
-            const usersRef = db.ref('users');
-            usersRef.on('value', snapshot => {
-                chatList.innerHTML = '';
-                snapshot.forEach(child => {
-                    if(child.key !== currentUser.uid) {
-                        const user = child.val();
-                        const chatItem = document.createElement('div');
-                        chatItem.className = 'chat-item';
-                        chatItem.onclick = () => openChat(child.key, user);
-                        chatItem.innerHTML = `
-                            <img src="${user.profilePictureUrl}">
-                            <div class="chat-info">
-                                <div class="chat-name">
-                                    <span>${user.username} ${user.status === 'online' ? '<span class="online-dot"></span>' : ''}</span>
-                                    <small style="color:var(--text-secondary)">12:00 م</small>
-                                </div>
-                                <div class="chat-last-msg">اضغط لبدء المحادثة</div>
-                            </div>
-                        `;
-                        chatList.appendChild(chatItem);
-                    }
-                });
-            });
-        }
+  function loadGroupsList(container, filter='') {
+    db.ref(`userGroups/${currentUser.uid}`).get().then(snap => {
+      if (!snap.exists()) {
+        container.innerHTML += `<div style="text-align:center;padding:40px 20px;color:var(--text-muted);font-size:14px;">لا توجد مجموعات بعد</div>`;
+        return;
+      }
+      const gids = Object.keys(snap.val()||{});
+      gids.forEach(gid => {
+        db.ref(`groups/${gid}`).get().then(gs => {
+          if (!gs.exists()) return;
+          const g = gs.val();
+          if (filter && !(g.name||'').toLowerCase().includes(filter.toLowerCase())) return;
+          const item = document.createElement('div');
+          item.className = 'chat-item' + (currentChatId===gid?' active':'');
+          item.innerHTML = `
+            <div class="group-icon" style="font-size:22px;">${g.name?.charAt(0)||'G'}</div>
+            <div style="flex:1;min-width:0;">
+              <div style="font-weight:700;font-size:14px;">${escHtml(g.name||'مجموعة')}</div>
+              <div style="font-size:12px;color:var(--text-muted);">${g.memberCount||0} أعضاء • ${g.desc||''}</div>
+            </div>`;
+          item.addEventListener('click', () => openGroupChat(gid, g));
+          container.appendChild(item);
+        });
+      });
+    });
+  }
 
-        function openChat(userId, userData) {
-            currentChatId = userId;
-            document.getElementById('chat-header').style.display = 'flex';
-            document.getElementById('chat-input-area').style.display = 'flex';
-            document.getElementById('chat-avatar').src = userData.profilePictureUrl;
-            document.getElementById('chat-name').innerText = userData.username;
-            
-            // Update status dynamically
-            db.ref('users/' + userId).on('value', snap => {
-                if(snap.val()) {
-                    document.getElementById('chat-status').innerText = snap.val().status === 'online' ? 'متصل الآن' : 'آخر ظهور ' + new Date(snap.val().lastSeen).toLocaleTimeString('ar-EG');
-                }
-            });
+  function filterSidebar(val) {
+    renderSidebarContent(val);
+  }
 
-            if(window.innerWidth < 768) {
-                document.getElementById('app-layout').classList.add('chat-open');
-                document.getElementById('back-btn').style.display = 'block';
-            }
+  // ==========================================
+  // OPEN CHAT
+  // ==========================================
+  function openChat(chatData) {
+    if (chatData.type === 'group') {
+      db.ref(`groups/${chatData.id}`).get().then(s => {
+        if (s.exists()) openGroupChat(chatData.id, s.val());
+      });
+    } else {
+      openDMWithUser(chatData.partnerId);
+    }
+  }
 
-            loadMessages(userId);
-            playNotificationSound('open');
-        }
+  async function openDMWithUser(uid) {
+    if (uid === currentUser.uid) return;
+    const userSnap = await db.ref(`users/${uid}`).get();
+    if (!userSnap.exists()) return;
+    const partner = userSnap.val();
+    currentChatPartner = partner;
+    currentChatType = 'dm';
+    const chatId = [currentUser.uid, uid].sort().join('_');
+    currentChatId = chatId;
+    await openChatUI(chatId, partner.name||'مستخدم', partner.avatar||`https://api.dicebear.com/7.x/avataaars/svg?seed=${uid}`, uid, 'dm');
+    // Reset unread
+    db.ref(`userChats/${currentUser.uid}/${chatId}/unread`).set(0);
+  }
 
-        function closeChatMobile() {
-            document.getElementById('app-layout').classList.remove('chat-open');
-        }
+  async function openGroupChat(gid, gdata) {
+    currentChatType = 'group';
+    currentChatPartner = gdata;
+    currentChatId = gid;
+    await openChatUI(gid, gdata.name||'مجموعة', null, null, 'group');
+  }
 
-        function loadMessages(userId) {
-            const chatId = [currentUser.uid, userId].sort().join('_');
-            const msgArea = document.getElementById('messages-area');
-            msgArea.innerHTML = '';
-            
-            db.ref('chats/' + chatId).on('value', snapshot => {
-                msgArea.innerHTML = '';
-                snapshot.forEach(child => {
-                    const msg = child.val();
-                    const div = document.createElement('div');
-                    div.className = `message ${msg.senderId === currentUser.uid ? 'sent' : 'received'}`;
-                    
-                    if(msg.type === 'voice') {
-                        div.innerHTML = `
-                            <div class="voice-msg">
-                                <i class="fas fa-play"></i>
-                                <div class="voice-wave"></div>
-                                <small class="time">${msg.duration || '0:00'}</small>
-                            </div>`;
-                    } else {
-                        div.innerHTML = `${msg.text} <span class="time">${new Date(msg.timestamp).toLocaleTimeString('ar-EG', {hour: '2-digit', minute:'2-digit'})}</span>`;
-                    }
-                    msgArea.appendChild(div);
-                });
-                msgArea.scrollTop = msgArea.scrollHeight;
-            });
-        }
+  async function openChatUI(chatId, name, avatar, partnerId, type) {
+    document.getElementById('chat-empty').style.display = 'none';
+    document.getElementById('chat-active').style.display = 'flex';
 
-        function sendMessage() {
-            const input = document.getElementById('msg-input');
-            const text = input.value;
-            if(!text || !currentChatId) return;
+    document.getElementById('chat-header-name').textContent = name;
+    const headerAvatar = document.getElementById('chat-header-avatar');
+    if (type === 'group') {
+      headerAvatar.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=0ea5e9&color=fff&size=80`;
+    } else {
+      headerAvatar.src = avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${partnerId}`;
+    }
 
-            const chatId = [currentUser.uid, currentChatId].sort().join('_');
-            db.ref('chats/' + chatId).push({
-                senderId: currentUser.uid,
-                text: text,
-                timestamp: firebase.database.ServerValue.TIMESTAMP,
-                type: 'text'
-            });
-            input.value = '';
-            playNotificationSound('send');
-        }
+    if (type === 'dm' && partnerId) {
+      watchUserOnline(partnerId, online => {
+        document.getElementById('chat-online-indicator').style.display = online ? 'block' : 'none';
+        document.getElementById('chat-status-dot').style.background = online ? 'var(--success)' : 'var(--text-muted)';
+        document.getElementById('chat-status-text').textContent = online ? '🟢 متصل الآن' : '⚫ غير متصل';
+      });
+      listenTyping(partnerId, chatId);
+    } else {
+      document.getElementById('chat-status-text').textContent = `مجموعة`;
+      document.getElementById('chat-online-indicator').style.display = 'none';
+    }
 
-        function handleEnter(e) { if(e.key === 'Enter') sendMessage(); }
+    // Update profile panel
+    document.getElementById('pp-name').textContent = name;
+    document.getElementById('pp-avatar').src = headerAvatar.src;
+    if (type === 'dm' && currentChatPartner) {
+      document.getElementById('pp-bio').textContent = currentChatPartner.bio || '';
+      document.getElementById('pp-status').textContent = currentChatPartner.status || '';
+    }
 
-        // =========================================
-        // Voice Recording (Messenger Style)
-        // =========================================
-        async function startRecording() {
-            try {
-                const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-                mediaRecorder = new MediaRecorder(stream);
-                audioChunks = [];
-                const micBtn = document.getElementById('mic-btn');
-                micBtn.classList.add('recording-btn');
-                
-                mediaRecorder.ondataavailable = event => { audioChunks.push(event.data); };
-                mediaRecorder.start();
-            } catch(e) { alert('يجب السماح بالوصول إلى الميكروفون'); }
-        }
+    // Update active sidebar item
+    document.querySelectorAll('.chat-item').forEach(el => el.classList.remove('active'));
+    document.querySelectorAll(`[data-chat-id="${chatId}"]`).forEach(el => el.classList.add('active'));
 
-        function stopRecording() {
-            if(mediaRecorder && mediaRecorder.state === 'recording') {
-                mediaRecorder.stop();
-                document.getElementById('mic-btn').classList.remove('recording-btn');
-                
-                mediaRecorder.onstop = () => {
-                    const audioBlob = new Blob(audioChunks, { type: 'audio/mp3' });
-                    // In a real app, upload to Firebase Storage, get URL, then send message.
-                    // Here we simulate sending the voice note directly.
-                    const chatId = [currentUser.uid, currentChatId].sort().join('_');
-                    db.ref('chats/' + chatId).push({
-                        senderId: currentUser.uid,
-                        type: 'voice',
-                        duration: '0:05', // Simulated
-                        // audioUrl: downloadURL, 
-                        timestamp: firebase.database.ServerValue.TIMESTAMP
-                    });
-                    playNotificationSound('send');
-                };
-            }
-        }
+    // Clear + load messages
+    document.getElementById('messages-area').innerHTML = '';
+    if (messagesListener) messagesListener();
+    loadMessages(chatId);
 
-        // =========================================
-        // Calls (Realistic Simulation)
-        // =========================================
-        function startCall() {
-            if(!currentChatId) return;
-            const overlay = document.getElementById('call-overlay');
-            overlay.style.display = 'flex';
-            document.getElementById('call-status').innerText = 'جاري الاتصال...';
-            
-            // Simulate 15s wait
-            setTimeout(() => { document.getElementById('call-status').innerText = 'مكالمة جارية 00:15'; }, 15000);
-            
-            // Auto end after 1 min for demo
-            setTimeout(() => { endCall(); }, 60000);
-        }
+    // Mobile: show chat panel
+    hideSidebarMobile();
+    document.getElementById('back-btn').style.display = '';
+  }
 
-        function endCall() {
-            document.getElementById('call-overlay').style.display = 'none';
-        }
+  // ==========================================
+  // MESSAGES
+  // ==========================================
+  function loadMessages(chatId) {
+    const msgsRef = db.ref(`messages/${chatId}`).limitToLast(80);
+    messagesListener = msgsRef.on('value', snap => {
+      const area = document.getElementById('messages-area');
+      area.innerHTML = '';
+      if (snap.exists()) {
+        snap.forEach(child => appendMessage(child.key, child.val()));
+      }
+      scrollToBottom();
+    });
+    // Also listen for new messages
+    msgsRef.on('child_added', (snap) => {
+      const msgData = snap.val();
+      if (msgData.senderId !== currentUser.uid) {
+        playNotifSound();
+        showToast(`💬 ${msgData.senderName||'رسالة جديدة'}: ${msgData.type==='image'?'صورة 🖼️':msgData.type==='audio'?'رسالة صوتية 🎤':(msgData.text||'').substring(0,40)}`);
+      }
+    });
+  }
 
-        // =========================================
-        // Stories (Hold to pause, Video support)
-        // =========================================
-        let stories = [
-            { userId: 'bot1', username: 'جاسر اشلاف', img: 'https://via.placeholder.com/100', type: 'image', url: 'https://picsum.photos/400/700' },
-            { userId: 'bot2', username: 'مستخدم DZ', img: 'https://via.placeholder.com/100', type: 'image', url: 'https://picsum.photos/400/700?random=1' }
-        ];
-        let currentStory = 0;
+  function appendMessage(msgId, msg) {
+    const area = document.getElementById('messages-area');
+    const isMine = msg.senderId === currentUser.uid;
+    const row = document.createElement('div');
+    row.className = `msg-row ${isMine?'out':'in'}`;
+    row.dataset.msgId = msgId;
+    row.style.cssText = 'margin-bottom:6px;padding:0 12px;display:flex;align-items:flex-end;gap:6px;';
 
-        function loadStories() {
-            const bar = document.querySelector('.stories-bar');
-            // Add "Add Story" button
-            bar.innerHTML = `<div class="story-item" onclick="alert('إضافة ستوري جديدة')"><img src="https://via.placeholder.com/60" style="border: 2px dashed var(--text-secondary);"><span>إضافة</span></div>`;
-            
-            stories.forEach((story, index) => {
-                bar.innerHTML += `<div class="story-item" onclick="viewStory(${index})"><img src="${story.img}"><span>${story.username}</span></div>`;
-            });
-        }
+    let contentHtml = '';
+    if (msg.type === 'image') {
+      contentHtml = `<div class="media-msg" style="padding:4px;">
+        <img src="${msg.imageUrl}" loading="lazy" alt="صورة" onclick="openImgPreview('${msg.imageUrl}')" />
+      </div>`;
+    } else if (msg.type === 'audio') {
+      contentHtml = buildAudioMsg(msg);
+    } else {
+      contentHtml = `<div style="padding:10px 14px;line-height:1.5;font-size:14px;">${escHtml(msg.text||'').replace(/\n/g,'<br/>')}</div>`;
+    }
 
-        function viewStory(index) {
-            currentStory = index;
-            isStoryPaused = false;
-            const viewer = document.getElementById('story-viewer');
-            viewer.style.display = 'flex';
-            
-            const story = stories[index];
-            document.getElementById('story-user-avatar').src = story.img;
-            document.getElementById('story-user-name').innerText = story.username;
-            
-            const content = document.getElementById('story-content');
-            if(story.type === 'image') {
-                content.innerHTML = `<img src="${story.url}" style="height: 70vh; object-fit: contain;">`;
-            } else {
-                // Video Simulation
-                content.innerHTML = `<video src="${story.url}" autoplay style="height: 70vh;"></video>`;
-            }
+    if (msg.replyTo) {
+      contentHtml = `<div style="background:rgba(0,0,0,0.2);border-radius:8px 8px 0 0;padding:6px 10px;border-right:2px solid var(--accent);font-size:12px;color:var(--text-secondary);margin-top:6px;margin-right:4px;margin-left:4px;">
+        ↩ ${escHtml(msg.replyToText||'').substring(0,60)}</div>` + contentHtml;
+    }
 
-            // Progress Bar
-            const progress = document.getElementById('story-progress');
-            progress.innerHTML = '';
-            stories.forEach((_, i) => {
-                const bar = document.createElement('div');
-                bar.className = `progress-bar ${i <= index ? 'active' : ''}`;
-                progress.appendChild(bar);
-            });
+    const reactions = buildReactionsHtml(msg.reactions||{});
+    const timeStr = formatMsgTime(msg.timestamp);
+    const ticks = isMine ? `<span class="${msg.read?'tick-read':'tick-sent'}"><i class="fa fa-check-double" style="font-size:11px;"></i></span>` : '';
 
-            // Auto Next Story (5 seconds)
-            clearInterval(storyTimer);
-            let timeLeft = 5000;
-            storyTimer = setInterval(() => {
-                if(!isStoryPaused) {
-                    timeLeft -= 100;
-                    if(timeLeft <= 0) {
-                        clearInterval(storyTimer);
-                        if(index < stories.length - 1) viewStory(index + 1);
-                        else closeStory();
-                    }
-                }
-            }, 100);
-        }
+    row.innerHTML = `
+      <div style="position:relative;max-width:72%;">
+        <div class="${isMine?'msg-out':'msg-in'}" style="position:relative;" oncontextmenu="showCtxMenu(event,'${msgId}',\`${escAttr(msg.text||'')}\`);return false;" ondblclick="setReplyTo('${msgId}',\`${escAttr(msg.text||'')}\`)">
+          ${currentChatType==='group' && !isMine ? `<div style="font-size:11px;color:var(--accent);padding:6px 14px 0;font-weight:700;">${escHtml(msg.senderName||'')}</div>` : ''}
+          ${contentHtml}
+          <div style="display:flex;align-items:center;justify-content:flex-end;gap:4px;padding:2px 10px 6px;opacity:0.7;">
+            <span style="font-size:10px;color:var(--text-muted);">${timeStr}</span>
+            ${ticks}
+          </div>
+        </div>
+        ${reactions}
+      </div>`;
 
-        function pauseStory() { isStoryPaused = true; }
-        function resumeStory() { isStoryPaused = false; }
-        function closeStory() { clearInterval(storyTimer); document.getElementById('story-viewer').style.display = 'none'; }
+    area.appendChild(row);
 
-        // =========================================
-        // Themes & Sounds
-        // =========================================
-        const themes = ['', 'light', 'red'];
-        let themeIndex = 0;
+    // Mark read
+    if (!isMine && currentChatType === 'dm') {
+      db.ref(`messages/${currentChatId}/${msgId}/read`).set(true);
+    }
+  }
 
-        function changeTheme() {
-            themeIndex++;
-            if(themeIndex >= themes.length) themeIndex = 0;
-            document.documentElement.setAttribute('data-theme', themes[themeIndex]);
-            playNotificationSound('click');
-        }
+  function buildAudioMsg(msg) {
+    const bars = Array.from({length:24}, (_,i) => {
+      const h = 6 + Math.sin(i*0.8)*10 + Math.random()*6;
+      return `<div class="audio-bar" style="height:${h}px;"></div>`;
+    }).join('');
+    const dur = msg.duration || '0:00';
+    return `<div class="audio-msg">
+      <button onclick="playAudio(this,'${msg.audioUrl}')" style="width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,0.2);border:none;cursor:pointer;color:#fff;font-size:14px;flex-shrink:0;display:flex;align-items:center;justify-content:center;">
+        <i class="fa fa-play"></i>
+      </button>
+      <div class="audio-wave">${bars}</div>
+      <span style="font-size:12px;opacity:0.8;">${dur}</span>
+    </div>`;
+  }
 
-        function playNotificationSound(type) {
-            // Base64 Encoded short beep sounds to avoid external files
-            const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-            const oscillator = audioCtx.createOscillator();
-            const gainNode = audioCtx.createGain();
-            oscillator.connect(gainNode);
-            gainNode.connect(audioCtx.destination);
-            
-            if(type === 'send') { oscillator.frequency.value = 800; gainNode.gain.value = 0.1; }
-            else if(type === 'open') { oscillator.frequency.value = 600; gainNode.gain.value = 0.1; }
-            else { oscillator.frequency.value = 500; gainNode.gain.value = 0.05; }
-            
-            oscillator.start();
-            oscillator.stop(audioCtx.currentTime + 0.1);
-        }
+  function buildReactionsHtml(reactions) {
+    const counts = {};
+    Object.values(reactions).forEach(r => { counts[r] = (counts[r]||0)+1; });
+    if (!Object.keys(counts).length) return '';
+    const items = Object.entries(counts).map(([e,c]) => `<span style="font-size:14px;">${e}${c>1?`<sup style="font-size:9px;">${c}</sup>`:''}</span>`).join('');
+    return `<div style="display:flex;gap:3px;flex-wrap:wrap;margin-top:4px;">${items}</div>`;
+  }
 
-        // =========================================
-        // AI Assistant (Teaches the App)
-        // =========================================
-        function toggleAI() { const w = document.getElementById('ai-window'); w.style.display = w.style.display === 'flex' ? 'none' : 'flex'; }
+  async function sendMessage() {
+    const input = document.getElementById('msg-input');
+    const text = input.value.trim();
+    if (!text || !currentChatId) return;
+    input.value = '';
+    input.style.height = 'auto';
+    toggleSendVoiceBtn();
 
-        function sendAiMsg() {
-            const input = document.getElementById('ai-input');
-            const text = input.value.toLowerCase();
-            if(!text) return;
-            
-            addAiBubble(text, 'ai-user');
-            input.value = '';
+    const msgData = {
+      text, senderId: currentUser.uid,
+      senderName: currentUserData?.name || currentUser.displayName || 'مستخدم',
+      senderAvatar: currentUserData?.avatar || '',
+      timestamp: Date.now(), type: 'text', read: false
+    };
+    if (replyTo) {
+      msgData.replyTo = replyTo.id;
+      msgData.replyToText = replyTo.text;
+      cancelReply();
+    }
+    const msgRef = db.ref(`messages/${currentChatId}`).push();
+    await msgRef.set(msgData);
+    updateChatMeta(text, 'text');
+    stopTyping();
+    scrollToBottom(true);
+  }
 
-            let reply = "عذراً، لم أفهم سؤالك. حاول السؤال عن: الستوريز، المكالمات، تغيير الثيم، أو كيفية التسجيل.";
-            
-            if(text.includes('ستوري') || text.includes('قصص')) {
-                reply = "لمشاهدة الستوري، اضغط على صورة صديقك في أعلى القائمة. يمكنك **الضغط مع الاستمرار (Hold)** لإيقاف الستوري مؤقتاً، ورفع إصبعك للاستمرار. إذا كانت الستوري فيديو، ستشتغل تلقائياً!";
-            } else if(text.includes('مكالم') || text.includes('اتصال')) {
-                reply = "لإجراء مكالمة، افتح دردشة الصديق واضغط على أيقونة الهاتف أو الفيديو في الأعلى. المكالمة ستبدأ بحالة 'جاري الاتصال...' لمدة 15 ثانية واقعية قبل أن تبدأ المكالمة الوهمية!";
-            } else if(text.includes('ثيم') || text.includes('وضع') || text.includes('ليلي')) {
-                reply = "لتغيير الثيم، اضغط على أيقونة **اللوحة (🎨)** في أعلى القائمة الجانبية. التطبيق يدعم الوضع الليلي، الفاتح، والوردي!";
-            } else if(text.includes('صوت') || text.includes('رسالة صوتية')) {
-                reply = "لتسجيل رسالة صوتية مثل الماسنجر، اضغط مع الاستمرار على أيقونة **الميكروفون (🎤)**. أثناء التسجيل، سيتحول اللون لأحمر. ارفع إصبعك لإرسالها فوراً!";
-            } else if(text.includes('من صنع') || text.includes('مبرمج')) {
-                reply = "تم صنع هذا التطبيق بالكامل بواسطة المبرمج الجزائري الشاب **جاسر اشلاف**! 🇩🇿";
-            }
+  async function handleImgUpload(event) {
+    const file = event.target.files[0];
+    if (!file || !currentChatId) return;
+    const reader = new FileReader();
+    reader.onload = async (e) => {
+      const base64 = e.target.result;
+      const msgData = {
+        imageUrl: base64, type: 'image',
+        senderId: currentUser.uid,
+        senderName: currentUserData?.name || currentUser.displayName,
+        timestamp: Date.now(), read: false
+      };
+      await db.ref(`messages/${currentChatId}`).push(msgData);
+      updateChatMeta('📷 صورة', 'image');
+      scrollToBottom(true);
+    };
+    reader.readAsDataURL(file);
+    event.target.value = '';
+  }
 
-            setTimeout(() => addAiBubble(reply, 'ai-bot'), 1000);
-        }
+  function updateChatMeta(lastMsg, type) {
+    if (!currentChatId) return;
+    const ts = Date.now();
+    if (currentChatType === 'dm' && currentChatPartner) {
+      const partnerUid = currentChatPartner.uid || currentChatPartner;
+      const myData = { name: currentChatPartner.name||'مستخدم', avatar: currentChatPartner.avatar||'', lastMsg, lastTime: ts, partnerId: partnerUid, type:'dm' };
+      const partnerData = { name: currentUserData?.name||'مستخدم', avatar: currentUserData?.avatar||'', lastMsg, lastTime: ts, partnerId: currentUser.uid, type:'dm', unread: firebase.database.ServerValue.increment(1) };
+      db.ref(`userChats/${currentUser.uid}/${currentChatId}`).update(myData);
+      db.ref(`userChats/${partnerUid}/${currentChatId}`).update(partnerData);
+    } else if (currentChatType === 'group') {
+      db.ref(`groups/${currentChatId}`).update({ lastMsg, lastTime: ts });
+      db.ref(`userGroups`).get().then(snap => {
+        snap.forEach(userSnap => {
+          if (userSnap.child(currentChatId).exists()) {
+            db.ref(`userChats/${userSnap.key}/${currentChatId}`).update({ lastMsg, lastTime: ts, name: currentChatPartner?.name, type:'group' });
+          }
+        });
+      });
+    }
+  }
 
-        function addAiBubble(text, cls) {
-            const div = document.createElement('div');
-            div.className = `ai-msg ${cls}`;
-            div.innerText = text;
-            document.getElementById('ai-messages').appendChild(div);
-            document.getElementById('ai-messages').scrollTop = 99999;
-        }
+  // ==========================================
+  // VOICE MESSAGES
+  // ==========================================
+  async function startVoiceRecord() {
+    if (isVoiceRecording) return;
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      mediaRecorder = new MediaRecorder(stream);
+      audioChunks = [];
+      isVoiceRecording = true;
+      mediaRecorder.ondataavailable = e => audioChunks.push(e.data);
+      mediaRecorder.start();
+      document.getElementById('voice-recorder').classList.add('open');
+      document.getElementById('msg-input-area').querySelector('.btn-accent, [onclick="sendMessage()"]');
+      voiceSeconds = 0;
+      startVoiceTimer();
+      startWaveAnimation();
+    } catch(e) {
+      showToast('❌ لم يتم الوصول للميكروفون');
+    }
+  }
 
-        // Tab switching logic (Simulated)
-        function switchTab(tab) {
-            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
-            event.target.closest('.nav-item').classList.add('active');
-            // In a full app, this would filter the chat-list based on Friends/Groups schema.
-            if(tab === 'groups') alert('ميزة الغروبات قيد التطوير باستخدام الـ Schema الخاص بك!');
-        }
+  function stopVoiceRecord() {
+    if (!isVoiceRecording) return;
+    if (voiceSeconds < 1) { cancelVoice(); return; }
+    sendVoice();
+  }
 
-    </script>
-</body>
-</html>
+  async function sendVoice() {
+    if (!mediaRecorder) return;
+    mediaRecorder.stop();
+    isVoiceRecording = false;
+    clearInterval(voiceTimer);
+    clearInterval(waveInterval);
+    const dur = formatVoiceDuration(voiceSeconds);
+    mediaRecorder.onstop = async () => {
+      const blob = new Blob(audioChunks, { type: 'audio/webm' });
+      const reader = new FileReader();
+      reader.onload = async (e) => {
+        const msgData = {
+          audioUrl: e.target.result, type: 'audio', duration: dur,
+          senderId: currentUser.uid,
+          senderName: currentUserData?.name || currentUser.displayName,
+          timestamp: Date.now(), read: false
+        };
+        await db.ref(`messages/${currentChatId}`).push(msgData);
+        updateChatMeta('🎤 رسالة صوتية', 'audio');
+        scrollToBottom(true);
+      };
+      reader.readAsDataURL(blob);
+      mediaRecorder.stream.getTracks().forEach(t=>t.stop());
+    };
+    document.getElementById('voice-recorder').classList.remove('open');
+  }
+
+  function cancelVoice() {
+    if (mediaRecorder) {
+      mediaRecorder.stop();
+      mediaRecorder.stream.getTracks().forEach(t=>t.stop());
+    }
+    isVoiceRecording = false;
+    clearInterval(voiceTimer);
+    clearInterval(waveInterval);
+    document.getElementById('voice-recorder').classList.remove('open');
+  }
+
+  function startVoiceTimer() {
+    voiceTimer = setInterval(() => {
+      voiceSeconds++;
+      const mm = Math.floor(voiceSeconds/60);
+      const ss = voiceSeconds%60;
+      document.getElementById('voice-timer').textContent = `${mm}:${ss.toString().padStart(2,'0')}`;
+    }, 1000);
+  }
+
+  function startWaveAnimation() {
+    const container = document.getElementById('voice-waveform');
+    container.innerHTML = '';
+    for (let i=0;i<30;i++) {
+      const bar = document.createElement('div');
+      bar.className = 'waveform-bar';
+      bar.style.animationDelay = (i*0.05)+'s';
+      container.appendChild(bar);
+    }
+  }
+
+  function formatVoiceDuration(s) {
+    return `${Math.floor(s/60)}:${(s%60).toString().padStart(2,'0')}`;
+  }
+
+  function playAudio(btn, url) {
+    const audio = new Audio(url);
+    btn.innerHTML = '<i class="fa fa-pause"></i>';
+    audio.play();
+    audio.onended = () => { btn.innerHTML = '<i class="fa fa-play"></i>'; };
+  }
+
+  // ==========================================
+  // TYPING INDICATOR
+  // ==========================================
+  function handleMsgInput(el) {
+    el.style.height = 'auto';
+    el.style.height = Math.min(el.scrollHeight, 120) + 'px';
+    toggleSendVoiceBtn();
+    if (!currentChatId || currentChatType === 'group') return;
+    db.ref(`typing/${currentChatId}/${currentUser.uid}`).set(true);
+    clearTimeout(typingTimeout);
+    typingTimeout = setTimeout(stopTyping, 2500);
+  }
+
+  function handleMsgKeydown(e) {
+    if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); }
+  }
+
+  function stopTyping() {
+    if (currentChatId) db.ref(`typing/${currentChatId}/${currentUser.uid}`).set(false);
+  }
+
+  function listenTyping(partnerUid, chatId) {
+    if (typingListeners[chatId]) typingListeners[chatId]();
+    const ref = db.ref(`typing/${chatId}/${partnerUid}`);
+    const off = ref.on('value', snap => {
+      const isTyping = snap.val() === true;
+      const ind = document.getElementById('typing-indicator');
+      const txt = document.getElementById('typing-text');
+      ind.style.display = isTyping ? 'flex' : 'none';
+      txt.textContent = isTyping ? 'يكتب...' : '';
+    });
+    typingListeners[chatId] = () => ref.off('value', off);
+  }
+
+  function toggleSendVoiceBtn() {
+    const val = document.getElementById('msg-input').value.trim();
+    document.getElementById('send-btn').style.display = val ? 'flex' : 'none';
+    document.getElementById('voice-btn').style.display = val ? 'none' : 'flex';
+  }
+
+  // ==========================================
+  // CALLS
+  // ==========================================
+  function startCall(type) {
+    if (!currentChatPartner) return;
+    const overlay = document.getElementById('call-overlay');
+    const name = currentChatPartner.name || 'مستخدم';
+    const avatar = currentChatPartner.avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${currentChatPartner.uid||'call'}`;
+    document.getElementById('call-avatar').src = avatar;
+    document.getElementById('call-name').textContent = name;
+    document.getElementById('call-status').textContent = type==='video' ? '📹 مكالمة فيديو...' : '📞 يتصل...';
+    document.getElementById('call-timer').style.display = 'none';
+    currentCallPartner = currentChatPartner;
+    overlay.classList.add('open');
+    playCallSound();
+    // Simulate connection after 3-5 seconds
+    setTimeout(() => {
+      if (overlay.classList.contains('open')) {
+        document.getElementById('call-status').textContent = type==='video' ? '📹 مكالمة فيديو نشطة' : '📞 متصل';
+        document.getElementById('call-timer').style.display = 'block';
+        startCallTimer();
+      }
+    }, 3000 + Math.random()*2000);
+  }
+
+  function endCall() {
+    document.getElementById('call-overlay').classList.remove('open');
+    clearInterval(callTimer);
+    callSeconds = 0;
+    stopCallSound();
+    showToast('📞 انتهت المكالمة');
+  }
+
+  function startCallTimer() {
+    callTimer = setInterval(() => {
+      callSeconds++;
+      const mm = Math.floor(callSeconds/60);
+      const ss = callSeconds%60;
+      document.getElementById('call-timer').textContent = `${mm}:${ss.toString().padStart(2,'0')}`;
+    }, 1000);
+  }
+
+  function toggleMute() {
+    isMuted = !isMuted;
+    const btn = document.getElementById('call-mute-btn');
+    btn.innerHTML = isMuted ? '<i class="fa fa-microphone-slash"></i>' : '<i class="fa fa-microphone"></i>';
+    btn.style.background = isMuted ? 'var(--danger)' : 'var(--bg-tertiary)';
+    btn.style.color = isMuted ? '#fff' : 'var(--text-primary)';
+  }
+
+  function toggleSpeaker() {
+    const btn = document.getElementById('call-speaker-btn');
+    btn.style.background = btn.dataset.on ? 'var(--bg-tertiary)' : 'var(--accent)';
+    btn.style.color = btn.dataset.on ? 'var(--text-primary)' : '#0f172a';
+    btn.dataset.on = btn.dataset.on ? '' : '1';
+  }
+
+  function acceptCall() {
+    document.getElementById('incoming-call').classList.remove('show');
+    showToast('📞 تم قبول المكالمة');
+  }
+  function declineCall() {
+    document.getElementById('incoming-call').classList.remove('show');
+  }
+
+  // ==========================================
+  // STORIES
+  // ==========================================
+  function loadStories() {
+    const bar = document.getElementById('stories-bar');
+    bar.innerHTML = '';
+
+    // My story add button
+    const myBtn = document.createElement('div');
+    myBtn.style.cssText = 'display:flex;flex-direction:column;align-items:center;gap:4px;flex-shrink:0;cursor:pointer;';
+    myBtn.innerHTML = `
+      <div style="position:relative;">
+        <div class="story-ring" style="padding:2px;border-radius:50%;">
+          <img src="${currentUserData?.avatar||`https://api.dicebear.com/7.x/avataaars/svg?seed=${currentUser?.uid}`}" class="avatar" style="width:54px;height:54px;" loading="lazy" alt="ستوريزي" />
+        </div>
+        <div class="story-add-overlay">+</div>
+      </div>
+      <span style="font-size:11px;color:var(--text-secondary);max-width:60px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;">ستوريزي</span>`;
+    myBtn.onclick = () => openModal('create-story-modal');
+    bar.appendChild(myBtn);
+
+    // Load stories from friends
+    const since24h = Date.now() - 86400000;
+    db.ref('stories').orderByChild('timestamp').startAt(since24h).get().then(snap => {
+      if (!snap.exists()) return;
+      const storyOwnerMap = {};
+      snap.forEach(child => {
+        const s = child.val();
+        if (s.uid === currentUser.uid) return;
+        if (!storyOwnerMap[s.uid]) storyOwnerMap[s.uid] = { user: s, stories: [] };
+        storyOwnerMap[s.uid].stories.push({ id: child.key, ...s });
+      });
+      Object.values(storyOwnerMap).forEach(entry => {
+        const { user, stories } = entry;
+        const seen = stories.every(s => s.views && s.views[currentUser.uid]);
+        const btn = document.createElement('div');
+        btn.style.cssText = 'display:flex;flex-direction:column;align-items:center;gap:4px;flex-shrink:0;cursor:pointer;';
+        btn.innerHTML = `
+          <div class="story-ring ${seen?'story-ring-seen':''}" style="padding:2px;border-radius:50%;">
+            <img src="${user.avatar||`https://api.dicebear.com/7.x/avataaars/svg?seed=${user.uid}`}" class="avatar" style="width:54px;height:54px;" loading="lazy" alt="${user.name}" />
+          </div>
+          <span style="font-size:11px;color:var(--text-secondary);max-width:60px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;">${escHtml(user.name||'')}</span>`;
+        btn.onclick = () => openStoriesViewer(stories, 0);
+        bar.appendChild(btn);
+      });
+    });
+  }
+
+  function setStoryType(t) {
+    storyType = t;
+    document.getElementById('story-text-form').style.display = t==='text'?'block':'none';
+    document.getElementById('story-image-form').style.display = t==='image'?'block':'none';
+    document.getElementById('story-type-text').classList.toggle('active', t==='text');
+    document.getElementById('story-type-image').classList.toggle('active', t==='image');
+  }
+
+  function setStoryBg(bg) { storyBgColor = bg; }
+
+  function previewStoryImg(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = e => {
+      storyImgBase64 = e.target.result;
+      const preview = document.getElementById('story-img-preview');
+      preview.src = storyImgBase64;
+      preview.style.display = 'block';
+    };
+    reader.readAsDataURL(file);
+  }
+
+  async function publishStory() {
+    const storyData = {
+      uid: currentUser.uid,
+      name: currentUserData?.name || currentUser.displayName,
+      avatar: currentUserData?.avatar || '',
+      timestamp: Date.now(),
+      type: storyType,
+      views: {}
+    };
+    if (storyType === 'text') {
+      const text = document.getElementById('story-text-input').value.trim();
+      if (!text) { showToast('❌ أدخل نص الستوري'); return; }
+      storyData.text = text;
+      storyData.bg = storyBgColor;
+    } else {
+      if (!storyImgBase64) { showToast('❌ اختر صورة'); return; }
+      storyData.imageUrl = storyImgBase64;
+    }
+    await db.ref('stories').push(storyData);
+    closeModal('create-story-modal');
+    document.getElementById('story-text-input').value = '';
+    storyImgBase64 = null;
+    document.getElementById('story-img-preview').style.display = 'none';
+    showToast('✨ تم نشر الستوري!');
+    loadStories();
+  }
+
+  function openStoriesViewer(stories, startIndex) {
+    storyOwners = stories;
+    storyCurrentIndex = startIndex;
+    document.getElementById('stories-viewer').classList.add('open');
+    displayStory(storyCurrentIndex);
+  }
+
+  function displayStory(index) {
+    if (index >= storyOwners.length) { closeStoriesViewer(); return; }
+    const s = storyOwners[index];
+    clearTimeout(storyAutoTimer);
+
+    document.getElementById('story-viewer-avatar').src = s.avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${s.uid}`;
+    document.getElementById('story-viewer-name').textContent = s.name || '';
+    document.getElementById('story-viewer-time').textContent = timeAgo(s.timestamp);
+
+    const img = document.getElementById('story-img');
+    const txt = document.getElementById('story-text-content');
+    const vid = document.getElementById('story-video');
+
+    img.style.display = 'none'; txt.style.display = 'none'; vid.style.display = 'none';
+
+    if (s.type === 'image' && s.imageUrl) {
+      img.src = s.imageUrl; img.style.display = 'block';
+    } else if (s.type === 'text') {
+      txt.textContent = s.text || '';
+      txt.style.display = 'block';
+      document.getElementById('story-content').style.background = s.bg || '#0f172a';
+    }
+
+    // Build progress bars
+    const pbContainer = document.getElementById('story-progress-bars');
+    pbContainer.innerHTML = '';
+    storyOwners.forEach((_, i) => {
+      const bar = document.createElement('div');
+      bar.className = 'story-progress';
+      const fill = document.createElement('div');
+      fill.className = 'story-progress-fill';
+      bar.appendChild(fill);
+      pbContainer.appendChild(bar);
+    });
+
+    // Animate current bar
+    const bars = pbContainer.querySelectorAll('.story-progress-fill');
+    bars.forEach((b,i) => { if(i<index) b.style.width='100%'; });
+    if (bars[index]) {
+      bars[index].style.transition = 'width 5s linear';
+      setTimeout(() => { bars[index].style.width = '100%'; }, 50);
+    }
+
+    // Mark as viewed
+    db.ref(`stories/${s.id}/views/${currentUser.uid}`).set(true);
+
+    storyAutoTimer = setTimeout(() => nextStory(), 5000);
+  }
+
+  function nextStory() {
+    if (storyPaused) return;
+    storyCurrentIndex++;
+    displayStory(storyCurrentIndex);
+  }
+
+  function toggleStoryPause() {
+    storyPaused = !storyPaused;
+    document.getElementById('story-pause-btn').innerHTML = storyPaused ? '<i class="fa fa-play"></i>' : '<i class="fa fa-pause"></i>';
+    if (!storyPaused) {
+      storyAutoTimer = setTimeout(() => nextStory(), 3000);
+    } else {
+      clearTimeout(storyAutoTimer);
+    }
+  }
+
+  function closeStoriesViewer() {
+    document.getElementById('stories-viewer').classList.remove('open');
+    clearTimeout(storyAutoTimer);
+    storyPaused = false;
+    const vid = document.getElementById('story-video');
+    vid.pause(); vid.src = '';
+  }
+
+  function sendStoryReply() {
+    const input = document.getElementById('story-reply-input');
+    const text = input.value.trim();
+    if (!text) return;
+    const s = storyOwners[storyCurrentIndex];
+    if (s && s.uid !== currentUser.uid) {
+      openDMWithUser(s.uid).then(() => {
+        document.getElementById('msg-input').value = `ردّ على ستوريزك: ${text}`;
+        sendMessage();
+      });
+    }
+    input.value = '';
+    showToast('✅ تم إرسال الردّ');
+  }
+
+  function reactToStory() {
+    const s = storyOwners[storyCurrentIndex];
+    if (s) db.ref(`stories/${s.id}/reactions/${currentUser.uid}`).set('❤️');
+    showToast('❤️ تم التفاعل مع الستوري');
+  }
+
+  // ==========================================
+  // FRIEND SYSTEM
+  // ==========================================
+  function loadFriendRequests() {
+    db.ref(`friendRequests/${currentUser.uid}`).on('value', snap => {
+      let pending = 0;
+      if (snap.exists()) snap.forEach(c => { if (c.val().status==='pending') pending++; });
+      // Could show badge on friends tab
+    });
+  }
+
+  async function searchUsers(query) {
+    const container = document.getElementById('user-search-results');
+    if (query.length < 2) { container.innerHTML = ''; return; }
+    container.innerHTML = '<div style="padding:16px;text-align:center;"><div class="spinner" style="margin:0 auto;"></div></div>';
+    const snap = await db.ref('users').get();
+    container.innerHTML = '';
+    if (!snap.exists()) return;
+    let found = 0;
+    snap.forEach(child => {
+      const user = child.val();
+      if (user.uid === currentUser.uid) return;
+      if ((user.username||'').toLowerCase().includes(query.toLowerCase()) ||
+          (user.name||'').toLowerCase().includes(query.toLowerCase()) ||
+          (user.email||'').toLowerCase().includes(query.toLowerCase())) {
+        found++;
+        const item = document.createElement('div');
+        item.className = 'chat-item';
+        item.style.margin = '2px 0';
+        item.innerHTML = `
+          <img src="${user.avatar||`https://api.dicebear.com/7.x/avataaars/svg?seed=${user.uid}`}" class="avatar" style="width:44px;height:44px;" loading="lazy" alt="${user.name}" />
+          <div style="flex:1;">
+            <div style="font-weight:700;font-size:14px;">${escHtml(user.name||'')}</div>
+            <div style="font-size:12px;color:var(--text-muted);">@${user.username||''}</div>
+          </div>
+          <button onclick="sendFriendRequest('${user.uid}','${escAttr(user.name||'')}','${user.avatar||''}')" class="btn-accent" style="padding:6px 12px;font-size:12px;border-radius:8px;font-family:'Cairo',sans-serif;">إضافة</button>`;
+        container.appendChild(item);
+      }
+    });
+    if (found === 0) container.innerHTML = '<div style="padding:16px;text-align:center;color:var(--text-muted);">لم يتم إيجاد نتائج</div>';
+  }
+
+  async function sendFriendRequest(toUid, toName, toAvatar) {
+    const reqId = currentUser.uid;
+    await db.ref(`friendRequests/${toUid}/${reqId}`).set({
+      fromUid: currentUser.uid,
+      fromName: currentUserData?.name || currentUser.displayName,
+      fromAvatar: currentUserData?.avatar || '',
+      status: 'pending',
+      timestamp: Date.now()
+    });
+    showToast(`✅ تم إرسال طلب الصداقة إلى ${toName}`);
+  }
+
+  async function acceptFriendRequest(fromUid, reqKey) {
+    await db.ref(`friends/${currentUser.uid}/${fromUid}`).set(true);
+    await db.ref(`friends/${fromUid}/${currentUser.uid}`).set(true);
+    await db.ref(`friendRequests/${currentUser.uid}/${reqKey}`).update({ status: 'accepted' });
+    showToast('✅ تم قبول طلب الصداقة!');
+    renderSidebarContent();
+  }
+
+  async function declineFriendRequest(reqKey) {
+    await db.ref(`friendRequests/${currentUser.uid}/${reqKey}`).remove();
+    showToast('تم رفض الطلب');
+    renderSidebarContent();
+  }
+
+  // ==========================================
+  // GROUPS
+  // ==========================================
+  let groupMembersList = [];
+
+  async function searchGroupMembers(query) {
+    const container = document.getElementById('group-member-results');
+    container.innerHTML = '';
+    if (query.length < 1) return;
+    const snap = await db.ref('users').get();
+    if (!snap.exists()) return;
+    snap.forEach(child => {
+      const user = child.val();
+      if (user.uid === currentUser.uid) return;
+      if ((user.name||'').toLowerCase().includes(query.toLowerCase())) {
+        const already = groupMembersList.find(m=>m.uid===user.uid);
+        const item = document.createElement('div');
+        item.className = 'fwd-contact';
+        item.innerHTML = `
+          <img src="${user.avatar||`https://api.dicebear.com/7.x/avataaars/svg?seed=${user.uid}`}" class="avatar" style="width:36px;height:36px;" loading="lazy" alt="${user.name}" />
+          <div style="flex:1;">${escHtml(user.name||'')}</div>
+          <button onclick="addGroupMember(${JSON.stringify({uid:user.uid,name:user.name,avatar:user.avatar}).replace(/"/g,'&quot;')})" style="padding:4px 10px;background:${already?'var(--success)':'var(--bg-tertiary)'};border:1px solid var(--border);border-radius:8px;color:${already?'#fff':'var(--text-primary)'};cursor:pointer;font-size:12px;font-family:'Cairo',sans-serif;">
+            ${already?'✓ مضاف':'إضافة'}
+          </button>`;
+        container.appendChild(item);
+      }
+    });
+  }
+
+  function addGroupMember(user) {
+    if (groupMembersList.find(m=>m.uid===user.uid)) return;
+    groupMembersList.push(user);
+    const container = document.getElementById('group-selected-members');
+    const chip = document.createElement('div');
+    chip.className = 'member-chip';
+    chip.dataset.uid = user.uid;
+    chip.innerHTML = `${escHtml(user.name||'')} <button onclick="removeGroupMember('${user.uid}')" style="background:none;border:none;color:var(--danger);cursor:pointer;font-size:12px;">×</button>`;
+    container.appendChild(chip);
+  }
+
+  function removeGroupMember(uid) {
+    groupMembersList = groupMembersList.filter(m=>m.uid!==uid);
+    const chip = document.querySelector(`.member-chip[data-uid="${uid}"]`);
+    if (chip) chip.remove();
+  }
+
+  async function createGroup() {
+    const name = document.getElementById('group-name-input').value.trim();
+    const desc = document.getElementById('group-desc-input').value.trim();
+    if (!name) { showToast('❌ أدخل اسم المجموعة'); return; }
+    const gid = db.ref('groups').push().key;
+    const members = { [currentUser.uid]: 'admin' };
+    groupMembersList.forEach(m => { members[m.uid] = 'member'; });
+    const groupData = {
+      id: gid, name, desc, createdBy: currentUser.uid,
+      createdAt: Date.now(), members,
+      memberCount: Object.keys(members).length,
+      lastMsg: 'تم إنشاء المجموعة', lastTime: Date.now()
+    };
+    await db.ref(`groups/${gid}`).set(groupData);
+    await db.ref(`userGroups/${currentUser.uid}/${gid}`).set(true);
+    for (const m of groupMembersList) {
+      await db.ref(`userGroups/${m.uid}/${gid}`).set(true);
+      await db.ref(`userChats/${m.uid}/${gid}`).set({ name, type:'group', lastMsg:'تمت دعوتك للمجموعة', lastTime: Date.now() });
+    }
+    await db.ref(`userChats/${currentUser.uid}/${gid}`).set({ name, type:'group', lastMsg:'تم إنشاء المجموعة', lastTime: Date.now() });
+    closeModal('create-group-modal');
+    groupMembersList = [];
+    document.getElementById('group-selected-members').innerHTML = '';
+    document.getElementById('group-name-input').value = '';
+    document.getElementById('group-desc-input').value = '';
+    showToast(`✅ تم إنشاء مجموعة "${name}"`);
+    switchSidebarTab('groups');
+  }
+
+  // ==========================================
+  // CONTEXT MENU & MESSAGE ACTIONS
+  // ==========================================
+  function showCtxMenu(e, msgId, text) {
+    e.preventDefault();
+    selectedMsgId = msgId;
+    const menu = document.getElementById('ctx-menu');
+    menu.classList.add('open');
+    const x = Math.min(e.clientX, window.innerWidth - 200);
+    const y = Math.min(e.clientY, window.innerHeight - 200);
+    menu.style.left = x+'px'; menu.style.top = y+'px';
+    menu.dataset.text = text;
+    document.addEventListener('click', closeCtxMenu, { once: true });
+  }
+
+  function closeCtxMenu() { document.getElementById('ctx-menu').classList.remove('open'); }
+
+  function ctxAction(action) {
+    const menu = document.getElementById('ctx-menu');
+    const text = menu.dataset.text || '';
+    closeCtxMenu();
+    if (action === 'reply') setReplyTo(selectedMsgId, text);
+    else if (action === 'copy') { navigator.clipboard.writeText(text); showToast('✅ تم النسخ'); }
+    else if (action === 'delete') deleteMessage(selectedMsgId);
+    else if (action === 'forward') openForwardModal(text);
+    else if (action === 'pin') pinMessage(text);
+    else if (action === 'star') showToast('⭐ تم التمييز');
+  }
+
+  function setReplyTo(id, text) {
+    replyTo = { id, text };
+    const rp = document.getElementById('reply-preview');
+    rp.style.display = 'flex';
+    document.getElementById('reply-preview-text').textContent = text.substring(0,80);
+    document.getElementById('msg-input').focus();
+  }
+
+  function cancelReply() {
+    replyTo = null;
+    document.getElementById('reply-preview').style.display = 'none';
+  }
+
+  async function deleteMessage(msgId) {
+    if (!currentChatId) return;
+    await db.ref(`messages/${currentChatId}/${msgId}`).remove();
+    showToast('🗑️ تم حذف الرسالة');
+  }
+
+  function openForwardModal(text) {
+    const list = document.getElementById('forward-list');
+    list.innerHTML = '';
+    allChats.forEach(c => {
+      const item = document.createElement('div');
+      item.className = 'fwd-contact';
+      item.innerHTML = `
+        <img src="${c.avatar||`https://api.dicebear.com/7.x/avataaars/svg?seed=${c.id}`}" class="avatar" style="width:40px;height:40px;" loading="lazy" alt="${c.name}" />
+        <span style="flex:1;">${escHtml(c.name||'')}</span>
+        <button onclick="forwardTo('${c.id}','${escAttr(c.partnerId||'')}',\`${escAttr(text)}\`)" class="btn-accent" style="padding:6px 12px;font-size:12px;border-radius:8px;font-family:'Cairo',sans-serif;">إرسال</button>`;
+      list.appendChild(item);
+    });
+    openModal('forward-modal');
+  }
+
+  async function forwardTo(chatId, partnerId, text) {
+    const msgData = {
+      text: `↗️ ${text}`, senderId: currentUser.uid,
+      senderName: currentUserData?.name || currentUser.displayName,
+      timestamp: Date.now(), type: 'text', read: false, forwarded: true
+    };
+    await db.ref(`messages/${chatId}`).push(msgData);
+    closeModal('forward-modal');
+    showToast('✅ تمت إعادة التوجيه');
+  }
+
+  function pinMessage(text) {
+    const pm = document.getElementById('pinned-msg');
+    document.getElementById('pinned-msg-text').textContent = text;
+    pm.classList.add('show');
+    showToast('📌 تم تثبيت الرسالة');
+  }
+
+  // ==========================================
+  // PROFILE
+  // ==========================================
+  function openModal(id) {
+    const m = document.getElementById(id);
+    if (!m) return;
+    m.classList.add('open');
+    if (id === 'profile-edit-modal') loadProfileEditForm();
+  }
+
+  function closeModal(id) {
+    document.getElementById(id)?.classList.remove('open');
+  }
+
+  function loadProfileEditForm() {
+    const data = currentUserData;
+    if (!data) return;
+    document.getElementById('edit-avatar-img').src = data.avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${currentUser.uid}`;
+    document.getElementById('edit-name').value = data.name || '';
+    document.getElementById('edit-username').value = data.username || '';
+    document.getElementById('edit-bio').value = data.bio || '';
+    document.getElementById('edit-status-type').value = data.status || 'متاح';
+  }
+
+  async function saveProfile() {
+    const name = document.getElementById('edit-name').value.trim();
+    const username = document.getElementById('edit-username').value.trim().replace('@','');
+    const bio = document.getElementById('edit-bio').value.trim();
+    const status = document.getElementById('edit-status-type').value;
+    if (!name) { showToast('❌ أدخل الاسم'); return; }
+    const updates = { name, username: username.toLowerCase(), bio, status };
+    await db.ref(`users/${currentUser.uid}`).update(updates);
+    await currentUser.updateProfile({ displayName: name });
+    showToast('✅ تم حفظ الملف الشخصي');
+    closeModal('profile-edit-modal');
+    document.getElementById('sidebar-avatar').src = currentUserData?.avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${currentUser.uid}`;
+  }
+
+  function uploadAvatar(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = async (e) => {
+      const base64 = e.target.result;
+      document.getElementById('edit-avatar-img').src = base64;
+      document.getElementById('sidebar-avatar').src = base64;
+      await db.ref(`users/${currentUser.uid}/avatar`).set(base64);
+      showToast('✅ تم تحديث الصورة الشخصية');
+    };
+    reader.readAsDataURL(file);
+  }
+
+  function toggleProfilePanel() {
+    const panel = document.getElementById('profile-panel');
+    panel.classList.toggle('open');
+  }
+
+  // ==========================================
+  // SETTINGS
+  // ==========================================
+  function openSettings() { document.getElementById('settings-panel').classList.add('open'); }
+  function closeSettings() { document.getElementById('settings-panel').classList.remove('open'); }
+
+  function applyTheme(t) {
+    document.body.className = `theme-${t}`;
+    currentTheme = t;
+    localStorage.setItem('dzTheme', t);
+    document.querySelectorAll('.sound-item[id^="theme-"]').forEach(el => el.classList.remove('selected'));
+    const themeEl = document.getElementById('theme-'+t);
+    if (themeEl) themeEl.classList.add('selected');
+    if (currentUser) db.ref(`users/${currentUser.uid}/theme`).set(t);
+  }
+
+  function selectSound(s) {
+    selectedSound = s;
+    localStorage.setItem('dzSound', s);
+    document.querySelectorAll('.sound-item[id^="sound-"]').forEach(el => el.classList.remove('selected'));
+    document.getElementById('sound-'+s)?.classList.add('selected');
+    if (currentUser) db.ref(`users/${currentUser.uid}/sound`).set(s);
+  }
+
+  function previewSound(s) { playSound(s); }
+
+  function playNotifSound() {
+    playSound(selectedSound);
+  }
+
+  function playSound(type) {
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.connect(gain); gain.connect(ctx.destination);
+    const sounds = {
+      ding: { freq:[880,660], dur:[0.05,0.3], type:'sine' },
+      pop:  { freq:[400,300], dur:[0.05,0.1], type:'sine' },
+      chime:{ freq:[523,659,784], dur:[0.1,0.1,0.3], type:'triangle' },
+      bell: { freq:[], dur:[], type:'sine' }
+    };
+    const cfg = sounds[type] || sounds.ding;
+    if (!cfg.freq.length) return;
+    osc.frequency.setValueAtTime(cfg.freq[0], ctx.currentTime);
+    cfg.freq.forEach((f,i) => osc.frequency.setValueAtTime(f, ctx.currentTime + (i>0?cfg.dur[i-1]:0)));
+    gain.gain.setValueAtTime(0.3, ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.5);
+    osc.type = cfg.type;
+    osc.start();
+    osc.stop(ctx.currentTime + 0.6);
+  }
+
+  let callOscillator = null, callCtx = null;
+  function playCallSound() {
+    callCtx = new (window.AudioContext || window.webkitAudioContext)();
+    callOscillator = callCtx.createOscillator();
+    const gain = callCtx.createGain();
+    callOscillator.connect(gain); gain.connect(callCtx.destination);
+    callOscillator.frequency.value = 440;
+    callOscillator.type = 'sine';
+    gain.gain.value = 0.2;
+    callOscillator.start();
+    // Pattern: beep beep
+    let on = true;
+    setInterval(() => {
+      gain.gain.value = on ? 0.2 : 0;
+      on = !on;
+    }, 600);
+  }
+  function stopCallSound() {
+    if (callOscillator) { try { callOscillator.stop(); } catch(e){} }
+  }
+
+  function savePref(key, val) { localStorage.setItem('dzPref_'+key, val); }
+
+  function loadPrefs() {
+    applyTheme(currentTheme);
+    selectSound(selectedSound);
+    // Apply toggle styles
+    updateToggleStyles();
+  }
+
+  function updateToggleStyles() {
+    document.querySelectorAll('input[type="checkbox"]').forEach(cb => {
+      const track = cb.nextElementSibling;
+      if (track) {
+        track.style.background = cb.checked ? 'var(--accent)' : 'var(--bg-tertiary)';
+      }
+    });
+    document.querySelectorAll('input[type="checkbox"]').forEach(cb => {
+      cb.addEventListener('change', function() {
+        const track = this.nextElementSibling;
+        if (track) track.style.background = this.checked ? 'var(--accent)' : 'var(--bg-tertiary)';
+      });
+    });
+  }
+
+  // ==========================================
+  // EMOJI PICKER
+  // ==========================================
+  let emojiCategory = 'all';
+
+  function toggleEmojiPicker() {
+    const picker = document.getElementById('emoji-picker');
+    picker.style.display = picker.style.display === 'none' ? 'block' : 'none';
+    if (picker.style.display === 'block') renderEmojis('all');
+  }
+
+  function filterEmoji(cat) {
+    emojiCategory = cat;
+    document.querySelectorAll('#emoji-picker .tab-btn').forEach((b,i) => {
+      b.classList.toggle('active', ['all','face','love','gesture'][i]===cat);
+    });
+    renderEmojis(cat);
+  }
+
+  function renderEmojis(cat) {
+    const grid = document.getElementById('emoji-grid');
+    grid.innerHTML = '';
+    (EMOJIS[cat]||EMOJIS.all).forEach(em => {
+      const btn = document.createElement('button');
+      btn.className = 'emoji-btn';
+      btn.textContent = em;
+      btn.onclick = () => insertEmoji(em);
+      grid.appendChild(btn);
+    });
+  }
+
+  function insertEmoji(em) {
+    const input = document.getElementById('msg-input');
+    const pos = input.selectionStart;
+    input.value = input.value.substring(0,pos) + em + input.value.substring(pos);
+    input.focus();
+    input.selectionStart = input.selectionEnd = pos + em.length;
+    toggleSendVoiceBtn();
+  }
+
+  // ==========================================
+  // CHAT SEARCH
+  // ==========================================
+  function openSearchChat() {
+    const bar = document.getElementById('chat-search-bar');
+    bar.style.display = 'flex';
+    document.getElementById('chat-search-input').focus();
+  }
+
+  function closeChatSearch() {
+    document.getElementById('chat-search-bar').style.display = 'none';
+    document.getElementById('chat-search-input').value = '';
+    document.querySelectorAll('.highlight').forEach(el => {
+      const parent = el.parentNode;
+      parent.replaceChild(document.createTextNode(el.textContent), el);
+      parent.normalize();
+    });
+  }
+
+  function searchInChat(query) {
+    const msgs = document.querySelectorAll('#messages-area .msg-out, #messages-area .msg-in');
+    msgs.forEach(msg => {
+      const text = msg.querySelector('div[style*="padding"]');
+      if (text && query) {
+        const orig = text.dataset.orig || text.textContent;
+        text.dataset.orig = orig;
+        text.innerHTML = orig.replace(new RegExp(escRegex(query),'gi'), m => `<span class="highlight">${m}</span>`);
+      }
+    });
+  }
+
+  function openChatMenu(e) {
+    showCtxLike(e, [
+      { label:'بحث في الرسائل', icon:'fa-search', fn: openSearchChat },
+      { label:'مسح المحادثة', icon:'fa-eraser', fn: clearChat },
+      { label:'حظر المستخدم', icon:'fa-ban', fn: blockUser, danger: true }
+    ]);
+  }
+
+  function showCtxLike(e, items) {
+    const menu = document.getElementById('ctx-menu');
+    menu.innerHTML = '';
+    items.forEach(item => {
+      const el = document.createElement('div');
+      el.className = 'ctx-item' + (item.danger?' danger':'');
+      el.innerHTML = `<i class="fa ${item.icon}"></i>${item.label}`;
+      el.onclick = () => { item.fn(); closeCtxMenu(); };
+      menu.appendChild(el);
+    });
+    menu.classList.add('open');
+    menu.style.left = (e.clientX-180)+'px';
+    menu.style.top = e.clientY+'px';
+    document.addEventListener('click', closeCtxMenu, {once:true});
+  }
+
+  async function clearChat() {
+    if (!currentChatId) return;
+    if (!confirm('هل تريد مسح جميع الرسائل؟')) return;
+    await db.ref(`messages/${currentChatId}`).remove();
+    showToast('✅ تم مسح المحادثة');
+  }
+
+  async function blockUser() {
+    if (!currentChatPartner) return;
+    await db.ref(`blocks/${currentUser.uid}/${currentChatPartner.uid}`).set(true);
+    showToast('🚫 تم حظر المستخدم');
+  }
+
+  // ==========================================
+  // IMAGE PREVIEW
+  // ==========================================
+  function openImgPreview(url) {
+    document.getElementById('img-preview-full').src = url;
+    document.getElementById('img-preview-overlay').classList.add('open');
+  }
+  function closeImgPreview() {
+    document.getElementById('img-preview-overlay').classList.remove('open');
+  }
+
+  // ==========================================
+  // AI ASSISTANT
+  // ==========================================
+  function initAI() {
+    addAIMessage('bot', 'مرحباً! 👋 أنا مساعد DZ CLOSE الذكي. سأساعدك في استخدام التطبيق. كيف يمكنني مساعدتك؟');
+  }
+
+  function toggleAI() {
+    const panel = document.getElementById('ai-panel');
+    panel.classList.toggle('open');
+  }
+
+  function sendAISuggestion(btn) {
+    document.getElementById('ai-input').value = btn.textContent;
+    sendAIMsg();
+  }
+
+  function sendAIMsg() {
+    const input = document.getElementById('ai-input');
+    const q = input.value.trim();
+    if (!q) return;
+    addAIMessage('user', q);
+    input.value = '';
+    setTimeout(() => {
+      const reply = getAIReply(q);
+      addAIMessage('bot', reply);
+    }, 600);
+  }
+
+  function getAIReply(q) {
+    const ql = q.toLowerCase();
+    for (const [key, val] of Object.entries(AI_KNOWLEDGE)) {
+      if (ql.includes(key.toLowerCase())) return val;
+    }
+    // Advanced contextual replies
+    if (ql.includes('مكالم') || ql.includes('اتصال')) return AI_KNOWLEDGE['كيف أجري مكالمة'];
+    if (ql.includes('ثيم') || ql.includes('لون') || ql.includes('تصميم')) return AI_KNOWLEDGE['كيف أغير الثيم'];
+    if (ql.includes('صوت') || ql.includes('ميكروفون') || ql.includes('صوتية')) return AI_KNOWLEDGE['كيف أرسل صوتية'];
+    if (ql.includes('صديق') || ql.includes('اضاف')) return AI_KNOWLEDGE['كيف أضيف صديق'];
+    if (ql.includes('ستوري') || ql.includes('قصة')) return AI_KNOWLEDGE['ما هي الستوريز'];
+    if (ql.includes('مجموعة') || ql.includes('غروب')) return AI_KNOWLEDGE['كيف أنشئ مجموعة'];
+    if (ql.includes('صورة') || ql.includes('ملف')) return 'لإرسال صورة: في نافذة الدردشة اضغط أيقونة الصورة 🖼️ وستتمكن من اختيار صورة من جهازك.';
+    if (ql.includes('شكرا') || ql.includes('شكر')) return 'بكل سرور! 😊 أنا دائماً هنا لمساعدتك. هل تحتاج لأي شيء آخر؟';
+    if (ql.includes('مرحبا') || ql.includes('سلام')) return 'مرحباً بك في DZ CLOSE! 🌟 تطبيق الدردشة الأكثر تميزاً. كيف يمكنني مساعدتك اليوم؟';
+    return AI_KNOWLEDGE['default'];
+  }
+
+  function addAIMessage(role, text) {
+    const container = document.getElementById('ai-messages');
+    const div = document.createElement('div');
+    div.style.cssText = `display:flex;gap:8px;${role==='user'?'flex-direction:row-reverse;':''}`;
+    div.innerHTML = `
+      <div style="width:32px;height:32px;border-radius:50%;background:${role==='bot'?'linear-gradient(135deg,var(--accent),var(--accent2))':'var(--bg-tertiary)'};display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;">
+        ${role==='bot'?'🤖':'👤'}
+      </div>
+      <div style="background:${role==='bot'?'var(--bg-tertiary)':'var(--accent)'};color:${role==='bot'?'var(--text-primary)':'#0f172a'};padding:10px 12px;border-radius:${role==='bot'?'4px 14px 14px 14px':'14px 4px 14px 14px'};font-size:13px;line-height:1.5;max-width:85%;">
+        ${escHtml(text)}
+      </div>`;
+    container.appendChild(div);
+    container.scrollTop = container.scrollHeight;
+  }
+
+  // ==========================================
+  // SCROLL
+  // ==========================================
+  function scrollToBottom(force=false) {
+    const area = document.getElementById('messages-area');
+    if (force || area.scrollHeight - area.scrollTop - area.clientHeight < 200) {
+      area.scrollTop = area.scrollHeight;
+      document.getElementById('scroll-bottom-btn').classList.remove('show');
+    }
+  }
+
+  function handleMsgScroll() {
+    const area = document.getElementById('messages-area');
+    const dist = area.scrollHeight - area.scrollTop - area.clientHeight;
+    document.getElementById('scroll-bottom-btn').classList.toggle('show', dist > 300);
+  }
+
+  // ==========================================
+  // TOAST
+  // ==========================================
+  function showToast(msg, duration=3000) {
+    const container = document.getElementById('toast-container');
+    const toast = document.createElement('div');
+    toast.className = 'toast';
+    toast.innerHTML = msg;
+    container.appendChild(toast);
+    setTimeout(() => toast.remove(), duration);
+  }
+
+  // ==========================================
+  // MOBILE NAVIGATION
+  // ==========================================
+  function hideSidebarMobile() {
+    if (window.innerWidth <= 768) {
+      document.getElementById('sidebar').classList.add('hidden-mobile');
+      document.getElementById('chat-panel').classList.remove('hidden-mobile');
+    }
+  }
+
+  function showSidebar() {
+    document.getElementById('sidebar').classList.remove('hidden-mobile');
+  }
+
+  function backToSidebar() {
+    showSidebar();
+    document.getElementById('chat-panel').classList.add('hidden-mobile');
+  }
+
+  // ==========================================
+  // UTILS
+  // ==========================================
+  function escHtml(str) {
+    return (str||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+  function escAttr(str) {
+    return (str||'').replace(/\\/g,'\\\\').replace(/`/g,'\\`').replace(/'/g,"\\'").replace(/"/g,'\\"');
+  }
+  function escRegex(str) {
+    return str.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
+  }
+
+  function formatTime(ts) {
+    if (!ts) return '';
+    const d = new Date(ts);
+    const now = new Date();
+    const diff = now - d;
+    if (diff < 86400000 && d.getDate()===now.getDate()) {
+      return d.getHours().toString().padStart(2,'0')+':'+d.getMinutes().toString().padStart(2,'0');
+    }
+    if (diff < 172800000) return 'أمس';
+    return `${d.getDate()}/${d.getMonth()+1}`;
+  }
+
+  function formatMsgTime(ts) {
+    if (!ts) return '';
+    const d = new Date(ts);
+    return d.getHours().toString().padStart(2,'0')+':'+d.getMinutes().toString().padStart(2,'0');
+  }
+
+  function timeAgo(ts) {
+    const diff = Date.now() - ts;
+    if (diff < 60000) return 'الآن';
+    if (diff < 3600000) return `${Math.floor(diff/60000)} دقائق`;
+    if (diff < 86400000) return `${Math.floor(diff/3600000)} ساعات`;
+    return `${Math.floor(diff/86400000)} أيام`;
+  }
+
+  function triggerImgUpload() {
+    document.getElementById('img-upload-input').click();
+  }
+
+  function escRegex(s) { return s.replace(/[.*+?^${}()|[\]\\]/g,'\\$&'); }
+
+  // ==========================================
+  // EVENT LISTENERS
+  // ==========================================
+  document.addEventListener('DOMContentLoaded', () => {
+    // Close ctx menu on click outside
+    document.addEventListener('click', (e) => {
+      if (!document.getElementById('ctx-menu').contains(e.target)) {
+        closeCtxMenu();
+      }
+      if (!document.getElementById('emoji-picker').contains(e.target) &&
+          !e.target.closest('[onclick="toggleEmojiPicker()"]')) {
+        document.getElementById('emoji-picker').style.display = 'none';
+      }
+    });
+
+    // Initial toggle button states
+    toggleSendVoiceBtn();
+
+    // Keyboard shortcuts
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape') {
+        closeCtxMenu();
+        document.getElementById('emoji-picker').style.display = 'none';
+        document.getElementById('img-preview-overlay').classList.remove('open');
+        closeStoriesViewer();
+      }
+    });
+
+    // Resize handler
+    window.addEventListener('resize', () => {
+      if (window.innerWidth > 768) {
+        document.getElementById('sidebar').classList.remove('hidden-mobile');
+      }
+    });
+
+    // Load more messages on scroll up
+    document.getElementById('messages-area').addEventListener('scroll', function() {
+      if (this.scrollTop === 0 && currentChatId) {
+        // Could implement load older messages here
+      }
+    });
+  });
+
+  // Story hold-to-pause with touch
+  document.addEventListener('touchstart', (e) => {
+    const viewer = document.getElementById('stories-viewer');
+    if (viewer.classList.contains('open')) {
+      clearTimeout(storyAutoTimer);
+      storyPaused = true;
+    }
+  });
+  document.addEventListener('touchend', (e) => {
+    const viewer = document.getElementById('stories-viewer');
+    if (viewer.classList.contains('open') && storyPaused) {
+      storyPaused = false;
+      storyAutoTimer = setTimeout(() => nextStory(), 2000);
+    }
+  });
+
+  // ==========================================
+  // ADDITIONAL FEATURES
+  // ==========================================
+
+  // Reaction to message (double tap)
+  function addReaction(chatId, msgId, reaction) {
+    db.ref(`messages/${chatId}/${msgId}/reactions/${currentUser.uid}`).set(reaction);
+  }
+
+  // Mark messages as read when chat is open
+  function markAllRead() {
+    if (!currentChatId || !currentUser) return;
+    db.ref(`userChats/${currentUser.uid}/${currentChatId}/unread`).set(0);
+  }
+
+  // Presence update on visibility change
+  document.addEventListener('visibilitychange', () => {
+    if (currentUser) {
+      db.ref(`users/${currentUser.uid}/online`).set(!document.hidden);
+    }
+  });
+
+  // ==========================================
+  // INIT
+  // ==========================================
+  // Apply saved theme immediately
+  document.body.className = `theme-${currentTheme}`;
+
+  </script>
+
+
+</body></html>
